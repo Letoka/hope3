@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeModuleGroupMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeModuleGroup" >
+    <id column="modulegroupname" property="modulegroupname" jdbcType="VARCHAR" />
+    <result column="moduleid" property="moduleid" jdbcType="INTEGER" />
+    <result column="sequence" property="sequence" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    modulegroupname, moduleid, sequence
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopemodulegroup
+    where modulegroupname = #{modulegroupname,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from hopemodulegroup
+    where modulegroupname = #{modulegroupname,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeModuleGroup" >
+    insert into hopemodulegroup (modulegroupname, moduleid, sequence
+      )
+    values (#{modulegroupname,jdbcType=VARCHAR}, #{moduleid,jdbcType=INTEGER}, #{sequence,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeModuleGroup" >
+    insert into hopemodulegroup
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="modulegroupname != null" >
+        modulegroupname,
+      </if>
+      <if test="moduleid != null" >
+        moduleid,
+      </if>
+      <if test="sequence != null" >
+        sequence,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="modulegroupname != null" >
+        #{modulegroupname,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="sequence != null" >
+        #{sequence,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeModuleGroup" >
+    update hopemodulegroup
+    <set >
+      <if test="moduleid != null" >
+        moduleid = #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="sequence != null" >
+        sequence = #{sequence,jdbcType=INTEGER},
+      </if>
+    </set>
+    where modulegroupname = #{modulegroupname,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeModuleGroup" >
+    update hopemodulegroup
+    set moduleid = #{moduleid,jdbcType=INTEGER},
+      sequence = #{sequence,jdbcType=INTEGER}
+    where modulegroupname = #{modulegroupname,jdbcType=VARCHAR}
+  </update>
+</mapper>

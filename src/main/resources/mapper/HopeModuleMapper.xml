@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeModuleMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeModule" >
+    <id column="moduleid" property="moduleid" jdbcType="INTEGER" />
+    <result column="modulename" property="modulename" jdbcType="VARCHAR" />
+    <result column="enabled" property="enabled" jdbcType="INTEGER" />
+    <result column="shortname" property="shortname" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="image" property="image" jdbcType="VARCHAR" />
+    <result column="modulegroupname" property="modulegroupname" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    /*moduleid, modulename, enabled, shortname, description, icon, image, modulegroupname,
+    url*/
+    moduleid, modulename, shortname, description, icon, image, modulegroupname
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopemodule
+    where moduleid = #{moduleid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopemodule
+    where moduleid = #{moduleid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeModule" >
+    insert into hopemodule (moduleid, modulename, enabled, 
+      shortname, description, icon, 
+      image, modulegroupname, url
+      )
+    values (#{moduleid,jdbcType=INTEGER}, #{modulename,jdbcType=VARCHAR}, #{enabled,jdbcType=INTEGER}, 
+      #{shortname,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{image,jdbcType=VARCHAR}, #{modulegroupname,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeModule" >
+    insert into hopemodule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="moduleid != null" >
+        moduleid,
+      </if>
+      <if test="modulename != null" >
+        modulename,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="shortname != null" >
+        shortname,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="image != null" >
+        image,
+      </if>
+      <if test="modulegroupname != null" >
+        modulegroupname,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="modulename != null" >
+        #{modulename,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=INTEGER},
+      </if>
+      <if test="shortname != null" >
+        #{shortname,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null" >
+        #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="modulegroupname != null" >
+        #{modulegroupname,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeModule" >
+    update hopemodule
+    <set >
+      <if test="modulename != null" >
+        modulename = #{modulename,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=INTEGER},
+      </if>
+      <if test="shortname != null" >
+        shortname = #{shortname,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null" >
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="modulegroupname != null" >
+        modulegroupname = #{modulegroupname,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where moduleid = #{moduleid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeModule" >
+    update hopemodule
+    set modulename = #{modulename,jdbcType=VARCHAR},
+      enabled = #{enabled,jdbcType=INTEGER},
+      shortname = #{shortname,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      image = #{image,jdbcType=VARCHAR},
+      modulegroupname = #{modulegroupname,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR}
+    where moduleid = #{moduleid,jdbcType=INTEGER}
+  </update>
+</mapper>

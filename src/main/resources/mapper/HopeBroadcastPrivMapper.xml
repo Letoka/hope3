@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeBroadcastPrivMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeBroadcastPriv" >
+    <id column="broadcastprivid" property="broadcastprivid" jdbcType="INTEGER" />
+    <result column="broadcastid" property="broadcastid" jdbcType="INTEGER" />
+    <result column="privtype" property="privtype" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="deptid" property="deptid" jdbcType="VARCHAR" />
+    <result column="privgroupid" property="privgroupid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    broadcastprivid, broadcastid, privtype, aamid, deptid, privgroupid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopebroadcastpriv
+    where broadcastprivid = #{broadcastprivid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopebroadcastpriv
+    where broadcastprivid = #{broadcastprivid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeBroadcastPriv" >
+    insert into hopebroadcastpriv (broadcastprivid, broadcastid, privtype, 
+      aamid, deptid, privgroupid
+      )
+    values (#{broadcastprivid,jdbcType=INTEGER}, #{broadcastid,jdbcType=INTEGER}, #{privtype,jdbcType=INTEGER}, 
+      #{aamid,jdbcType=VARCHAR}, #{deptid,jdbcType=VARCHAR}, #{privgroupid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeBroadcastPriv" >
+    insert into hopebroadcastpriv
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="broadcastprivid != null" >
+        broadcastprivid,
+      </if>
+      <if test="broadcastid != null" >
+        broadcastid,
+      </if>
+      <if test="privtype != null" >
+        privtype,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="deptid != null" >
+        deptid,
+      </if>
+      <if test="privgroupid != null" >
+        privgroupid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="broadcastprivid != null" >
+        #{broadcastprivid,jdbcType=INTEGER},
+      </if>
+      <if test="broadcastid != null" >
+        #{broadcastid,jdbcType=INTEGER},
+      </if>
+      <if test="privtype != null" >
+        #{privtype,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="privgroupid != null" >
+        #{privgroupid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeBroadcastPriv" >
+    update hopebroadcastpriv
+    <set >
+      <if test="broadcastid != null" >
+        broadcastid = #{broadcastid,jdbcType=INTEGER},
+      </if>
+      <if test="privtype != null" >
+        privtype = #{privtype,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        aamid = #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        deptid = #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="privgroupid != null" >
+        privgroupid = #{privgroupid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where broadcastprivid = #{broadcastprivid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeBroadcastPriv" >
+    update hopebroadcastpriv
+    set broadcastid = #{broadcastid,jdbcType=INTEGER},
+      privtype = #{privtype,jdbcType=INTEGER},
+      aamid = #{aamid,jdbcType=VARCHAR},
+      deptid = #{deptid,jdbcType=VARCHAR},
+      privgroupid = #{privgroupid,jdbcType=VARCHAR}
+    where broadcastprivid = #{broadcastprivid,jdbcType=INTEGER}
+  </update>
+</mapper>

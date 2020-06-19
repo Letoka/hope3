@@ -1,0 +1,5 @@
+2020-05-14 16:47:14,850 INFO (StartupInfoLogger.java:61)- Started Hope3Application in 4.14 seconds (JVM running for 5.073)
+2020-05-14 16:47:24,981 DEBUG (HopeBroadcastController.java:34)- 日志测试20200513，具体时间为Thu May 14 16:47:24 CST 2020,方法参数：海淀区融媒体
+2020-05-14 16:47:25,042 DEBUG (BaseJdbcLogger.java:143)- ==>  Preparing: select broadcastid, broadcasttype, broadcastname, starttime, endtime, enabled, published from hopebroadcast where broadcastid = ? 
+2020-05-14 16:47:25,179 DEBUG (BaseJdbcLogger.java:143)- ==> Parameters: 1(Integer)
+2020-05-14 16:47:25,221 DEBUG (BaseJdbcLogger.java:143)- <==      Total: 1

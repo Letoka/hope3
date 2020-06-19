@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeShortcutBarMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeShortcutBar" >
+    <id column="shortcutbarid" property="shortcutbarid" jdbcType="INTEGER" />
+    <id column="shortcutbarname" property="shortcutbarname" jdbcType="VARCHAR" />
+    <id column="moduleid" property="moduleid" jdbcType="INTEGER" />
+    <result column="shortcutbardescript" property="shortcutbardescript" jdbcType="VARCHAR" />
+    <result column="shortcut_image" property="shortcutImage" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    shortcutbarid, shortcutbarname, moduleid, shortcutbardescript, shortcut_image
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBarKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopeshortcutbar
+    where shortcutbarid = #{shortcutbarid,jdbcType=INTEGER}
+      and shortcutbarname = #{shortcutbarname,jdbcType=VARCHAR}
+      and moduleid = #{moduleid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBarKey" >
+    delete from hopeshortcutbar
+    where shortcutbarid = #{shortcutbarid,jdbcType=INTEGER}
+      and shortcutbarname = #{shortcutbarname,jdbcType=VARCHAR}
+      and moduleid = #{moduleid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBar" >
+    insert into hopeshortcutbar (shortcutbarid, shortcutbarname, moduleid, 
+      shortcutbardescript, shortcut_image)
+    values (#{shortcutbarid,jdbcType=INTEGER}, #{shortcutbarname,jdbcType=VARCHAR}, #{moduleid,jdbcType=INTEGER}, 
+      #{shortcutbardescript,jdbcType=VARCHAR}, #{shortcutImage,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBar" >
+    insert into hopeshortcutbar
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="shortcutbarid != null" >
+        shortcutbarid,
+      </if>
+      <if test="shortcutbarname != null" >
+        shortcutbarname,
+      </if>
+      <if test="moduleid != null" >
+        moduleid,
+      </if>
+      <if test="shortcutbardescript != null" >
+        shortcutbardescript,
+      </if>
+      <if test="shortcutImage != null" >
+        shortcut_image,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="shortcutbarid != null" >
+        #{shortcutbarid,jdbcType=INTEGER},
+      </if>
+      <if test="shortcutbarname != null" >
+        #{shortcutbarname,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="shortcutbardescript != null" >
+        #{shortcutbardescript,jdbcType=VARCHAR},
+      </if>
+      <if test="shortcutImage != null" >
+        #{shortcutImage,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBar" >
+    update hopeshortcutbar
+    <set >
+      <if test="shortcutbardescript != null" >
+        shortcutbardescript = #{shortcutbardescript,jdbcType=VARCHAR},
+      </if>
+      <if test="shortcutImage != null" >
+        shortcut_image = #{shortcutImage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where shortcutbarid = #{shortcutbarid,jdbcType=INTEGER}
+      and shortcutbarname = #{shortcutbarname,jdbcType=VARCHAR}
+      and moduleid = #{moduleid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBar" >
+    update hopeshortcutbar
+    set shortcutbardescript = #{shortcutbardescript,jdbcType=VARCHAR},
+      shortcut_image = #{shortcutImage,jdbcType=VARCHAR}
+    where shortcutbarid = #{shortcutbarid,jdbcType=INTEGER}
+      and shortcutbarname = #{shortcutbarname,jdbcType=VARCHAR}
+      and moduleid = #{moduleid,jdbcType=INTEGER}
+  </update>
+</mapper>

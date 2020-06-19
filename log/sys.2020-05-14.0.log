@@ -1,0 +1,17 @@
+2020-05-14 13:59:01,214 INFO (StartupInfoLogger.java:55)- Starting Hope3Application on LAPTOP-MOACCTMH with PID 5688 (D:\icbc\icbcpro\hope3\target\classes started by qinwa in D:\icbc\icbcpro\hope3)
+2020-05-14 13:59:01,216 DEBUG (StartupInfoLogger.java:56)- Running with Spring Boot v2.2.7.RELEASE, Spring v5.2.6.RELEASE
+2020-05-14 13:59:01,217 INFO (SpringApplication.java:651)- No active profile set, falling back to default profiles: default
+2020-05-14 13:59:10,355 INFO (StartupInfoLogger.java:61)- Started Hope3Application in 10.885 seconds (JVM running for 26.32)
+2020-05-14 13:59:45,880 DEBUG (Hope3TestController.java:35)- 日志测试20200513，具体时间为Thu May 14 13:59:45 CST 2020,方法参数：海淀区融媒体
+2020-05-14 13:59:45,909 DEBUG (BaseJdbcLogger.java:143)- ==>  Preparing: SELECT * FROM tcenter_log where Title = ? 
+2020-05-14 13:59:45,936 DEBUG (BaseJdbcLogger.java:143)- ==> Parameters: 海淀区融媒体(String)
+2020-05-14 13:59:45,948 DEBUG (BaseJdbcLogger.java:143)- <==      Total: 5
+2020-05-14 16:44:44,244 INFO (StartupInfoLogger.java:55)- Starting Hope3Application on LAPTOP-MOACCTMH with PID 16388 (D:\icbc\icbcpro\hope3\target\classes started by qinwa in D:\icbc\icbcpro\hope3)
+2020-05-14 16:44:44,345 DEBUG (StartupInfoLogger.java:56)- Running with Spring Boot v2.2.7.RELEASE, Spring v5.2.6.RELEASE
+2020-05-14 16:44:44,346 INFO (SpringApplication.java:651)- No active profile set, falling back to default profiles: default
+2020-05-14 16:46:21,119 INFO (StartupInfoLogger.java:55)- Starting Hope3Application on LAPTOP-MOACCTMH with PID 21024 (D:\icbc\icbcpro\hope3\target\classes started by qinwa in D:\icbc\icbcpro\hope3)
+2020-05-14 16:46:21,122 DEBUG (StartupInfoLogger.java:56)- Running with Spring Boot v2.2.7.RELEASE, Spring v5.2.6.RELEASE
+2020-05-14 16:46:21,123 INFO (SpringApplication.java:651)- No active profile set, falling back to default profiles: default
+2020-05-14 16:47:11,015 INFO (StartupInfoLogger.java:55)- Starting Hope3Application on LAPTOP-MOACCTMH with PID 26228 (D:\icbc\icbcpro\hope3\target\classes started by qinwa in D:\icbc\icbcpro\hope3)
+2020-05-14 16:47:11,024 DEBUG (StartupInfoLogger.java:56)- Running with Spring Boot v2.2.7.RELEASE, Spring v5.2.6.RELEASE
+2020-05-14 16:47:11,025 INFO (SpringApplication.java:651)- No active profile set, falling back to default profiles: default

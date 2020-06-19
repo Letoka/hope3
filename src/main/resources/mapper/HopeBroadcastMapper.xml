@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeBroadcastMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeBroadcast" >
+    <id column="broadcastid" property="broadcastid" jdbcType="INTEGER" />
+    <result column="broadcasttype" property="broadcasttype" jdbcType="VARCHAR" />
+    <result column="broadcastname" property="broadcastname" jdbcType="VARCHAR" />
+    <result column="starttime" property="starttime" jdbcType="TIMESTAMP" />
+    <result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
+    <result column="enabled" property="enabled" jdbcType="INTEGER" />
+    <result column="published" property="published" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    broadcastid, broadcasttype, broadcastname, starttime, endtime, enabled, published
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopebroadcast
+    where broadcastid = #{broadcastid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopebroadcast
+    where broadcastid = #{broadcastid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeBroadcast" >
+    insert into hopebroadcast (broadcastid, broadcasttype, broadcastname, 
+      starttime, endtime, enabled, 
+      published)
+    values (#{broadcastid,jdbcType=INTEGER}, #{broadcasttype,jdbcType=VARCHAR}, #{broadcastname,jdbcType=VARCHAR}, 
+      #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}, #{enabled,jdbcType=INTEGER}, 
+      #{published,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeBroadcast" >
+    insert into hopebroadcast
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="broadcastid != null" >
+        broadcastid,
+      </if>
+      <if test="broadcasttype != null" >
+        broadcasttype,
+      </if>
+      <if test="broadcastname != null" >
+        broadcastname,
+      </if>
+      <if test="starttime != null" >
+        starttime,
+      </if>
+      <if test="endtime != null" >
+        endtime,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="published != null" >
+        published,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="broadcastid != null" >
+        #{broadcastid,jdbcType=INTEGER},
+      </if>
+      <if test="broadcasttype != null" >
+        #{broadcasttype,jdbcType=VARCHAR},
+      </if>
+      <if test="broadcastname != null" >
+        #{broadcastname,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null" >
+        #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=INTEGER},
+      </if>
+      <if test="published != null" >
+        #{published,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeBroadcast" >
+    update hopebroadcast
+    <set >
+      <if test="broadcasttype != null" >
+        broadcasttype = #{broadcasttype,jdbcType=VARCHAR},
+      </if>
+      <if test="broadcastname != null" >
+        broadcastname = #{broadcastname,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null" >
+        starttime = #{starttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        endtime = #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=INTEGER},
+      </if>
+      <if test="published != null" >
+        published = #{published,jdbcType=INTEGER},
+      </if>
+    </set>
+    where broadcastid = #{broadcastid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeBroadcast" >
+    update hopebroadcast
+    set broadcasttype = #{broadcasttype,jdbcType=VARCHAR},
+      broadcastname = #{broadcastname,jdbcType=VARCHAR},
+      starttime = #{starttime,jdbcType=TIMESTAMP},
+      endtime = #{endtime,jdbcType=TIMESTAMP},
+      enabled = #{enabled,jdbcType=INTEGER},
+      published = #{published,jdbcType=INTEGER}
+    where broadcastid = #{broadcastid,jdbcType=INTEGER}
+  </update>
+</mapper>

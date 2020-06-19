@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeShortcutBarPrivMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeShortcutBarPriv" >
+    <id column="shortcutbarprivid" property="shortcutbarprivid" jdbcType="INTEGER" />
+    <result column="shortcutbarname" property="shortcutbarname" jdbcType="VARCHAR" />
+    <result column="privtype" property="privtype" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="deptid" property="deptid" jdbcType="VARCHAR" />
+    <result column="privgroupid" property="privgroupid" jdbcType="VARCHAR" />
+    <result column="odeptid" property="odeptid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    shortcutbarprivid, shortcutbarname, privtype, aamid, deptid, privgroupid, odeptid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopeshortcutbarpriv
+    where shortcutbarprivid = #{shortcutbarprivid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopeshortcutbarpriv
+    where shortcutbarprivid = #{shortcutbarprivid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBarPriv" >
+    insert into hopeshortcutbarpriv (shortcutbarprivid, shortcutbarname, 
+      privtype, aamid, deptid, 
+      privgroupid, odeptid)
+    values (#{shortcutbarprivid,jdbcType=INTEGER}, #{shortcutbarname,jdbcType=VARCHAR}, 
+      #{privtype,jdbcType=INTEGER}, #{aamid,jdbcType=VARCHAR}, #{deptid,jdbcType=VARCHAR}, 
+      #{privgroupid,jdbcType=VARCHAR}, #{odeptid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBarPriv" >
+    insert into hopeshortcutbarpriv
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="shortcutbarprivid != null" >
+        shortcutbarprivid,
+      </if>
+      <if test="shortcutbarname != null" >
+        shortcutbarname,
+      </if>
+      <if test="privtype != null" >
+        privtype,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="deptid != null" >
+        deptid,
+      </if>
+      <if test="privgroupid != null" >
+        privgroupid,
+      </if>
+      <if test="odeptid != null" >
+        odeptid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="shortcutbarprivid != null" >
+        #{shortcutbarprivid,jdbcType=INTEGER},
+      </if>
+      <if test="shortcutbarname != null" >
+        #{shortcutbarname,jdbcType=VARCHAR},
+      </if>
+      <if test="privtype != null" >
+        #{privtype,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="privgroupid != null" >
+        #{privgroupid,jdbcType=VARCHAR},
+      </if>
+      <if test="odeptid != null" >
+        #{odeptid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBarPriv" >
+    update hopeshortcutbarpriv
+    <set >
+      <if test="shortcutbarname != null" >
+        shortcutbarname = #{shortcutbarname,jdbcType=VARCHAR},
+      </if>
+      <if test="privtype != null" >
+        privtype = #{privtype,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        aamid = #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        deptid = #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="privgroupid != null" >
+        privgroupid = #{privgroupid,jdbcType=VARCHAR},
+      </if>
+      <if test="odeptid != null" >
+        odeptid = #{odeptid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where shortcutbarprivid = #{shortcutbarprivid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBarPriv" >
+    update hopeshortcutbarpriv
+    set shortcutbarname = #{shortcutbarname,jdbcType=VARCHAR},
+      privtype = #{privtype,jdbcType=INTEGER},
+      aamid = #{aamid,jdbcType=VARCHAR},
+      deptid = #{deptid,jdbcType=VARCHAR},
+      privgroupid = #{privgroupid,jdbcType=VARCHAR},
+      odeptid = #{odeptid,jdbcType=VARCHAR}
+    where shortcutbarprivid = #{shortcutbarprivid,jdbcType=INTEGER}
+  </update>
+</mapper>

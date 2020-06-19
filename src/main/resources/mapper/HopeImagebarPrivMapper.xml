@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeImagebarPrivMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeImagebarPriv" >
+    <id column="imagebarprivid" property="imagebarprivid" jdbcType="INTEGER" />
+    <result column="privtype" property="privtype" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="deptid" property="deptid" jdbcType="VARCHAR" />
+    <result column="privgroupid" property="privgroupid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    imagebarprivid, privtype, aamid, deptid, privgroupid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopeimagebarpriv
+    where imagebarprivid = #{imagebarprivid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopeimagebarpriv
+    where imagebarprivid = #{imagebarprivid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeImagebarPriv" >
+    insert into hopeimagebarpriv (imagebarprivid, privtype, aamid, 
+      deptid, privgroupid)
+    values (#{imagebarprivid,jdbcType=INTEGER}, #{privtype,jdbcType=INTEGER}, #{aamid,jdbcType=VARCHAR}, 
+      #{deptid,jdbcType=VARCHAR}, #{privgroupid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeImagebarPriv" >
+    insert into hopeimagebarpriv
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="imagebarprivid != null" >
+        imagebarprivid,
+      </if>
+      <if test="privtype != null" >
+        privtype,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="deptid != null" >
+        deptid,
+      </if>
+      <if test="privgroupid != null" >
+        privgroupid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="imagebarprivid != null" >
+        #{imagebarprivid,jdbcType=INTEGER},
+      </if>
+      <if test="privtype != null" >
+        #{privtype,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="privgroupid != null" >
+        #{privgroupid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeImagebarPriv" >
+    update hopeimagebarpriv
+    <set >
+      <if test="privtype != null" >
+        privtype = #{privtype,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        aamid = #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        deptid = #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="privgroupid != null" >
+        privgroupid = #{privgroupid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where imagebarprivid = #{imagebarprivid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeImagebarPriv" >
+    update hopeimagebarpriv
+    set privtype = #{privtype,jdbcType=INTEGER},
+      aamid = #{aamid,jdbcType=VARCHAR},
+      deptid = #{deptid,jdbcType=VARCHAR},
+      privgroupid = #{privgroupid,jdbcType=VARCHAR}
+    where imagebarprivid = #{imagebarprivid,jdbcType=INTEGER}
+  </update>
+</mapper>

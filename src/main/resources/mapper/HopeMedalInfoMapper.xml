@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeMedalInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeMedalInfo" >
+    <id column="medalid" property="medalid" jdbcType="INTEGER" />
+    <result column="medalname" property="medalname" jdbcType="VARCHAR" />
+    <result column="medallevel" property="medallevel" jdbcType="INTEGER" />
+    <result column="medaldescript" property="medaldescript" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    medalid, medalname, medallevel, medaldescript
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopemedalinfo
+    where medalid = #{medalid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopemedalinfo
+    where medalid = #{medalid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeMedalInfo" >
+    insert into hopemedalinfo (medalid, medalname, medallevel, 
+      medaldescript)
+    values (#{medalid,jdbcType=INTEGER}, #{medalname,jdbcType=VARCHAR}, #{medallevel,jdbcType=INTEGER}, 
+      #{medaldescript,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeMedalInfo" >
+    insert into hopemedalinfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="medalid != null" >
+        medalid,
+      </if>
+      <if test="medalname != null" >
+        medalname,
+      </if>
+      <if test="medallevel != null" >
+        medallevel,
+      </if>
+      <if test="medaldescript != null" >
+        medaldescript,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="medalid != null" >
+        #{medalid,jdbcType=INTEGER},
+      </if>
+      <if test="medalname != null" >
+        #{medalname,jdbcType=VARCHAR},
+      </if>
+      <if test="medallevel != null" >
+        #{medallevel,jdbcType=INTEGER},
+      </if>
+      <if test="medaldescript != null" >
+        #{medaldescript,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeMedalInfo" >
+    update hopemedalinfo
+    <set >
+      <if test="medalname != null" >
+        medalname = #{medalname,jdbcType=VARCHAR},
+      </if>
+      <if test="medallevel != null" >
+        medallevel = #{medallevel,jdbcType=INTEGER},
+      </if>
+      <if test="medaldescript != null" >
+        medaldescript = #{medaldescript,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where medalid = #{medalid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeMedalInfo" >
+    update hopemedalinfo
+    set medalname = #{medalname,jdbcType=VARCHAR},
+      medallevel = #{medallevel,jdbcType=INTEGER},
+      medaldescript = #{medaldescript,jdbcType=VARCHAR}
+    where medalid = #{medalid,jdbcType=INTEGER}
+  </update>
+</mapper>

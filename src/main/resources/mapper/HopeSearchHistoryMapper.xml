@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeSearchHistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeSearchHistory" >
+    <id column="searchhistoryid" property="searchhistoryid" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="searchtext" property="searchtext" jdbcType="VARCHAR" />
+    <result column="logtime" property="logtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    searchhistoryid, aamid, searchtext, logtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopesearchhistory
+    where searchhistoryid = #{searchhistoryid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopesearchhistory
+    where searchhistoryid = #{searchhistoryid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" >
+    insert into hopesearchhistory (searchhistoryid, aamid, searchtext, 
+      logtime)
+    values (#{searchhistoryid,jdbcType=INTEGER}, #{aamid,jdbcType=VARCHAR}, #{searchtext,jdbcType=VARCHAR}, 
+      #{logtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" >
+    insert into hopesearchhistory
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="searchhistoryid != null" >
+        searchhistoryid,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="searchtext != null" >
+        searchtext,
+      </if>
+      <if test="logtime != null" >
+        logtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="searchhistoryid != null" >
+        #{searchhistoryid,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="searchtext != null" >
+        #{searchtext,jdbcType=VARCHAR},
+      </if>
+      <if test="logtime != null" >
+        #{logtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" >
+    update hopesearchhistory
+    <set >
+      <if test="aamid != null" >
+        aamid = #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="searchtext != null" >
+        searchtext = #{searchtext,jdbcType=VARCHAR},
+      </if>
+      <if test="logtime != null" >
+        logtime = #{logtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where searchhistoryid = #{searchhistoryid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" >
+    update hopesearchhistory
+    set aamid = #{aamid,jdbcType=VARCHAR},
+      searchtext = #{searchtext,jdbcType=VARCHAR},
+      logtime = #{logtime,jdbcType=TIMESTAMP}
+    where searchhistoryid = #{searchhistoryid,jdbcType=INTEGER}
+  </update>
+</mapper>

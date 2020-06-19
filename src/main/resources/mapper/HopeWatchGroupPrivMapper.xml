@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeWatchGroupPrivMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeWatchGroupPriv" >
+    <id column="watchgroupprivid" property="watchgroupprivid" jdbcType="VARCHAR" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    watchgroupprivid, aamid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopewatchgrouppriv
+    where watchgroupprivid = #{watchgroupprivid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from hopewatchgrouppriv
+    where watchgroupprivid = #{watchgroupprivid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeWatchGroupPriv" >
+    insert into hopewatchgrouppriv (watchgroupprivid, aamid)
+    values (#{watchgroupprivid,jdbcType=VARCHAR}, #{aamid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeWatchGroupPriv" >
+    insert into hopewatchgrouppriv
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="watchgroupprivid != null" >
+        watchgroupprivid,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="watchgroupprivid != null" >
+        #{watchgroupprivid,jdbcType=VARCHAR},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeWatchGroupPriv" >
+    update hopewatchgrouppriv
+    <set >
+      <if test="aamid != null" >
+        aamid = #{aamid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where watchgroupprivid = #{watchgroupprivid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeWatchGroupPriv" >
+    update hopewatchgrouppriv
+    set aamid = #{aamid,jdbcType=VARCHAR}
+    where watchgroupprivid = #{watchgroupprivid,jdbcType=VARCHAR}
+  </update>
+</mapper>

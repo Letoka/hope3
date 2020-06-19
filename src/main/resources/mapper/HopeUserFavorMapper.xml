@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeUserFavorMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
+    <id column="favorid" property="favorid" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="favortype" property="favortype" jdbcType="INTEGER" />
+    <result column="moduleid" property="moduleid" jdbcType="INTEGER" />
+    <result column="activityid" property="activityid" jdbcType="INTEGER" />
+    <result column="modulesequence" property="modulesequence" jdbcType="INTEGER" />
+    <result column="activitysequence" property="activitysequence" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    favorid, aamid, favortype, moduleid, activityid, modulesequence, activitysequence
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopeuserfavor
+    where favorid = #{favorid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopeuserfavor
+    where favorid = #{favorid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
+    insert into hopeuserfavor (favorid, aamid, favortype, 
+      moduleid, activityid, modulesequence, 
+      activitysequence)
+    values (#{favorid,jdbcType=INTEGER}, #{aamid,jdbcType=VARCHAR}, #{favortype,jdbcType=INTEGER}, 
+      #{moduleid,jdbcType=INTEGER}, #{activityid,jdbcType=INTEGER}, #{modulesequence,jdbcType=INTEGER}, 
+      #{activitysequence,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
+    insert into hopeuserfavor
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="favorid != null" >
+        favorid,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="favortype != null" >
+        favortype,
+      </if>
+      <if test="moduleid != null" >
+        moduleid,
+      </if>
+      <if test="activityid != null" >
+        activityid,
+      </if>
+      <if test="modulesequence != null" >
+        modulesequence,
+      </if>
+      <if test="activitysequence != null" >
+        activitysequence,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="favorid != null" >
+        #{favorid,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="favortype != null" >
+        #{favortype,jdbcType=INTEGER},
+      </if>
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="activityid != null" >
+        #{activityid,jdbcType=INTEGER},
+      </if>
+      <if test="modulesequence != null" >
+        #{modulesequence,jdbcType=INTEGER},
+      </if>
+      <if test="activitysequence != null" >
+        #{activitysequence,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
+    update hopeuserfavor
+    <set >
+      <if test="aamid != null" >
+        aamid = #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="favortype != null" >
+        favortype = #{favortype,jdbcType=INTEGER},
+      </if>
+      <if test="moduleid != null" >
+        moduleid = #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="activityid != null" >
+        activityid = #{activityid,jdbcType=INTEGER},
+      </if>
+      <if test="modulesequence != null" >
+        modulesequence = #{modulesequence,jdbcType=INTEGER},
+      </if>
+      <if test="activitysequence != null" >
+        activitysequence = #{activitysequence,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where favorid = #{favorid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
+    update hopeuserfavor
+    set aamid = #{aamid,jdbcType=VARCHAR},
+      favortype = #{favortype,jdbcType=INTEGER},
+      moduleid = #{moduleid,jdbcType=INTEGER},
+      activityid = #{activityid,jdbcType=INTEGER},
+      modulesequence = #{modulesequence,jdbcType=INTEGER},
+      activitysequence = #{activitysequence,jdbcType=TIMESTAMP}
+    where favorid = #{favorid,jdbcType=INTEGER}
+  </update>
+</mapper>

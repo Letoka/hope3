@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeUserLog_hMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeUserLog_h" >
+    <id column="userlogid" property="userlogid" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="moduleid" property="moduleid" jdbcType="INTEGER" />
+    <result column="logtime" property="logtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    userlogid, aamid, moduleid, logtime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopeuserlog_h
+    where userlogid = #{userlogid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopeuserlog_h
+    where userlogid = #{userlogid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeUserLog_h" >
+    insert into hopeuserlog_h (userlogid, aamid, moduleid, 
+      logtime)
+    values (#{userlogid,jdbcType=INTEGER}, #{aamid,jdbcType=VARCHAR}, #{moduleid,jdbcType=INTEGER}, 
+      #{logtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserLog_h" >
+    insert into hopeuserlog_h
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userlogid != null" >
+        userlogid,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="moduleid != null" >
+        moduleid,
+      </if>
+      <if test="logtime != null" >
+        logtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userlogid != null" >
+        #{userlogid,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="logtime != null" >
+        #{logtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserLog_h" >
+    update hopeuserlog_h
+    <set >
+      <if test="aamid != null" >
+        aamid = #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleid != null" >
+        moduleid = #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="logtime != null" >
+        logtime = #{logtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where userlogid = #{userlogid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeUserLog_h" >
+    update hopeuserlog_h
+    set aamid = #{aamid,jdbcType=VARCHAR},
+      moduleid = #{moduleid,jdbcType=INTEGER},
+      logtime = #{logtime,jdbcType=TIMESTAMP}
+    where userlogid = #{userlogid,jdbcType=INTEGER}
+  </update>
+</mapper>

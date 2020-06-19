@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeviewModulePrivMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeviewModulePriv" >
+    <result column="moduleid" property="moduleid" jdbcType="INTEGER" />
+    <result column="privtype" property="privtype" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="deptid" property="deptid" jdbcType="VARCHAR" />
+    <result column="odeptid" property="odeptid" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeviewModulePriv" >
+    insert into hopeviewmodulepriv (moduleid, privtype, aamid, 
+      deptid, odeptid)
+    values (#{moduleid,jdbcType=INTEGER}, #{privtype,jdbcType=INTEGER}, #{aamid,jdbcType=VARCHAR}, 
+      #{deptid,jdbcType=VARCHAR}, #{odeptid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeviewModulePriv" >
+    insert into hopeviewmodulepriv
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="moduleid != null" >
+        moduleid,
+      </if>
+      <if test="privtype != null" >
+        privtype,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="deptid != null" >
+        deptid,
+      </if>
+      <if test="odeptid != null" >
+        odeptid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="privtype != null" >
+        #{privtype,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="odeptid != null" >
+        #{odeptid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

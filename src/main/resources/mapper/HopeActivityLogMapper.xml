@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeActivityLogMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeActivityLog" >
+    <id column="activityid" property="activityid" jdbcType="INTEGER" />
+    <id column="viewtime" property="viewtime" jdbcType="TIMESTAMP" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="liked" property="liked" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    activityid, viewtime, aamid, liked
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.icbc.zsyw.hope3.dto.HopeActivityLogKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopeactivitylog
+    where activityid = #{activityid,jdbcType=INTEGER}
+      and viewtime = #{viewtime,jdbcType=TIMESTAMP}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeActivityLogKey" >
+    delete from hopeactivitylog
+    where activityid = #{activityid,jdbcType=INTEGER}
+      and viewtime = #{viewtime,jdbcType=TIMESTAMP}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeActivityLog" >
+    insert into hopeactivitylog (activityid, viewtime, aamid, 
+      liked)
+    values (#{activityid,jdbcType=INTEGER}, #{viewtime,jdbcType=TIMESTAMP}, #{aamid,jdbcType=VARCHAR}, 
+      #{liked,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeActivityLog" >
+    insert into hopeactivitylog
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="activityid != null" >
+        activityid,
+      </if>
+      <if test="viewtime != null" >
+        viewtime,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="liked != null" >
+        liked,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="activityid != null" >
+        #{activityid,jdbcType=INTEGER},
+      </if>
+      <if test="viewtime != null" >
+        #{viewtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="liked != null" >
+        #{liked,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeActivityLog" >
+    update hopeactivitylog
+    <set >
+      <if test="aamid != null" >
+        aamid = #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="liked != null" >
+        liked = #{liked,jdbcType=INTEGER},
+      </if>
+    </set>
+    where activityid = #{activityid,jdbcType=INTEGER}
+      and viewtime = #{viewtime,jdbcType=TIMESTAMP}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeActivityLog" >
+    update hopeactivitylog
+    set aamid = #{aamid,jdbcType=VARCHAR},
+      liked = #{liked,jdbcType=INTEGER}
+    where activityid = #{activityid,jdbcType=INTEGER}
+      and viewtime = #{viewtime,jdbcType=TIMESTAMP}
+  </update>
+</mapper>

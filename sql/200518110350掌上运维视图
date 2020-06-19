@@ -1,0 +1,36 @@
+/*
+MySQL Backup
+Source Server Version: 5.6.26
+Source Database: mldb
+Date: 2020/5/18 11:03:50
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+--  View definition for `view_back_summary`
+-- ----------------------------
+DROP VIEW IF EXISTS `view_back_summary`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_back_summary` AS select `a`.`privgroupid` AS `privgroupid`,`a`.`hgaamid` AS `hgaamid`,`a`.`huaamid` AS `huaamid`,`a`.`hudeptid` AS `hudeptid` from `v_pri_dept_v1` `a` union select `b`.`privgroupid` AS `privgroupid`,`b`.`hgaamid` AS `hgaamid`,`b`.`huaamid` AS `huaamid`,`b`.`hudeptid` AS `hudeptid` from `v_pri_dept_v2` `b`;
+
+-- ----------------------------
+--  View definition for `v_pri_dept`
+-- ----------------------------
+DROP VIEW IF EXISTS `v_pri_dept`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_pri_dept` AS select `view_back_summary`.`privgroupid` AS `privgroupid`,(case when (`view_back_summary`.`hgaamid` is not null) then `view_back_summary`.`hgaamid` else `view_back_summary`.`huaamid` end) AS `aamid`,`view_back_summary`.`hudeptid` AS `hudeptid` from `view_back_summary`;
+
+-- ----------------------------
+--  View definition for `v_pri_dept_v1`
+-- ----------------------------
+DROP VIEW IF EXISTS `v_pri_dept_v1`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_pri_dept_v1` AS select `hg`.`privgroupid` AS `privgroupid`,`hg`.`aamid` AS `hgaamid`,`hu`.`aamid` AS `huaamid`,`hu`.`deptid` AS `hudeptid` from (`hopeprivgroup` `hg` left join `hopeuserinfo` `hu` on((`hg`.`deptid` = `hu`.`deptid`)));
+
+-- ----------------------------
+--  View definition for `v_pri_dept_v2`
+-- ----------------------------
+DROP VIEW IF EXISTS `v_pri_dept_v2`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_pri_dept_v2` AS select `hg`.`privgroupid` AS `privgroupid`,`hg`.`aamid` AS `hgaamid`,`hu`.`aamid` AS `huaamid`,`hu`.`deptid` AS `hudeptid` from (`hopeuserinfo` `hu` left join `hopeprivgroup` `hg` on((`hg`.`deptid` = `hu`.`deptid`)));
+
+-- ----------------------------
+--  Records 
+-- ----------------------------
