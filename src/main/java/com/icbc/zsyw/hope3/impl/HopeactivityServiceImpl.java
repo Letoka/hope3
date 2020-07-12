@@ -5,11 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.icbc.zsyw.hope3.common.BaseResponse;
 import com.icbc.zsyw.hope3.dto.HopeActicity;
 import com.icbc.zsyw.hope3.dto.HopeActivityLog;
-import com.icbc.zsyw.hope3.dto.HopePrivGroup;
 import com.icbc.zsyw.hope3.dto.HopeUserFavor;
-import com.icbc.zsyw.hope3.enums.ActivityClassEnum;
-import com.icbc.zsyw.hope3.enums.HopeActiviLogResEnum;
-import com.icbc.zsyw.hope3.enums.HopePrivRequestEnum;
+import com.icbc.zsyw.hope3.enums.*;
 import com.icbc.zsyw.hope3.mapper.HopeActicityMapper;
 import com.icbc.zsyw.hope3.mapper.HopeActivityLogMapper;
 import com.icbc.zsyw.hope3.mapper.HopeUserFavorMapper;
@@ -45,58 +42,174 @@ public class HopeactivityServiceImpl implements HopeactivityService {
     private HopeUserFavorMapper hopeUserFavorMapper;
     /**
     * 功能描述:发现页文章展示（分成案例培训，技术分享，视图上新三个模块进行）
-     * @param hopePrivGroup
+     * @param jsonObject
     * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.util.List<com.icbc.zsyw.hope3.impl.HopeactivityServiceImpl.ActivityClass>>
     * @Author: qinwankang
     * @Date: 2020/6/2 16:52
     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public BaseResponse<List<ActivityClass>> queryHopeActivity(HopePrivGroup hopePrivGroup) {
+    public BaseResponse<List<ActivityClass>> queryHopeActivity(JSONObject jsonObject) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         //入参校验
-        BaseResponse checkResoponse =   checkparameter(hopePrivGroup);
+        BaseResponse checkResoponse =   checkparameter(jsonObject);
         if(!BaseResponse.STATUS_HANDLE_SUCCESS.equals(checkResoponse.getStatus()) || !BaseResponse.STATUS_HANDLER_SUCCESS.equals(checkResoponse.getMessage())){
             return checkResoponse;
         }
-        List<HopeActicity>activtilist =  hopeActicityMapper.queryWatchActivity(hopePrivGroup);
+        List<HopeActicity>activtilist =  hopeActicityMapper.queryWatchActivity(jsonObject);
         if(activtilist==null || activtilist.size()==0)
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
-        List<ActivityClass> relist = new ArrayList<ActivityClass>();
-        for(ActivityClassEnum activityClassEnum:ActivityClassEnum.values()){
-            ActivityClass activityClass = new ActivityClass();
-            activityClass.setAclass(activityClassEnum.getValue());
-            List<HopeActicity>aclist = new ArrayList<HopeActicity>();
+       // List<ActivityClass> relist = new ArrayList<ActivityClass>();
+      //  for(ActivityClassEnum activityClassEnum:ActivityClassEnum.values()){
+            //ActivityClass activityClass = new ActivityClass();
+            //activityClass.setAclass(activityClassEnum.getValue());
+          //  List<HopeActicity>aclist = new ArrayList<HopeActicity>();
+        //pdf路径
+         String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+            Date now =new Date();
+            List<HopeActicity>activtilist1 =new ArrayList<HopeActicity>();
             for(HopeActicity hopeActicity:activtilist){
-                if(activityClassEnum.getKey()==hopeActicity.getTextclass()){
-                    Date now =new Date();
-                    if(hopeActicity.getStarttime().before(now)){
+              //  if(activityClassEnum.getKey()==hopeActicity.getTextclass()){
+                if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
                     //是否点赞
-                    HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),hopePrivGroup.getAamid());
-                    if(hopeActivityLog!=null){
-                        hopeActicity.setDianzan(true);
-                    }
+                    //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                    //  if(hopeActivityLog!=null){
+                    //       hopeActicity.setDianzan(true);
+                    //   }
+                    //点赞量
+                    Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                    hopeActicity.setDianzanliang(dianzangliang);
                     //是否收藏
-                    HopeUserFavor hopeUserFavor =  hopeUserFavorMapper.checkShoucang(hopeActicity.getActivityid(),hopePrivGroup.getAamid());
-                    if(hopeUserFavor!=null){
+                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(jsonObject.getString("aamid"),hopeActicity.getActivityid());
+                    if(hopeUserFavors!=0){
                         hopeActicity.setShoucang(true);
                     }
+                    //收藏量
+                    Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                    hopeActicity.setShoucangliang(shoucangliang);
                     //访问量
-                    Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),hopePrivGroup.getAamid());
-                    hopeActicity.setFangwenCount(acount);
-                    //pdf路径
-                     String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/hope3/static/upload/";
-                     String webUrlend = webUrlq+hopeActicity.getImagename();
-                     hopeActicity.setImagepath(webUrlend);
-                     aclist.add(hopeActicity);
+                    //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                    //   hopeActicity.setFangwenCount(acount);
+                    //图片路径
+                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    hopeActicity.setImagename(webUrlend);
+                    //文章路径
+                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                    hopeActicity.setTextpath(textpath);
+                    //    aclist.add(hopeActicity);
+                    activtilist1.add(hopeActicity);
+                    continue;
+                }
+                if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
+                    if(hopeActicity.getEndtime().after(now)){
+                        //是否点赞
+                        //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                        //  if(hopeActivityLog!=null){
+                        //       hopeActicity.setDianzan(true);
+                        //   }
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(jsonObject.getString("aamid"),hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
+                        //访问量
+                        //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                        //   hopeActicity.setFangwenCount(acount);
+                        //图片路径
+                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                        //    aclist.add(hopeActicity);
+                        activtilist1.add(hopeActicity);
+                        continue;
                     }
                 }
+                if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
+                    if(hopeActicity.getStarttime().before(now)){
+                        //是否点赞
+                        //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                        //  if(hopeActivityLog!=null){
+                        //       hopeActicity.setDianzan(true);
+                        //   }
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(jsonObject.getString("aamid"),hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
+                        //访问量
+                        //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                        //   hopeActicity.setFangwenCount(acount);
+                        //图片路径
+                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                        //    aclist.add(hopeActicity);
+                        activtilist1.add(hopeActicity);
+                        continue;
+                    }
+                }
+                    if(hopeActicity.getStarttime().before(now)&& hopeActicity.getEndtime().after(now)){
+                    //是否点赞
+                 //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                  //  if(hopeActivityLog!=null){
+                 //       hopeActicity.setDianzan(true);
+                 //   }
+                    //点赞量
+                  Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                    hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(jsonObject.getString("aamid"),hopeActicity.getActivityid());
+                   if(hopeUserFavors!=0){
+                        hopeActicity.setShoucang(true);
+                    }
+                    //收藏量
+                   Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                    hopeActicity.setShoucangliang(shoucangliang);
+                        //访问量
+                  //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                 //   hopeActicity.setFangwenCount(acount);
+                    //图片路径
+                     String webUrlend = webUrlq+hopeActicity.getImagename();
+                     hopeActicity.setImagename(webUrlend);
+                     //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                 //    aclist.add(hopeActicity);
+                        activtilist1.add(hopeActicity);
+                        continue;
+                    }
+                //}
             }
-            activityClass.setList(aclist);
-            relist.add(activityClass);
-        }
-        if(relist==null || relist.size()==0)
-            return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+            //activityClass.setList(aclist);
+          //  relist.add(activityClass);
+      //  }
+      //  if(relist==null || relist.size()==0)
+         //   return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+        List<ActivityClass> relist = new ArrayList<ActivityClass>();
+          for(ActivityClassEnum activityClassEnum:ActivityClassEnum.values()) {
+              ActivityClass activityClass = new ActivityClass();
+              activityClass.setAclass(activityClassEnum.getValue());
+              if(activityClassEnum.getKey()==jsonObject.getInteger(HopeActivityReqEnum.textclass.name())){
+                  activityClass.setList(activtilist1);
+              }
+              relist.add(activityClass);
+          }
         return new BaseResponse<List<ActivityClass>>(BaseResponse.STATUS_HANDLE_SUCCESS,relist,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
 /**
@@ -113,9 +226,9 @@ public class HopeactivityServiceImpl implements HopeactivityService {
         BaseResponse aclogresponse = checkactivilog(hopeActivityLog);
         if(!BaseResponse.STATUS_HANDLE_SUCCESS.equals(aclogresponse.getStatus()) || !BaseResponse.STATUS_HANDLER_SUCCESS.equals(aclogresponse.getMessage()))
             return aclogresponse;
-        HopeActivityLog hopeActivityLog1 = hopeActivityLogMapper.checkDianzan(hopeActivityLog.getActivityid(),hopeActivityLog.getAamid());
-        if(hopeActivityLog1!=null)
-            return new BaseResponse<>(BaseResponse.DATA_STATUS_EXIST,BaseResponse.DATA_STATUS_EXISTER);
+      //  HopeActivityLog hopeActivityLog1 = hopeActivityLogMapper.checkDianzan(hopeActivityLog.getActivityid(),hopeActivityLog.getAamid());
+        /*if(hopeActivityLog1!=null)
+            return new BaseResponse<>(BaseResponse.DATA_STATUS_EXIST,BaseResponse.DATA_STATUS_EXISTER);*/
         hopeActivityLogMapper.insert(hopeActivityLog);
         return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
@@ -133,8 +246,8 @@ public class HopeactivityServiceImpl implements HopeactivityService {
         BaseResponse actfavorresponse = checkacfavor(hopeUserFavor);
         if(!BaseResponse.STATUS_HANDLE_SUCCESS.equals(actfavorresponse.getStatus()) || !BaseResponse.STATUS_HANDLER_SUCCESS.equals(actfavorresponse.getMessage()))
             return actfavorresponse;
-        HopeUserFavor hopeUserFavor1= hopeUserFavorMapper.checkShoucang(hopeUserFavor.getActivityid(),hopeUserFavor.getAamid());
-        if(hopeUserFavor1!=null)
+        Integer hopeUserFavor1= hopeUserFavorMapper.checkShoucang(hopeUserFavor.getAamid(),hopeUserFavor.getActivityid());
+        if(hopeUserFavor1!=0)
             return new BaseResponse<>(BaseResponse.DATA_STATUS_EXIST,BaseResponse.DATA_STATUS_EXISTER);
         hopeUserFavorMapper.insert(hopeUserFavor);
         return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
@@ -170,6 +283,40 @@ public class HopeactivityServiceImpl implements HopeactivityService {
         if (hlist==null || hlist.size()==0)
             return new BaseResponse<List<HopeActicity>>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
         return new BaseResponse<List<HopeActicity>>(BaseResponse.STATUS_HANDLE_SUCCESS,hlist,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+/**
+* 功能描述:发现页取消收藏功能
+ * @param hopeUserFavor
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Object>
+* @Author: qinwankang
+* @Date: 2020/7/1 19:36
+*/
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public BaseResponse<Object> deleteCollActivi(HopeUserFavor hopeUserFavor) {
+        //入参校验
+        BaseResponse cresponse = checkdeleParam(hopeUserFavor);
+        if(!cresponse.getStatus().equals(BaseResponse.STATUS_HANDLE_SUCCESS)||!cresponse.getMessage().equals(BaseResponse.STATUS_HANDLER_SUCCESS)){
+            return cresponse;
+        }
+        //是否收藏
+        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(hopeUserFavor.getAamid(),hopeUserFavor.getActivityid());
+        if(hopeUserFavors==0){
+           return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+        }
+        hopeUserFavorMapper.deleteByAamidAndAcid(hopeUserFavor);
+        return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+
+    private BaseResponse checkdeleParam(HopeUserFavor hopeUserFavor) {
+        if(StringUtils.isEmpty(hopeUserFavor.getAamid())){
+            return new BaseResponse(HopeUserFavorRequestEnum.aamid.getReturnCode(),HopeUserFavorRequestEnum.aamid.getMsg());
+        }
+
+        if(StringUtils.isEmpty(hopeUserFavor.getActivityid())){
+            return new BaseResponse(HopeUserFavorRequestEnum.activityid.getReturnCode(),HopeUserFavorRequestEnum.activityid.getMsg());
+        }
+       return new BaseResponse(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
 
     /**
@@ -255,21 +402,24 @@ public class HopeactivityServiceImpl implements HopeactivityService {
     * @Author: qinwankang
     * @Date: 2020/6/2 16:53
     */
-    private BaseResponse checkparameter(HopePrivGroup hopePrivGroup) {
+    private BaseResponse checkparameter(JSONObject hopePrivGroup) {
         //body请求体校验
-        JSONObject input = JSONObject.parseObject(JSON.toJSONString(hopePrivGroup));
-        if (input.size() == 0) {
+      //  JSONObject input = JSONObject.parseObject(JSON.toJSONString(hopePrivGroup));
+        if (hopePrivGroup.size() == 0) {
             return new BaseResponse(BaseResponse.ALL_BLANK, null,
                     BaseResponse.ALL_BLANKER);
         } else {
             for (HopePrivRequestEnum applyCreditQuotaRequestEnum : HopePrivRequestEnum.values()) {
                 if (applyCreditQuotaRequestEnum.isNotEmpty()
-                        && StringUtils.isEmpty(input.getString(applyCreditQuotaRequestEnum.name()))
-                        && null!=input.getString(applyCreditQuotaRequestEnum.name())) {
+                        && StringUtils.isEmpty(hopePrivGroup.getString(applyCreditQuotaRequestEnum.name()))
+                        && null!=hopePrivGroup.getString(applyCreditQuotaRequestEnum.name())) {
                     return new BaseResponse(applyCreditQuotaRequestEnum.getReturnCode(), null,
                             applyCreditQuotaRequestEnum.getMsg());
                 }
             }
+        }
+        if(null==hopePrivGroup.getInteger(HopeActivityReqEnum.textclass.name())){
+          return new BaseResponse(HopeActivityReqEnum.textclass.getReturnCode(),HopeActivityReqEnum.textclass.getMsg());
         }
         return new BaseResponse(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
     }

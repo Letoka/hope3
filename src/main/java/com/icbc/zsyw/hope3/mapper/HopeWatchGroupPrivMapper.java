@@ -1,6 +1,8 @@
 package com.icbc.zsyw.hope3.mapper;
 
 import com.icbc.zsyw.hope3.dto.HopeWatchGroupPriv;
+import org.apache.ibatis.annotations.Mapper;
+
 
 public interface HopeWatchGroupPrivMapper {
     int deleteByPrimaryKey(String watchgroupprivid);

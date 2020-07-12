@@ -19,6 +19,14 @@
     from hopebroadcast
     where broadcastid = #{broadcastid,jdbcType=INTEGER}
   </select>
+  <select id="queryHopeBroadcast" resultType="com.icbc.zsyw.hope3.dto.HopeBroadcast" parameterType="com.alibaba.fastjson.JSONObject" >
+   SELECT c.* FROM
+            (SELECT hb.* FROM hopebroadcast hb INNER JOIN
+            (SELECT broadcastid FROM hopeviewbroadcastpriv WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY broadcastid ) b
+            ON hb.broadcastid = b.broadcastid ) c WHERE c.enabled=1 AND c.published=0
+ UNION
+            SELECT * FROM hopebroadcast WHERE enabled=1 AND published=1 GROUP BY broadcastid ORDER BY starttime DESC
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from hopebroadcast
     where broadcastid = #{broadcastid,jdbcType=INTEGER}

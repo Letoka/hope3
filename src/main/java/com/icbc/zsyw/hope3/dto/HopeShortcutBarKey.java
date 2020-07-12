@@ -1,6 +1,12 @@
 package com.icbc.zsyw.hope3.dto;
 
-public class HopeShortcutBarKey {
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.io.Serializable;
+
+//@Entity
+public class HopeShortcutBarKey implements Serializable {
+ //   @Id
     private Integer shortcutbarid;
 
     private String shortcutbarname;

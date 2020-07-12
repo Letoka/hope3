@@ -3,6 +3,7 @@ package com.icbc.zsyw.hope3.controller;
 import com.alibaba.fastjson.JSON;
 import com.icbc.zsyw.hope3.common.BaseResponse;
 import com.icbc.zsyw.hope3.dto.HopeBroadcast;
+import com.icbc.zsyw.hope3.dto.HopeUserLog;
 import com.icbc.zsyw.hope3.dto.HopeUserLog_h;
 import com.icbc.zsyw.hope3.dto.HopeviewBroadcastPriv;
 import com.icbc.zsyw.hope3.service.HopeUserLog_hService;
@@ -39,25 +40,41 @@ public class HopeUserLog_hController {
     */
     @RequestMapping(path = {"/queryUserLog_h"},method = RequestMethod.POST)
     public BaseResponse<Integer> queryUserLog_h(HttpServletRequest request, @RequestBody HopeUserLog_h hopeUserLog_h){
-        log.info("queryUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog_h));
+      //  log.info("queryUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog_h));
         BaseResponse<Integer> response = hopeUserLog_hService.queryUserLog_h(hopeUserLog_h);
-        log.info("queryUserLog_hEnd Result:"+JSON.toJSONString(response));
+      //  log.info("queryUserLog_hEnd Result:"+JSON.toJSONString(response));
         return response;
 
     }
     /**
     * 功能描述:增加访问量，主要参数，用户id,视图id,访问时间；
      * @param request
-     * @param hopeUserLog_h
+     * @param hopeUserLog
     * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
     * @Author: qinwankang
     * @Date: 2020/5/21 16:54
     */
     @RequestMapping(path = {"/insertUserLog_h"},method = RequestMethod.POST)
-    public BaseResponse<Integer> insertUserLog_h(HttpServletRequest request, @RequestBody HopeUserLog_h hopeUserLog_h){
-        log.info("insertUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog_h));
-        BaseResponse<Integer> response = hopeUserLog_hService.insertUserLog_h(hopeUserLog_h);
-        log.info("insertUserLog_hEnd Result:"+ JSON.toJSONString(response));
+    public BaseResponse<Integer> insertUserLog_h(HttpServletRequest request, @RequestBody HopeUserLog hopeUserLog){
+      //  log.info("insertUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog));
+        BaseResponse<Integer> response = hopeUserLog_hService.insertUserLog_h(hopeUserLog);
+      //  log.info("insertUserLog_hEnd Result:"+ JSON.toJSONString(response));
+        return response;
+
+    }
+    /**
+    * 功能描述:记录用户点击四大项（首页-1，消息-2，发现-3，我的-4）
+     * @param request
+     * @param hopeUserLog
+    * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
+    * @Author: qinwankang
+    * @Date: 2020/7/9 16:13
+    */
+    @RequestMapping(path = {"/insertFourCh"},method = RequestMethod.POST)
+    public BaseResponse<Integer> insertFourCh(HttpServletRequest request, @RequestBody HopeUserLog hopeUserLog){
+        //  log.info("insertUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog));
+        BaseResponse<Integer> response = hopeUserLog_hService.insertFourCh(hopeUserLog);
+        //  log.info("insertUserLog_hEnd Result:"+ JSON.toJSONString(response));
         return response;
 
     }

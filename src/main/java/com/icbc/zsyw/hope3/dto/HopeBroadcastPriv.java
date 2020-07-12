@@ -1,6 +1,11 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+//@Entity
 public class HopeBroadcastPriv {
+  //  @Id
     private Integer broadcastprivid;
 
     private Integer broadcastid;
@@ -12,6 +17,9 @@ public class HopeBroadcastPriv {
     private String deptid;
 
     private String privgroupid;
+    public HopeBroadcastPriv(){
+
+    }
 
     public Integer getBroadcastprivid() {
         return broadcastprivid;

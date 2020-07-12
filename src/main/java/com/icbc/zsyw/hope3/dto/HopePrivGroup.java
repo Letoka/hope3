@@ -1,6 +1,12 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+//@Entity
 public class HopePrivGroup {
+ //   @Id
+
     private String privgroupid;
 
     private Integer privtype;

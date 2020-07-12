@@ -68,7 +68,7 @@ public class FileUploadController {
         out1.flush();
         out1.close();
     //    registry.addResourceHandler("/static/upload/**").addResourceLocations("file:///"+imgLoaclPath);
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/hope3/static/upload/";
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
         String webUrlend = webUrlq+fileName;
         return new BaseResponse<String>(BaseResponse.STATUS_HANDLE_SUCCESS,webUrlend,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
@@ -97,7 +97,7 @@ public class FileUploadController {
         out1.flush();
         out1.close();
      //   registry.addResourceHandler("/static/upload/**").addResourceLocations("file:///"+imgLoaclPath);
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/hope3/static/upload/";
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
         String webUrlend = webUrlq+fileName;
         return new BaseResponse<String>(BaseResponse.STATUS_HANDLE_SUCCESS,webUrlend,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
@@ -126,7 +126,7 @@ public class FileUploadController {
         out1.flush();
         out1.close();
        //registry.addResourceHandler("/static/upload/**").addResourceLocations("file:///"+imgLoaclPath);
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/hope3/static/uplaod/";
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/uplaod/";
         String webUrlend = webUrlq+fileName;
         return new BaseResponse<String>(BaseResponse.STATUS_HANDLE_SUCCESS,webUrlend,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
@@ -159,7 +159,7 @@ public class FileUploadController {
         //out1.flush();
         //out1.close();
         // registry.addResourceHandler("/static/upload/**").addResourceLocations("file:///"+imgLoaclPath);
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/hope3/static/uplaod/";
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/uplaod/";
         String webUrlend = webUrlq+fileName;
         return new BaseResponse<String>(BaseResponse.STATUS_HANDLE_SUCCESS,webUrlend,BaseResponse.STATUS_HANDLER_SUCCESS);
     }

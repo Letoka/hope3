@@ -3,9 +3,10 @@
         "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
 <generatorConfiguration>
+
     <!-- 引入配置文件 -->
     <!--TODO 注意！！！自动生成代码 要把这句放开,链接数据库-->
-    <properties resource="application.properties"/>
+    <properties resource="gen/application.properties"/>
     <!-- 指定数据连接驱动jar地址 -->
     <classPathEntry location="D:\repo\mysql\mysql-connector-java\8.0.20\mysql-connector-java-8.0.20.jar"/>
 
@@ -178,12 +179,13 @@
                enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false">
         </table>-->
-        <!--<table schema="mldb" tableName="hopeuserfavor"
-               domainObjectName="HopeUserFavor" enableCountByExample="false"
+<!--<table schema="zsyw" tableName="hopeuserinfo"
+               domainObjectName="HopeUserInfo" enableCountByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdateByExample="false">
+               enableUpdate
+               ByExample="false">
         </table>-->
-        <table schema="mldb" tableName="xxx"
+        <table schema="xxx" tableName="xxx"
                domainObjectName="xxx" enableCountByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false">

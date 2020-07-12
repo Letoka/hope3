@@ -1,6 +1,11 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+//@Entity
 public class HopeImagebarPriv {
+  //  @Id
     private Integer imagebarprivid;
 
     private Integer privtype;

@@ -17,6 +17,15 @@
     where activityid = #{activityid,jdbcType=INTEGER}
       and viewtime = #{viewtime,jdbcType=TIMESTAMP}
   </select>
+  <select id="checkDianzan" resultMap="BaseResultMap" parameterType="com.icbc.zsyw.hope3.dto.HopeActivityLogKey" >
+    SELECT * FROM hopeactivitylog WHERE activityid = #{activityid,jdbcType=INTEGER} AND aamid = #{aamid,jdbcType=VARCHAR} AND liked = 1
+  </select>
+  <select id="queryActiviCount" resultType="java.lang.Integer" parameterType="com.icbc.zsyw.hope3.dto.HopeActivityLogKey" >
+   SELECT COUNT(*) FROM hopeactivitylog WHERE aamid =  #{aamid,jdbcType=VARCHAR}  AND activityid = #{activityid,jdbcType=INTEGER} AND liked = 0
+  </select>
+  <select id="getdianzanliang" resultType="java.lang.Integer" parameterType="com.icbc.zsyw.hope3.dto.HopeActivityLogKey" >
+ SELECT COUNT(*) FROM hopeactivitylog WHERE activityid = #{activityid,jdbcType=INTEGER} AND liked = 1
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeActivityLogKey" >
     delete from hopeactivitylog
     where activityid = #{activityid,jdbcType=INTEGER}

@@ -4,6 +4,9 @@ public class HopeActivityLog extends HopeActivityLogKey {
     private String aamid;
 
     private Integer liked;
+    public HopeActivityLog(){
+
+    }
 
     public String getAamid() {
         return aamid;

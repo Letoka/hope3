@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"><link rel=icon href=favicon.ico><title>掌上运维</title><script>//动态rem
+    var recalc = function () {
+      var html = document.getElementsByTagName('html')[0];
+      var pageWidth = html.getBoundingClientRect().width;
+      html.style.fontSize = pageWidth / 375 * 100 + 'px';
+    }
+    window.addEventListener('resize', recalc, false)
+    document.addEventListener('DOMContentLoaded', recalc, false)</script><link href=css/OuterIframe.52a22639.css rel=prefetch><link href=css/chunk-0d53435f.89d99e70.css rel=prefetch><link href=css/chunk-1a70073b.21831812.css rel=prefetch><link href=css/chunk-30017aaa.2660dd8c.css rel=prefetch><link href=css/chunk-314fde9c.910b947b.css rel=prefetch><link href=css/chunk-35732328.7f979842.css rel=prefetch><link href=css/chunk-47b6bbdc.9d70a5c4.css rel=prefetch><link href=css/chunk-48dbfeaf.5f6e0aa7.css rel=prefetch><link href=css/chunk-58cb7b20.8167ec4e.css rel=prefetch><link href=css/chunk-690f037b.0c0f92dd.css rel=prefetch><link href=css/chunk-86805e1a.9cc51c9f.css rel=prefetch><link href=css/chunk-c13ee334.39a83728.css rel=prefetch><link href=css/chunk-cf2146b6.2c1fcff3.css rel=prefetch><link href=css/chunk-d658b248.afdee6e9.css rel=prefetch><link href=css/chunk-dbc7ae1e.07d3c606.css rel=prefetch><link href=css/chunk-e362a750.89d99e70.css rel=prefetch><link href=js/OuterIframe.9d63c299.js rel=prefetch><link href=js/chunk-0d53435f.2941eb88.js rel=prefetch><link href=js/chunk-1a70073b.f22ae7a2.js rel=prefetch><link href=js/chunk-30017aaa.f582769b.js rel=prefetch><link href=js/chunk-314fde9c.6d56570a.js rel=prefetch><link href=js/chunk-35732328.840eb24c.js rel=prefetch><link href=js/chunk-47b6bbdc.b8dfd1d9.js rel=prefetch><link href=js/chunk-48dbfeaf.aee66187.js rel=prefetch><link href=js/chunk-58cb7b20.89465f4a.js rel=prefetch><link href=js/chunk-690f037b.454f114f.js rel=prefetch><link href=js/chunk-86805e1a.ada56287.js rel=prefetch><link href=js/chunk-c13ee334.ed74501e.js rel=prefetch><link href=js/chunk-cf2146b6.0c5b641e.js rel=prefetch><link href=js/chunk-d658b248.a784b9ef.js rel=prefetch><link href=js/chunk-dbc7ae1e.7d541025.js rel=prefetch><link href=js/chunk-e1a3a1b8.bb8802c3.js rel=prefetch><link href=js/chunk-e362a750.458ab9ec.js rel=prefetch><link href=css/app.0ec05259.css rel=preload as=style><link href=css/chunk-vendors.a2b281b5.css rel=preload as=style><link href=js/app.c0ba23b2.js rel=preload as=script><link href=js/chunk-vendors.6ee45ea6.js rel=preload as=script><link href=css/chunk-vendors.a2b281b5.css rel=stylesheet><link href=css/app.0ec05259.css rel=stylesheet></head><body><noscript><strong>We're sorry but edition-commissioning doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id=app></div><script src=js/chunk-vendors.6ee45ea6.js></script><script src=js/app.c0ba23b2.js></script></body><script>// 阻止webView双击放大
+  window.onload = function () {
+    (function () {
+      var agent = navigator.userAgent.toLowerCase();
+      var iLastTouch = null; //缓存上一次tap的时间
+      if (agent.indexOf('iphone') >= 0) {
+        var a = document.getElementsByTagName('body');
+        a[0].addEventListener('touchend', function (event) {
+          var iNow = new Date()
+            .getTime();
+          iLastTouch = iLastTouch || iNow + 1 /** 第一次时将iLastTouch设为当前时间+1 */;
+          var delta = iNow - iLastTouch;
+          if (delta < 500 && delta > 0) {
+            event.preventDefault();
+            return false;
+          }
+          iLastTouch = iNow;
+        }, false);
+      }
+    })()
+  }</script></html>

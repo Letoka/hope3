@@ -16,9 +16,23 @@
     from hopesearchhistory
     where searchhistoryid = #{searchhistoryid,jdbcType=INTEGER}
   </select>
+  <select id="queryHotSearch" resultType="com.icbc.zsyw.hope3.dto.HopeSearchHistory"  >
+   SELECT searchtext,COUNT(*) as hotSearchcount FROM hopesearchhistory GROUP BY searchtext ORDER BY hotSearchcount DESC
+  </select>
+  <select id="querySearchRecord" resultType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" >
+SELECT searchtext FROM hopesearchhistory WHERE aamid = #{aamid,jdbcType=VARCHAR} ORDER BY logtime DESC
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from hopesearchhistory
     where searchhistoryid = #{searchhistoryid,jdbcType=INTEGER}
+  </delete>
+  <delete id="delSearchRecord" parameterType="com.alibaba.fastjson.JSONObject" >
+    delete from hopesearchhistory
+    <where>
+      searchtext in <foreach collection="jsonArray" item="item" index="index"
+                     open="(" separator="," close=")">#{item}</foreach>
+      and aamid = #{aamid}
+    </where>
   </delete>
   <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" >
     insert into hopesearchhistory (searchhistoryid, aamid, searchtext, 

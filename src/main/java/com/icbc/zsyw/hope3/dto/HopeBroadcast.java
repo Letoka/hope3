@@ -1,8 +1,11 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Date;
-
+//@Entity
 public class HopeBroadcast {
+   // @Id
     private Integer broadcastid;
 
     private String broadcasttype;
@@ -16,6 +19,9 @@ public class HopeBroadcast {
     private Integer enabled;
 
     private Integer published;
+    public HopeBroadcast(){
+
+    }
 
     public Integer getBroadcastid() {
         return broadcastid;

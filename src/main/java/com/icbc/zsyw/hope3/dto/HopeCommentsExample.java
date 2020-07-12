@@ -11,6 +11,7 @@ public class HopeCommentsExample {
 
     protected List<Criteria> oredCriteria;
 
+
     public HopeCommentsExample() {
         oredCriteria = new ArrayList<Criteria>();
     }

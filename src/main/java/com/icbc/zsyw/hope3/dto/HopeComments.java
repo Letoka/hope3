@@ -4,6 +4,9 @@ public class HopeComments extends HopeCommentsKey {
     private Integer comments;
 
     private String description;
+    public HopeComments(){
+
+    }
 
     public Integer getComments() {
         return comments;

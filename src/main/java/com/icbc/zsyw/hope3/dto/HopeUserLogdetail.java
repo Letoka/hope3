@@ -1,8 +1,11 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Date;
-
+//@Entity
 public class HopeUserLogdetail {
+   // @Id
     private Integer userlogdetailid;
 
     private String aamid;

@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -17,6 +18,7 @@ import javax.servlet.MultipartConfigElement;
 @MapperScan("com.icbc.zsyw.hope3.mapper")
 @EnableTransactionManagement
 @EnableScheduling
+//@ServletComponentScan(basePackages = "com.icbc.zsyw.hope3.config.*")
 public class Hope3Application extends SpringBootServletInitializer {
 
     @Override
@@ -41,4 +43,5 @@ public class Hope3Application extends SpringBootServletInitializer {
         factory.setMaxRequestSize(DataSize.ofBytes(bytes));
         return factory.createMultipartConfig();
     }
+
 }

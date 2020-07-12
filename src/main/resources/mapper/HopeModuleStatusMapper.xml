@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeModuleStatusMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeModuleStatus" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="modulestatus" property="modulestatus" jdbcType="VARCHAR" />
+    <result column="moduletype" property="moduletype" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, aamid, modulestatus, moduletype
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopemodulestatus
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByaamidAndtype" resultType="java.lang.String" parameterType="com.alibaba.fastjson.JSONObject" >
+    SELECT modulestatus FROM hopemodulestatus WHERE aamid = #{aamid,jdbcType=VARCHAR} AND moduletype = #{key,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByaamidAndtype1" resultType="com.icbc.zsyw.hope3.dto.HopeModuleStatus" parameterType="com.alibaba.fastjson.JSONObject" >
+   SELECT * FROM hopemodulestatus WHERE aamid = #{aamid,jdbcType=VARCHAR} AND moduletype = #{moduletype,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopemodulestatus
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeModuleStatus" >
+    insert into hopemodulestatus (id, aamid, modulestatus, 
+      moduletype)
+    values (#{id,jdbcType=INTEGER}, #{aamid,jdbcType=VARCHAR}, #{modulestatus,jdbcType=VARCHAR}, 
+      #{moduletype,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeModuleStatus" >
+    insert into hopemodulestatus
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="modulestatus != null" >
+        modulestatus,
+      </if>
+      <if test="moduletype != null" >
+        moduletype,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="modulestatus != null" >
+        #{modulestatus,jdbcType=VARCHAR},
+      </if>
+      <if test="moduletype != null" >
+        #{moduletype,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeModuleStatus" >
+    update hopemodulestatus
+    <set >
+      <if test="aamid != null" >
+        aamid = #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="modulestatus != null" >
+        modulestatus = #{modulestatus,jdbcType=VARCHAR},
+      </if>
+      <if test="moduletype != null" >
+        moduletype = #{moduletype,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeModuleStatus" >
+    update hopemodulestatus
+    set aamid = #{aamid,jdbcType=VARCHAR},
+      modulestatus = #{modulestatus,jdbcType=VARCHAR},
+      moduletype = #{moduletype,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateMstatus" parameterType="com.icbc.zsyw.hope3.dto.HopeModuleStatus" >
+   UPDATE hopemodulestatus SET modulestatus =  #{modulestatus,jdbcType=VARCHAR} WHERE aamid =#{aamid,jdbcType=VARCHAR} AND moduletype = #{moduletype,jdbcType=VARCHAR}
+  </update>
+</mapper>

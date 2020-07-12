@@ -38,9 +38,9 @@ public class HopeCommentsController {
     */
     @RequestMapping(path = {"/insertHopeComments"},method = RequestMethod.POST)
     public BaseResponse<List<HopeBroadcast>> insertHopeComments(HttpServletRequest request, @RequestBody HopeComments hopeComments){
-        log.info("insertHopeCommentsStart hopeComments:"+JSON.toJSONString(hopeComments));
+        //log.info("insertHopeCommentsStart hopeComments:"+JSON.toJSONString(hopeComments));
         BaseResponse<List<HopeBroadcast>> response = hopeCommentsService.insertHopeComments(hopeComments);
-        log.info("insertHopeCommentsEnd Result:"+ JSON.toJSONString(response));
+        //log.info("insertHopeCommentsEnd Result:"+ JSON.toJSONString(response));
         return response;
 
     }

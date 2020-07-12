@@ -1,9 +1,12 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.util.Date;
-
+//@Entity
 public class HopeSearchHistory_h {
+   // @Id
     private Integer searchhistoryid;
 
     private String aamid;

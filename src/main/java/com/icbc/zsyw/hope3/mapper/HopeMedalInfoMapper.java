@@ -1,6 +1,8 @@
 package com.icbc.zsyw.hope3.mapper;
 
 import com.icbc.zsyw.hope3.dto.HopeMedalInfo;
+import org.apache.ibatis.annotations.Mapper;
+
 
 public interface HopeMedalInfoMapper {
     int deleteByPrimaryKey(Integer medalid);

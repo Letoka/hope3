@@ -1,14 +1,17 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Date;
-
-public class HopeCommentsKey {
+//@Entity
+public class HopeCommentsKey implements Serializable {
     private String aamid;
 
     private Integer moduleid;
 
     private Date logtime;
-
+  //  @Id
     public String getAamid() {
         return aamid;
     }
@@ -16,7 +19,7 @@ public class HopeCommentsKey {
     public void setAamid(String aamid) {
         this.aamid = aamid == null ? null : aamid.trim();
     }
-
+   // @Id
     public Integer getModuleid() {
         return moduleid;
     }
@@ -24,7 +27,7 @@ public class HopeCommentsKey {
     public void setModuleid(Integer moduleid) {
         this.moduleid = moduleid;
     }
-
+  //  @Id
     public Date getLogtime() {
         return logtime;
     }

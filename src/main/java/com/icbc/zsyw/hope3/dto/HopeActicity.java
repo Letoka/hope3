@@ -1,9 +1,12 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.util.Date;
-
+//@Entity
 public class HopeActicity {
+   // @Id
     private Integer activityid;
 
     private String authorname;
@@ -18,7 +21,7 @@ public class HopeActicity {
 
     private String imagepath;
 
-    private Date timeori;
+
 
     private Integer activitytype;
 
@@ -28,6 +31,44 @@ public class HopeActicity {
 
     private Integer showed;
 
+    private String brief;
+
+
+
+    @Transient//点赞量
+    private Integer dianzanliang;
+    @Transient//收藏量
+    private Integer shoucangliang;
+
+
+    public HopeActicity(){
+
+    }
+
+    public Integer getDianzanliang() {
+        return dianzanliang;
+    }
+
+    public Integer getShoucangliang() {
+        return shoucangliang;
+    }
+
+    public void setDianzanliang(Integer dianzanliang) {
+        this.dianzanliang = dianzanliang;
+    }
+
+    public void setShoucangliang(Integer shoucangliang) {
+        this.shoucangliang = shoucangliang;
+    }
+
+    public String getBrief() {
+        return brief;
+    }
+
+    public void setBrief(String brief) {
+        this.brief = brief;
+    }
+
     private String privgroupid;
     @Transient//默认false未点赞
     private boolean dianzan=false;
@@ -35,6 +76,46 @@ public class HopeActicity {
     private boolean shoucang=false;
     @Transient
     private Integer fangwenCount;
+    @Transient//表示权限，0无权限，1有权限
+    private Integer quanxianC=0;
+    @Transient//关键字名称
+    private String keyname;
+    @Transient//关键字名称
+    private Float weight;
+    @Transient//1案例分享，2技术上新，3视图上新
+    private String textclassName;
+
+    public String getTextclassName() {
+        return textclassName;
+    }
+
+    public void setTextclassName(String textclassName) {
+        this.textclassName = textclassName;
+    }
+
+    public Float getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Float weight) {
+        this.weight = weight;
+    }
+
+    public String getKeyname() {
+        return keyname;
+    }
+
+    public void setKeyname(String keyname) {
+        this.keyname = keyname;
+    }
+
+    public Integer getQuanxianC() {
+        return quanxianC;
+    }
+
+    public void setQuanxianC(Integer quanxianC) {
+        this.quanxianC = quanxianC;
+    }
 
     public boolean isDianzan() {
         return dianzan;
@@ -116,13 +197,7 @@ public class HopeActicity {
         this.imagepath = imagepath == null ? null : imagepath.trim();
     }
 
-    public Date getTimeori() {
-        return timeori;
-    }
 
-    public void setTimeori(Date timeori) {
-        this.timeori = timeori;
-    }
 
     public Integer getActivitytype() {
         return activitytype;

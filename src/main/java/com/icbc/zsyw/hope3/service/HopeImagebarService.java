@@ -13,7 +13,7 @@ import java.util.List;
  * @Version V1.0
  **/
 public interface HopeImagebarService {
-    BaseResponse<List<HopeImagebar>> queryHopeImagebar(String aamid, String deptid);
+    BaseResponse<List<HopeImagebar>> queryHopeImagebar(String aamid, String deptid,String odeptid);
     /**
     * 功能描述:点击头图返回对应视图
      * @param imagebarid

@@ -1,8 +1,11 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Date;
-
+//@Entity
 public class HopeImagebar {
+   // @Id
     private Integer imagebarid;
 
     private String icon;
@@ -17,7 +20,9 @@ public class HopeImagebar {
 
     private Integer published;
 
-    private String moduleurl;
+    private Integer moduleid;
+
+    private String imagebarurl;
 
     public Integer getImagebarid() {
         return imagebarid;
@@ -75,11 +80,19 @@ public class HopeImagebar {
         this.published = published;
     }
 
-    public String getModuleurl() {
-        return moduleurl;
+    public Integer getModuleid() {
+        return moduleid;
     }
 
-    public void setModuleurl(String moduleurl) {
-        this.moduleurl = moduleurl == null ? null : moduleurl.trim();
+    public String getImagebarurl() {
+        return imagebarurl;
+    }
+
+    public void setModuleid(Integer moduleid) {
+        this.moduleid = moduleid;
+    }
+
+    public void setImagebarurl(String imagebarurl) {
+        this.imagebarurl = imagebarurl;
     }
 }

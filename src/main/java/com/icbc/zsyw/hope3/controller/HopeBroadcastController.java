@@ -5,8 +5,7 @@ import com.icbc.zsyw.hope3.common.BaseResponse;
 import com.icbc.zsyw.hope3.dto.*;
 import com.icbc.zsyw.hope3.impl.HopeBroadcastServiceImpl;
 import com.icbc.zsyw.hope3.service.HopeBroadcastService;
-import com.icbc.zsyw.hope3.task.BaseTask;
-import com.icbc.zsyw.hope3.task.HopeBroadcastTask;
+
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * @ClassName HopeBroadcastController
@@ -38,21 +32,28 @@ import java.util.concurrent.Future;
 public class HopeBroadcastController {
     @Resource
     private HopeBroadcastService hopeBroadcastService;
+
     private static final Logger logger = LoggerFactory.getLogger(HopeBroadcastController.class);
 /**
 * 功能描述:项目测试，与业务需求没有关系（可留可不留）
  * @param request
- * @param tcenterLog
+ * @param
 * @return: com.icbc.zsyw.hope3.dto.HopeBroadcast
 * @Author: qinwankang
 * @Date: 2020/5/21 15:24
 */
-    @RequestMapping(path = {"/hello"},method = RequestMethod.GET)
-    public HopeBroadcast checkUserSex(HttpServletRequest request, @RequestBody TcenterLog tcenterLog){
 
-        logger.debug("日志测试20200513qwkakag，具体时间为"+new Date()+",方法参数："+tcenterLog.getTitle());
-        return hopeBroadcastService.checkUserSex(tcenterLog);
+    @RequestMapping(path = {"/hello"},method = RequestMethod.POST)
+    public HopeBroadcast checkUserSex(HttpServletRequest request){
+      float s = 1f/3f;
+         float ss = 0.33333334f;
+        float ss1 = 0.3333337f;
+
+
+return null;
     }
+
+
     /**
      * 功能描述:项目测试，与业务需求没有关系（可留可不留）
      * @param request
@@ -60,9 +61,9 @@ public class HopeBroadcastController {
      * @Author: qinwankang
      * @Date: 2020/5/21 15:24
      */
-    @RequestMapping(path = {"/helloword"},method = RequestMethod.GET)
+    @RequestMapping(path = {"/helloword"},method = RequestMethod.POST)
     public Map<String,Object> helloword(HttpServletRequest request){
-        String name = request.getParameter("name");
+       /* String name = request.getParameter("name");
         String classtype = request.getParameter("classtype");
         System.out.println(name);
         System.out.println(classtype);
@@ -86,8 +87,25 @@ public class HopeBroadcastController {
             e.printStackTrace();
         }
         logger.debug("日志测试20200513qwkakag，具体时间为"+new Date()+",方法参数：");
-        log.info("我是谁");
-        return map;
+        log.info("我是谁");*/
+     //  UserTest userTest= userTestMapper.selectByPrimaryKey("1");
+      //  UserTest userTest1= userTestMapper.selectByPrimaryKey("2");
+      //  float u = userTest.getWeight();
+      //  float u1 = userTest1.getWeight();
+        /*if(u<u1){
+            System.out.println("验证正确");
+        }else if(u==u1){
+            System.out.println("怎么相等");
+        }else if(u>u1){
+            System.out.println("三分之一大于0.333333335f");
+        }
+        System.out.println(u);
+        System.out.println(u1);
+        System.out.println(userTest.getWeight());
+        System.out.println(userTest1.getWeight());
+        */
+
+        return null;
     }
 
     /**
@@ -98,11 +116,12 @@ public class HopeBroadcastController {
     * @Author: qinwankang
     * @Date: 2020/5/20 16:02
     */
+
     @RequestMapping(path = {"/queryHopeBroadcast"},method = RequestMethod.POST)
     public BaseResponse<List<HopeBroadcast>> queryHopeBroadcast(HttpServletRequest request, @RequestBody HopeviewBroadcastPriv hopeviewBroadcastPriv){
-        log.info("queryHopeBroadcastStart hopeviewBroadcastPriv:"+JSON.toJSONString(hopeviewBroadcastPriv));
-        BaseResponse<List<HopeBroadcast>> response = hopeBroadcastService.queryHopeBroadcast(hopeviewBroadcastPriv.getAamid(),hopeviewBroadcastPriv.getDeptid());
-        log.info("queryHopeBroadcastEnd Result:"+ JSON.toJSONString(response));
+     //   log.info("queryHopeBroadcastStart hopeviewBroadcastPriv:"+JSON.toJSONString(hopeviewBroadcastPriv));
+        BaseResponse<List<HopeBroadcast>> response = hopeBroadcastService.queryHopeBroadcast(hopeviewBroadcastPriv.getAamid(),hopeviewBroadcastPriv.getDeptid(),hopeviewBroadcastPriv.getOdeptid());
+      //  log.info("queryHopeBroadcastEnd Result:"+ JSON.toJSONString(response));
         return response;
 
     }
@@ -116,9 +135,9 @@ public class HopeBroadcastController {
 */
     @RequestMapping(path = {"/queryHopeBroadcastDetail"},method = RequestMethod.POST)
     public BaseResponse<List<HopeBroadcastServiceImpl.BroadcastNameResult>> queryHopeBroadcastDetail(HttpServletRequest request, @RequestBody HopeviewBroadcastPriv hopeviewBroadcastPriv){
-        log.info("queryHopeBroadcastDetailStart hopeviewBroadcastPriv:"+JSON.toJSONString(hopeviewBroadcastPriv));
-        BaseResponse<List<HopeBroadcastServiceImpl.BroadcastNameResult>> response = hopeBroadcastService.queryHopeBroadcastDetail(hopeviewBroadcastPriv.getAamid(),hopeviewBroadcastPriv.getDeptid());
-        log.info("queryHopeBroadcastDetailEnd Result:"+JSON.toJSONString(response));
+      //  log.info("queryHopeBroadcastDetailStart hopeviewBroadcastPriv:"+JSON.toJSONString(hopeviewBroadcastPriv));
+        BaseResponse<List<HopeBroadcastServiceImpl.BroadcastNameResult>> response = hopeBroadcastService.queryHopeBroadcastDetail(hopeviewBroadcastPriv.getAamid(),hopeviewBroadcastPriv.getDeptid(),hopeviewBroadcastPriv.getOdeptid());
+      //  log.info("queryHopeBroadcastDetailEnd Result:"+JSON.toJSONString(response));
         return response;
 
     }

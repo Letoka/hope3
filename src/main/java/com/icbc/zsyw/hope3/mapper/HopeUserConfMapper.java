@@ -2,6 +2,8 @@ package com.icbc.zsyw.hope3.mapper;
 
 import com.icbc.zsyw.hope3.dto.HopeUserConf;
 import com.icbc.zsyw.hope3.dto.HopeUserConfKey;
+import org.apache.ibatis.annotations.Mapper;
+
 
 public interface HopeUserConfMapper {
     int deleteByPrimaryKey(HopeUserConfKey key);

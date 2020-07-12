@@ -20,6 +20,14 @@
     from hopeimagebar
     where imagebarid = #{imagebarid,jdbcType=INTEGER}
   </select>
+  <select id="queryHopeImagebar" resultType ="com.icbc.zsyw.hope3.dto.HopeImagebar" parameterType="com.icbc.zsyw.hope3.dto.HopePrivGroup" >
+   SELECT hi.* FROM hopeimagebar hi INNER JOIN
+          (SELECT imagebarid FROM hopeviewimagebarpriv WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY imagebarid) b
+          ON hi.imagebarid = b.imagebarid  WHERE hi.enabled = 1 AND hi.published=0
+UNION
+          SELECT * FROM hopeimagebar WHERE  enabled = 1 AND published=1 GROUP BY imagebarid ORDER BY weight DESC
+
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from hopeimagebar
     where imagebarid = #{imagebarid,jdbcType=INTEGER}

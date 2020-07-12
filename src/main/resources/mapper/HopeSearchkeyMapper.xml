@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeSearchkeyMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeSearchkey" >
+    <id column="searchid" property="searchid" jdbcType="INTEGER" />
+    <result column="keyname" property="keyname" jdbcType="VARCHAR" />
+    <result column="contentclass" property="contentclass" jdbcType="INTEGER" />
+    <result column="contentid" property="contentid" jdbcType="INTEGER" />
+    <result column="weight" property="weight" jdbcType="REAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    searchid, keyname, contentclass, contentid, weight
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopesearchkey
+    where searchid = #{searchid,jdbcType=INTEGER}
+  </select>
+  <select id="searchModuleByKey" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.alibaba.fastjson.JSONObject" >
+   SELECT hx.* FROM
+    (SELECT hm.moduleid,hm.modulename,hm.url,hm.useurltype,hm.icon,hm.image,hm.description,hl.contentclass,hl.weight,hl.keyname FROM hopemodule hm INNER JOIN
+    (SELECT hs.keyname,hs.contentclass,hs.contentid,hs.weight FROM hopesearchkey hs WHERE hs.keyname LIKE  CONCAT('%',#{name,jdbcType=VARCHAR},'%') AND hs.contentclass=0) hl ON hl.contentid = hm.moduleid WHERE hm.enabled=1) hx INNER JOIN
+    (SELECT moduleid FROM hopeviewmodulepriv WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY moduleid) b ON hx.moduleid = b.moduleid  ORDER BY hx.weight DESC
+  </select>
+  <select id="searchModuleByKeyNo" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.alibaba.fastjson.JSONObject" >
+   SELECT hm.moduleid,hm.modulename,hm.url,hm.useurltype,hm.icon,hm.image,hm.description,hl.contentclass,hl.weight,hl.keyname FROM hopemodule hm INNER JOIN
+    (SELECT hs.keyname,hs.contentclass,hs.contentid,hs.weight FROM hopesearchkey hs WHERE hs.contentclass=0 AND hs.keyname LIKE  CONCAT('%',#{name,jdbcType=VARCHAR},'%')) hl ON hl.contentid = hm.moduleid WHERE hm.enabled=1  ORDER BY hl.weight DESC
+   </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopesearchkey
+    where searchid = #{searchid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchkey" >
+    insert into hopesearchkey (searchid, keyname, contentclass, 
+      contentid, weight)
+    values (#{searchid,jdbcType=INTEGER}, #{keyname,jdbcType=VARCHAR}, #{contentclass,jdbcType=INTEGER}, 
+      #{contentid,jdbcType=INTEGER}, #{weight,jdbcType=REAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchkey" >
+    insert into hopesearchkey
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="searchid != null" >
+        searchid,
+      </if>
+      <if test="keyname != null" >
+        keyname,
+      </if>
+      <if test="contentclass != null" >
+        contentclass,
+      </if>
+      <if test="contentid != null" >
+        contentid,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="searchid != null" >
+        #{searchid,jdbcType=INTEGER},
+      </if>
+      <if test="keyname != null" >
+        #{keyname,jdbcType=VARCHAR},
+      </if>
+      <if test="contentclass != null" >
+        #{contentclass,jdbcType=INTEGER},
+      </if>
+      <if test="contentid != null" >
+        #{contentid,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=REAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchkey" >
+    update hopesearchkey
+    <set >
+      <if test="keyname != null" >
+        keyname = #{keyname,jdbcType=VARCHAR},
+      </if>
+      <if test="contentclass != null" >
+        contentclass = #{contentclass,jdbcType=INTEGER},
+      </if>
+      <if test="contentid != null" >
+        contentid = #{contentid,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=REAL},
+      </if>
+    </set>
+    where searchid = #{searchid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchkey" >
+    update hopesearchkey
+    set keyname = #{keyname,jdbcType=VARCHAR},
+      contentclass = #{contentclass,jdbcType=INTEGER},
+      contentid = #{contentid,jdbcType=INTEGER},
+      weight = #{weight,jdbcType=REAL}
+    where searchid = #{searchid,jdbcType=INTEGER}
+  </update>
+</mapper>

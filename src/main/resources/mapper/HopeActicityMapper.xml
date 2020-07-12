@@ -9,15 +9,30 @@
     <result column="textclass" property="textclass" jdbcType="INTEGER" />
     <result column="imagename" property="imagename" jdbcType="VARCHAR" />
     <result column="imagepath" property="imagepath" jdbcType="VARCHAR" />
-    <result column="timeori" property="timeori" jdbcType="TIMESTAMP" />
     <result column="activitytype" property="activitytype" jdbcType="INTEGER" />
     <result column="starttime" property="starttime" jdbcType="TIMESTAMP" />
     <result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
     <result column="showed" property="showed" jdbcType="INTEGER" />
     <result column="privgroupid" property="privgroupid" jdbcType="VARCHAR" />
   </resultMap>
+    <resultMap id="BaseResultMap1" type="com.icbc.zsyw.hope3.dto.HopeActicity" >
+        <id column="activityid" property="activityid" jdbcType="INTEGER" />
+        <result column="authorname" property="authorname" jdbcType="VARCHAR" />
+        <result column="textname" property="textname" jdbcType="VARCHAR" />
+        <result column="textpath" property="textpath" jdbcType="VARCHAR" />
+        <result column="textclass" property="textclass" jdbcType="INTEGER" />
+        <result column="imagename" property="imagename" jdbcType="VARCHAR" />
+        <result column="imagepath" property="imagepath" jdbcType="VARCHAR" />
+        <result column="activitytype" property="activitytype" jdbcType="INTEGER" />
+        <result column="starttime" property="starttime" jdbcType="TIMESTAMP" />
+        <result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
+        <result column="showed" property="showed" jdbcType="INTEGER" />
+        <result column="privgroupid" property="privgroupid" jdbcType="VARCHAR" />
+        <result column="keyname" property="keyname" jdbcType="VARCHAR" />
+        <result column="weight" property="weight"  />
+    </resultMap>
   <sql id="Base_Column_List" >
-    activityid, authorname, textname, textpath, textclass, imagename, imagepath, timeori, 
+    activityid, authorname, textname, textpath, textclass, imagename, imagepath,
     activitytype, starttime, endtime, showed, privgroupid
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -26,6 +41,70 @@
     from hopeacticity
     where activityid = #{activityid,jdbcType=INTEGER}
   </select>
+  <select id="queryWatchActivity" resultMap="BaseResultMap" parameterType="com.alibaba.fastjson.JSONObject" >
+  SELECT hc.* FROM hopeacticity hc  INNER JOIN
+        (SELECT privgroupid FROM hopeprivgroup WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY privgroupid) b ON hc.privgroupid = b.privgroupid
+        WHERE hc.activitytype = 0 AND hc.showed =1 AND hc.textclass=#{textclass,jdbcType=INTEGER}
+        UNION
+        SELECT * FROM hopeacticity WHERE activitytype = 1 AND showed =1 AND textclass=#{textclass,jdbcType=INTEGER}
+        ORDER BY starttime DESC
+
+  </select>
+  <select id="queryLatestActivity" resultMap="BaseResultMap"  >
+ SELECT hc.* FROM hopeacticity hc INNER JOIN
+            (SELECT MAX(starttime) AS starttime FROM hopeacticity ) b ON hc.starttime = b.starttime
+  </select>
+  <select id="getHopeActivitys" resultMap="BaseResultMap"  >
+ SELECT * FROM hopeacticity ORDER BY starttime DESC
+  </select>
+  <select id="searchActiciByName" resultMap="BaseResultMap" parameterType="com.alibaba.fastjson.JSONObject" >
+ SELECT hc.* FROM hopeacticity hc  INNER JOIN
+           (SELECT privgroupid FROM hopeprivgroup WHERE aamid =#{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY privgroupid) b ON hc.privgroupid = b.privgroupid
+           WHERE  hc.activitytype = 0 AND hc.showed =1 AND hc.textname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+            UNION
+          SELECT * FROM hopeacticity WHERE activitytype = 1 AND showed =1 AND textname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%') ORDER BY starttime DESC
+
+  </select>
+  <select id="searchActiciByKey" resultType="com.icbc.zsyw.hope3.dto.HopeActicity" parameterType="com.alibaba.fastjson.JSONObject" >
+ SELECT c.* FROM
+         ( SELECT ha.activityid,ha.textname,ha.textpath,ha.privgroupid,ha.activitytype,ha.showed,ha.starttime,ha.endtime,b.keyname,b.weight FROM hopeacticity ha INNER JOIN
+        (SELECT keyname,contentclass,contentid,weight FROM hopesearchkey WHERE keyname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%') AND contentclass=1 ) b ON b.contentid=ha.activityid) c INNER JOIN
+        (SELECT privgroupid FROM hopeprivgroup WHERE aamid =#{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY privgroupid) d ON d.privgroupid = c.privgroupid WHERE
+ c.activitytype=0
+       AND   c.showed=1
+  UNION
+         SELECT ha.activityid,ha.textname,ha.textpath,ha.privgroupid,ha.activitytype,ha.showed,ha.starttime,ha.endtime,b.keyname,b.weight FROM hopeacticity ha INNER JOIN
+        (SELECT keyname,contentclass,contentid,weight FROM hopesearchkey WHERE keyname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%') AND contentclass=1 ) b ON b.contentid=ha.activityid
+        WHERE ha.activitytype=1 AND ha.showed=1 ORDER BY weight DESC
+
+  </select>
+  <select id="searchActiciByNameNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+ SELECT * FROM hopeacticity WHERE showed =1 AND textname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%') ORDER BY starttime DESC
+  </select>
+  <select id="searchActiciByKeyNo" resultType="com.icbc.zsyw.hope3.dto.HopeActicity" parameterType="java.lang.String" >
+SELECT ha.activityid,ha.textname,ha.textpath,ha.privgroupid,ha.activitytype,ha.showed,ha.starttime,ha.endtime,b.keyname,b.weight FROM hopeacticity ha INNER JOIN
+            (SELECT keyname,contentclass,contentid,weight FROM hopesearchkey WHERE keyname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%') AND contentclass=1) b ON b.contentid=ha.activityid
+            WHERE  ha.showed=1 ORDER BY b.weight DESC
+  </select>
+  <select id="searchActiciByNameAndClass" resultMap="BaseResultMap" parameterType="com.alibaba.fastjson.JSONObject" >
+SELECT hc.* FROM hopeacticity hc  INNER JOIN
+        (SELECT privgroupid FROM hopeprivgroup WHERE aamid =#{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY privgroupid) b ON hc.privgroupid = b.privgroupid
+        WHERE hc.activitytype = 0 AND hc.showed =1 AND hc.textclass = #{textclass,jdbcType=INTEGER} AND hc.textname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+       UNION
+        SELECT * FROM hopeacticity WHERE activitytype = 1 AND showed =1 AND textclass = #{textclass,jdbcType=INTEGER} AND textname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%') ORDER BY starttime DESC
+  </select>
+  <select id="searchActiciByKeyandClass" resultType="com.icbc.zsyw.hope3.dto.HopeActicity" parameterType="com.alibaba.fastjson.JSONObject" >
+SELECT c.* FROM
+        ( SELECT ha.activityid,ha.textname,ha.textpath,ha.privgroupid,ha.activitytype,ha.showed,ha.starttime,ha.endtime,ha.textclass,b.keyname,b.weight FROM hopeacticity ha INNER JOIN
+        (SELECT keyname,contentclass,contentid,weight FROM hopesearchkey WHERE keyname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%') AND contentclass=1 ) b ON b.contentid=ha.activityid) c INNER JOIN
+        (SELECT privgroupid FROM hopeprivgroup WHERE aamid =#{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY privgroupid) d ON d.privgroupid = c.privgroupid WHERE
+c.activitytype=0 AND
+        c.showed=1 AND c.textclass = #{textclass,jdbcType=INTEGER}
+ UNION
+         SELECT ha.activityid,ha.textname,ha.textpath,ha.privgroupid,ha.activitytype,ha.showed,ha.starttime,ha.endtime,ha.textclass,b.keyname,b.weight FROM hopeacticity ha INNER JOIN
+        (SELECT keyname,contentclass,contentid,weight FROM hopesearchkey WHERE keyname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%') AND contentclass=1 ) b ON b.contentid=ha.activityid
+        WHERE ha.activitytype=1 AND ha.showed=1 AND ha.textclass =#{textclass,jdbcType=INTEGER} ORDER BY weight DESC
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from hopeacticity
     where activityid = #{activityid,jdbcType=INTEGER}
@@ -33,12 +112,12 @@
   <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeActicity" >
     insert into hopeacticity (activityid, authorname, textname, 
       textpath, textclass, imagename, 
-      imagepath, timeori, activitytype, 
+      imagepath, activitytype,
       starttime, endtime, showed, 
       privgroupid)
     values (#{activityid,jdbcType=INTEGER}, #{authorname,jdbcType=VARCHAR}, #{textname,jdbcType=VARCHAR}, 
       #{textpath,jdbcType=VARCHAR}, #{textclass,jdbcType=INTEGER}, #{imagename,jdbcType=VARCHAR}, 
-      #{imagepath,jdbcType=VARCHAR}, #{timeori,jdbcType=TIMESTAMP}, #{activitytype,jdbcType=INTEGER}, 
+      #{imagepath,jdbcType=VARCHAR},  #{activitytype,jdbcType=INTEGER},
       #{starttime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}, #{showed,jdbcType=INTEGER}, 
       #{privgroupid,jdbcType=VARCHAR})
   </insert>
@@ -65,9 +144,6 @@
       </if>
       <if test="imagepath != null" >
         imagepath,
-      </if>
-      <if test="timeori != null" >
-        timeori,
       </if>
       <if test="activitytype != null" >
         activitytype,
@@ -107,9 +183,7 @@
       <if test="imagepath != null" >
         #{imagepath,jdbcType=VARCHAR},
       </if>
-      <if test="timeori != null" >
-        #{timeori,jdbcType=TIMESTAMP},
-      </if>
+
       <if test="activitytype != null" >
         #{activitytype,jdbcType=INTEGER},
       </if>
@@ -148,9 +222,6 @@
       <if test="imagepath != null" >
         imagepath = #{imagepath,jdbcType=VARCHAR},
       </if>
-      <if test="timeori != null" >
-        timeori = #{timeori,jdbcType=TIMESTAMP},
-      </if>
       <if test="activitytype != null" >
         activitytype = #{activitytype,jdbcType=INTEGER},
       </if>
@@ -177,7 +248,6 @@
       textclass = #{textclass,jdbcType=INTEGER},
       imagename = #{imagename,jdbcType=VARCHAR},
       imagepath = #{imagepath,jdbcType=VARCHAR},
-      timeori = #{timeori,jdbcType=TIMESTAMP},
       activitytype = #{activitytype,jdbcType=INTEGER},
       starttime = #{starttime,jdbcType=TIMESTAMP},
       endtime = #{endtime,jdbcType=TIMESTAMP},

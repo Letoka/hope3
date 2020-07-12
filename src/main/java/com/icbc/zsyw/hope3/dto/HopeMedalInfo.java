@@ -1,6 +1,10 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+//@Entity
 public class HopeMedalInfo {
+   // @Id
     private Integer medalid;
 
     private String medalname;

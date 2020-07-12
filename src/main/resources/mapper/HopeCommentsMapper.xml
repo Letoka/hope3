@@ -91,6 +91,12 @@
       and moduleid = #{moduleid,jdbcType=INTEGER}
       and logtime = #{logtime,jdbcType=TIMESTAMP}
   </select>
+  <select id="sureCount" resultType="java.lang.Integer" parameterType="com.icbc.zsyw.hope3.dto.HopeCommentsKey" >
+    SELECT COUNT(*) FROM hopecomments WHERE moduleid = #{moduleid,jdbcType=INTEGER} AND comments = #{comments,jdbcType=INTEGER}
+  </select>
+  <select id="checkAamSure" resultType="com.icbc.zsyw.hope3.dto.HopeComments" parameterType="com.icbc.zsyw.hope3.dto.HopeCommentsKey" >
+    SELECT logtime,comments FROM hopecomments WHERE aamid = #{aamid,jdbcType=VARCHAR} AND moduleid = #{moduleid,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeCommentsKey" >
     delete from hopecomments
     where aamid = #{aamid,jdbcType=VARCHAR}

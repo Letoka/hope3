@@ -16,6 +16,11 @@
     from hopeuserhistory
     where userhistoryid = #{userhistoryid,jdbcType=INTEGER}
   </select>
+  <select id="queryByaamidAndModuleid" resultMap="BaseResultMap" parameterType="com.icbc.zsyw.hope3.dto.HopeUserHistory" >
+    select *
+    from hopeuserhistory
+    where aamid = #{aamid,jdbcType=VARCHAR} and moduleid=#{moduleid,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from hopeuserhistory
     where userhistoryid = #{userhistoryid,jdbcType=INTEGER}
@@ -78,5 +83,11 @@
       moduleid = #{moduleid,jdbcType=INTEGER},
       logtime = #{logtime,jdbcType=TIMESTAMP}
     where userhistoryid = #{userhistoryid,jdbcType=INTEGER}
+  </update>
+  <update id="updateUserHistory" parameterType="com.icbc.zsyw.hope3.dto.HopeUserHistory" >
+    update hopeuserhistory
+    set
+      logtime = #{logtime,jdbcType=TIMESTAMP}
+    where aamid = #{aamid,jdbcType=VARCHAR} and moduleid = #{moduleid,jdbcType=INTEGER}
   </update>
 </mapper>

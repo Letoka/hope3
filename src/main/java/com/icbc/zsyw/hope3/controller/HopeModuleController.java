@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
 
@@ -37,9 +39,9 @@ public class HopeModuleController {
     */
     @RequestMapping(path = {"/queryHopeModule"},method = RequestMethod.POST)
         public BaseResponse<List<HopeModule>> queryHopeModule(HttpServletRequest request, @RequestBody HopeviewModulePriv hopeviewModulePriv){
-        log.info("queryHopeModuleStart hopeviewModulePriv:"+ JSON.toJSONString(hopeviewModulePriv));
+     //   log.info("queryHopeModuleStart hopeviewModulePriv:"+ JSON.toJSONString(hopeviewModulePriv));
         BaseResponse<List<HopeModule>> response = hopeModuleService.queryHopeModule(hopeviewModulePriv.getAamid(),hopeviewModulePriv.getDeptid(),hopeviewModulePriv.getOdeptid());
-        log.info("queryHopeModule Result:"+JSON.toJSONString(response));
+      //  log.info("queryHopeModule Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -52,9 +54,10 @@ public class HopeModuleController {
     */
     @RequestMapping(path = {"/insertWatchHopeModule"},method = RequestMethod.POST)
     public BaseResponse<Integer> insertWatchHopeModule(HttpServletRequest request, @RequestBody HopeUserFavor hopeUserFavor){
-        log.info("insertWatchHopeModuleStart hopeUserFavor:"+JSON.toJSONString(hopeUserFavor));
+        HttpSession session = request.getSession();
+      //  log.info("insertWatchHopeModuleStart hopeUserFavor:"+JSON.toJSONString(hopeUserFavor));
         BaseResponse<Integer> response = hopeModuleService.insertWatchHopeModule(hopeUserFavor);
-        log.info("insertWatchHopeModuleEnd Result:"+JSON.toJSONString(response));
+       // log.info("insertWatchHopeModuleEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -67,9 +70,9 @@ public class HopeModuleController {
     */
     @RequestMapping(path = {"/deleteWatchHopeModule"},method = RequestMethod.POST)
     public BaseResponse<Integer> deleteWatchHopeModule(HttpServletRequest request, @RequestBody HopeUserFavor hopeUserFavor){
-        log.info("deleteWatchHopeModuleStart hopeUserFavor:"+JSON.toJSONString(hopeUserFavor));
+      //  log.info("deleteWatchHopeModuleStart hopeUserFavor:"+JSON.toJSONString(hopeUserFavor));
         BaseResponse<Integer> response = hopeModuleService.deleteWatchHopeModule(hopeUserFavor);
-        log.info("deleteWatchHopeModuleEnd Result:"+JSON.toJSONString(response));
+      //  log.info("deleteWatchHopeModuleEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -85,9 +88,9 @@ public class HopeModuleController {
     public BaseResponse<Integer> updateWatchHopeModuleSort(HttpServletRequest request, @RequestBody JSONObject jsonObject){
         HopeUserFavor hopeUserFavor = jsonObject.getObject("hopeUserFavor",HopeUserFavor.class);
         HopeUserFavor hopeUserFavorAfter = jsonObject.getObject("hopeUserFavorAfter",HopeUserFavor.class);
-        log.info("updateWatchHopeModuleSortStart jsonObject:"+JSON.toJSONString(jsonObject));
+        //log.info("updateWatchHopeModuleSortStart jsonObject:"+JSON.toJSONString(jsonObject));
         BaseResponse<Integer> response = hopeModuleService.updateWatchHopeModuleSort(hopeUserFavor,hopeUserFavorAfter);
-        log.info("updateWatchHopeModuleSortEnd Result:"+JSON.toJSONString(response));
+        //log.info("updateWatchHopeModuleSortEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -98,11 +101,12 @@ public class HopeModuleController {
     * @Author: qinwankang
     * @Date: 2020/5/19 16:59
     */
+
     @RequestMapping(path = {"/queryWatchHopeModule"},method = RequestMethod.POST)
-    public BaseResponse<List<HopeModule>> queryWatchHopeModule(HttpServletRequest request, @RequestBody HopeUserFavor hopeUserFavor){
-        log.info("queryWatchHopeModuleStart hopeUserFavor:"+JSON.toJSONString(hopeUserFavor));
-        BaseResponse<List<HopeModule>> response = hopeModuleService.queryWatchHopeModule(hopeUserFavor);
-        log.info("queryWatchHopeModuleEnd Result:"+JSON.toJSONString(response));
+    public BaseResponse<HopeModuleServiceImpl.ModuleFavor> queryWatchHopeModule(HttpServletRequest request, @RequestBody HopeUserFavor hopeUserFavor){
+       // log.info("queryWatchHopeModuleStart hopeUserFavor:"+JSON.toJSONString(hopeUserFavor));
+        BaseResponse<HopeModuleServiceImpl.ModuleFavor> response = hopeModuleService.queryWatchHopeModule(hopeUserFavor);
+       // log.info("queryWatchHopeModuleEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -114,10 +118,10 @@ public class HopeModuleController {
     * @Date: 2020/5/19 17:42
     */
     @RequestMapping(path = {"/queryMyFoot"},method = RequestMethod.POST)
-    public BaseResponse<List<HopeModule>> queryMyFoot(HttpServletRequest request, @RequestBody HopeUserHistory hopeUserHistory){
-        log.info("queryMyFootStart hopeUserHistory:"+JSON.toJSONString(hopeUserHistory));
-        BaseResponse<List<HopeModule>> response = hopeModuleService.queryMyFoot(hopeUserHistory);
-        log.info("queryMyFootEnd Result:"+JSON.toJSONString(response));
+    public BaseResponse<List<HopeModuleServiceImpl.ModuleGroupSub>> queryMyFoot(HttpServletRequest request, @RequestBody HopeUserHistory hopeUserHistory){
+       // log.info("queryMyFootStart hopeUserHistory:"+JSON.toJSONString(hopeUserHistory));
+        BaseResponse<List<HopeModuleServiceImpl.ModuleGroupSub>> response = hopeModuleService.queryMyFoot(hopeUserHistory);
+       // log.info("queryMyFootEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -130,9 +134,9 @@ public class HopeModuleController {
     */
     @RequestMapping(path = {"/insertMyFoot"},method = RequestMethod.POST)
     public BaseResponse insertMyFoot(HttpServletRequest request, @RequestBody HopeUserHistory hopeUserHistory){
-        log.info("insertMyFootStart hopeUserHistory:"+JSON.toJSONString(hopeUserHistory));
+      //  log.info("insertMyFootStart hopeUserHistory:"+JSON.toJSONString(hopeUserHistory));
         BaseResponse response = hopeModuleService.insertMyFoot(hopeUserHistory);
-        log.info("insertMyFootEnd Result:"+JSON.toJSONString(response));
+      //  log.info("insertMyFootEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -145,9 +149,9 @@ public class HopeModuleController {
     */
     @RequestMapping(path = {"/searchMoudleByName"},method = RequestMethod.POST)
     public BaseResponse<List<HopeModule>> searchMoudleByName(HttpServletRequest request, @RequestBody HopeModule hopeModule){
-        log.info("searchMoudleByNameStart hopeModule:"+JSON.toJSONString(hopeModule));
+      //  log.info("searchMoudleByNameStart hopeModule:"+JSON.toJSONString(hopeModule));
         BaseResponse<List<HopeModule>> response = hopeModuleService.searchMoudleByName(hopeModule);
-        log.info("searchMoudleByNameEnd Result:"+JSON.toJSONString(response));
+      //  log.info("searchMoudleByNameEnd Result:"+JSON.toJSONString(response));
         return response;
     }
 /**
@@ -159,10 +163,10 @@ public class HopeModuleController {
 * @Date: 2020/5/22 9:28
 */
     @RequestMapping(path = {"/searchMoudleByGroup"},method = RequestMethod.POST)
-    public BaseResponse<List<HopeModuleServiceImpl.ModuleGroup>> searchMoudleByGroup(HttpServletRequest request, @RequestBody HopeviewModulePriv hopeviewModulePriv){
-        log.info("searchMoudleByGroupStart hopeviewModulePriv:"+JSON.toJSONString(hopeviewModulePriv));
-        BaseResponse<List<HopeModuleServiceImpl.ModuleGroup>> response = hopeModuleService.searchMoudleByGroup(hopeviewModulePriv);
-        log.info("searchMoudleByGroupEnd Result:"+JSON.toJSONString(response));
+    public BaseResponse<HopeModuleServiceImpl.ModuleFavor> searchMoudleByGroup(HttpServletRequest request, @RequestBody HopeviewModulePriv hopeviewModulePriv){
+        //log.info("searchMoudleByGroupStart hopeviewModulePriv:"+JSON.toJSONString(hopeviewModulePriv));
+        BaseResponse<HopeModuleServiceImpl.ModuleFavor> response = hopeModuleService.searchMoudleByGroup(hopeviewModulePriv);
+       // log.info("searchMoudleByGroupEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -175,9 +179,9 @@ public class HopeModuleController {
     */
     @RequestMapping(path = {"/queryUrlBymoduleid"},method = RequestMethod.POST)
     public BaseResponse<String> queryUrlBymoduleid(HttpServletRequest request, @RequestBody JSONObject jsonObject){
-        log.info("queryUrlBymoduleidStart para:"+JSON.toJSONString(jsonObject));
+     //   log.info("queryUrlBymoduleidStart para:"+JSON.toJSONString(jsonObject));
         BaseResponse<String> response = hopeModuleService.queryUrlBymoduleid(jsonObject);
-        log.info("queryUrlBymoduleidEnd Result:"+JSON.toJSONString(response));
+       // log.info("queryUrlBymoduleidEnd Result:"+JSON.toJSONString(response));
         return response;
     }
 /**
@@ -191,9 +195,9 @@ public class HopeModuleController {
 */
     @RequestMapping(path = {"/queryModuleSub"},method = RequestMethod.POST)
     public BaseResponse<List<HopeModule>> queryModuleSub(HttpServletRequest request, @RequestBody HopePrivGroup hopePrivGroup){
-        log.info("queryModuleSubStart hopePrivGroup:"+JSON.toJSONString(hopePrivGroup));
+       // log.info("queryModuleSubStart hopePrivGroup:"+JSON.toJSONString(hopePrivGroup));
         BaseResponse<List<HopeModule>> response = hopeModuleService.queryModuleSub(hopePrivGroup);
-        log.info("queryModuleSubEnd Result:"+JSON.toJSONString(response));
+      //  log.info("queryModuleSubEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -206,9 +210,9 @@ public class HopeModuleController {
     */
     @RequestMapping(path = {"/editModuleSub"},method = RequestMethod.POST)
     public BaseResponse<Integer> editModuleSub(HttpServletRequest request, @RequestBody JSONObject jsonObject){
-        log.info("editModuleSubStart jsonObject:"+JSON.toJSONString(jsonObject));
+       // log.info("editModuleSubStart jsonObject:"+JSON.toJSONString(jsonObject));
         BaseResponse<Integer> response = hopeModuleService.editModuleSub(jsonObject);
-        log.info("editModuleSubEnd Result:"+JSON.toJSONString(response));
+       // log.info("editModuleSubEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -221,10 +225,84 @@ public class HopeModuleController {
     */
     @RequestMapping(path = {"/editModuleSubV2"},method = RequestMethod.POST)
     public BaseResponse<Integer> editModuleSubV2(HttpServletRequest request, @RequestBody JSONObject jsonObject){
-        log.info("editModuleSubV2Start jsonObject:"+JSON.toJSONString(jsonObject));
+       // log.info("editModuleSubV2Start jsonObject:"+JSON.toJSONString(jsonObject));
         BaseResponse<Integer> response = hopeModuleService.editModuleSubV2(jsonObject);
-        log.info("editModuleSubV2End Result:"+JSON.toJSONString(response));
+       // log.info("editModuleSubV2End Result:"+JSON.toJSONString(response));
         return response;
     }
-
+    /**
+    * 功能描述:修改一行视图（或者分类视图）展开或者收起的状态
+     * @param request
+     * @param hopeModuleStatus
+    * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
+    * @Author: qinwankang
+    * @Date: 2020/6/23 16:05
+    */
+    @RequestMapping(path = {"/editModuleStatus"},method = RequestMethod.POST)
+    public BaseResponse<Object> editModuleStatus(HttpServletRequest request, @RequestBody HopeModuleStatus hopeModuleStatus){
+       // log.info("editModuleStatusStart hopeModuleStatus:"+JSON.toJSONString(hopeModuleStatus));
+        BaseResponse<Object> response = hopeModuleService.editModuleStatus(hopeModuleStatus);
+        //log.info("editModuleStatusEnd Result:"+JSON.toJSONString(response));
+        return response;
+    }
+/**
+* 功能描述:首页搜索，名称模糊匹配视图，文章两个维度，每个维度又分为模糊匹配视图和关键字
+ * @param request
+ * @param jsonObject
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Object>
+* @Author: qinwankang
+* @Date: 2020/6/29 14:24searchModuleByName
+*/
+    @RequestMapping(path = {"/searchModuleByName"},method = RequestMethod.POST)
+    public BaseResponse<JSONObject> searchModuleByName(HttpServletRequest request, @RequestBody JSONObject jsonObject){
+       // log.info("searchModuleByNameStart hopeModule:"+JSON.toJSONString(jsonObject));
+        BaseResponse<JSONObject> response = hopeModuleService.searchModuleByName(jsonObject);
+        //log.info("searchModuleByNameEnd Result:"+JSON.toJSONString(response));
+        return response;
+    }
+    /**
+    * 功能描述:跳转新搜索页，和首页搜索功能一样，名称模糊匹配视图，文章两个维度，每个维度又分为模糊匹配视图和关键字
+     * @param request
+     * @param jsonObject
+    * @return: com.icbc.zsyw.hope3.common.BaseResponse<com.alibaba.fastjson.JSONObject>
+    * @Author: qinwankang
+    * @Date: 2020/7/3 9:36
+    */
+    @RequestMapping(path = {"/searchModuleByNameSec"},method = RequestMethod.POST)
+    public BaseResponse<JSONObject> searchModuleByNameSec(HttpServletRequest request, @RequestBody JSONObject jsonObject){
+       // log.info("searchModuleByNameSecStart hopeModule:"+JSON.toJSONString(jsonObject));
+        BaseResponse<JSONObject> response = hopeModuleService.searchModuleByNameSec(jsonObject);
+        //log.info("searchModuleByNameSecEnd Result:"+JSON.toJSONString(response));
+        return response;
+    }
+    /**
+    * 功能描述:文章发现页搜索功能
+     * @param request
+     * @param jsonObject
+    * @return: com.icbc.zsyw.hope3.common.BaseResponse<com.alibaba.fastjson.JSONObject>
+    * @Author: qinwankang
+    * @Date: 2020/7/3 11:06
+    */
+    @RequestMapping(path = {"/findPageSearch"},method = RequestMethod.POST)
+    public BaseResponse<HopeModuleServiceImpl.SearchDto> findPageSearch(HttpServletRequest request, @RequestBody JSONObject jsonObject){
+        //log.info("findPageSearchStart hopeModule:"+JSON.toJSONString(jsonObject));
+        BaseResponse<HopeModuleServiceImpl.SearchDto> response = hopeModuleService.findPageSearch(jsonObject);
+        //log.info("findPageSearchEnd Result:"+JSON.toJSONString(response));
+        return response;
+    }
+/**
+* 功能描述:点击三大块跳转对应视图页面，页面渲染所需接口
+ * @param request
+ * @param jsonObject
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.SearchDto>
+* @Author: qinwankang
+* @Date: 2020/7/10 17:16
+*/
+    @RequestMapping(path = {"/getModuleByShortCutBar"},method = RequestMethod.POST)
+    public BaseResponse<List<HopeModuleServiceImpl.ModuleGroupSub>> getModuleByShortCutBar(HttpServletRequest request, @RequestBody JSONObject jsonObject){
+        //log.info("findPageSearchStart hopeModule:"+JSON.toJSONString(jsonObject));
+        BaseResponse<List<HopeModuleServiceImpl.ModuleGroupSub>> response = hopeModuleService.getModuleByShortCutBar(jsonObject);
+        //log.info("findPageSearchEnd Result:"+JSON.toJSONString(response));
+        return response;
+    }
 }

@@ -16,6 +16,9 @@
     from hopeuserlog
     where userlogid = #{userlogid,jdbcType=INTEGER}
   </select>
+  <select id="queryUserLog_h" resultType="java.lang.Integer" parameterType="com.icbc.zsyw.hope3.dto.HopeUserLog" >
+  SELECT COUNT(*) FROM hopeuserlog WHERE moduleid = #{moduleid,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from hopeuserlog
     where userlogid = #{userlogid,jdbcType=INTEGER}

@@ -14,8 +14,11 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -38,6 +41,18 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     private HopeUserLog_hMapper hopeUserLog_hMapper;
     @Resource
     private HopeUserHistoryMapper hopeUserHistoryMapper;
+    @Resource
+    private HopeModuleStatusMapper hopeModuleStatusMapper;
+    @Resource
+    private HopeSearchkeyMapper hopeSearchkeyMapper;
+    @Resource
+    private HopeActicityMapper hopeActicityMapper;
+    @Resource
+    private HopeActivityLogMapper hopeActivityLogMapper;
+    @Resource
+    private HopeUserLogMapper hopeUserLogMapper;
+
+
     /**
      * 功能描述:我的关注模块(二级页面)全部视图，和queryModuleSub方法意义一样，现在被queryModuleSub替代
      * @param aamid
@@ -78,13 +93,13 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public BaseResponse<Integer> insertWatchHopeModule(HopeUserFavor hopeUserFavor) {
         //入参非空校验
-        for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getAamid()) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-            if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getModuleid()) && headCheckEnum.name().toString().equals("moduleid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
+      //  for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
+            if (HopeUserFavorRequestEnum.aamid.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getAamid()) )
+                return new BaseResponse<>(HopeUserFavorRequestEnum.aamid.getReturnCode(), null, HopeUserFavorRequestEnum.aamid.getMsg());
+            if(HopeUserFavorRequestEnum.moduleid.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getModuleid()) )
+                return new BaseResponse<>(HopeUserFavorRequestEnum.moduleid.getReturnCode(), null, HopeUserFavorRequestEnum.moduleid.getMsg());
 
-        }
+       // }
         HopeUserFavor hopeUserFavor1= hopeUserFavorMapper.selectWatchModule(hopeUserFavor);
         if(hopeUserFavor1!=null)
             return new BaseResponse<Integer>(BaseResponse.DATA_STATUS_EXIST,BaseResponse.DATA_STATUS_EXISTER);
@@ -192,18 +207,88 @@ public class HopeModuleServiceImpl implements HopeModuleService {
    */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public BaseResponse<List<HopeModule>> queryWatchHopeModule(HopeUserFavor hopeUserFavor) {
+    public BaseResponse<ModuleFavor> queryWatchHopeModule(HopeUserFavor hopeUserFavor) {
+
         //入参非空校验
         for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
             if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getAamid()) && headCheckEnum.name().toString().equals("aamid"))
                 return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
         }
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
         hopeUserFavor.setFavortype(UserFavorTypeEnum.shitu.getKey());
         List<HopeModule> list = hopeUserFavorMapper.queryWatchHopeModule(hopeUserFavor);
         if(list!=null && list.size()!=0){
-           return new BaseResponse<List<HopeModule>>(BaseResponse.STATUS_HANDLE_SUCCESS,list,BaseResponse.STATUS_HANDLER_SUCCESS);
+            for(HopeModule hopeModule:list){
+                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
+            }
         }
-        return new BaseResponse<List<HopeModule>>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+        String moduleStatus=   hopeModuleStatusMapper.selectByaamidAndtype(hopeUserFavor.getAamid(),HopeModuleTypeEnum.yihang.getKey());
+        BaseResponse<ModuleFavor> moduleFavorBaseResponse = checkModuelStauts(list,moduleStatus);
+        return moduleFavorBaseResponse;
+    }
+    /**
+    * 功能描述:查询视图（展开或者收起）状态
+     * @param list
+     * @param moduleStatus
+    * @return: com.icbc.zsyw.hope3.common.BaseResponse<com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.ModuleFavor>
+    * @Author: qinwankang
+    * @Date: 2020/6/23 16:33
+    */
+    private BaseResponse<ModuleFavor> checkModuelStauts(List list,String moduleStatus){
+        if(StringUtils.isEmpty(moduleStatus)|| null==moduleStatus){
+            if(list!=null && list.size()!=0){
+                ModuleFavor moduleFavor = new ModuleFavor();
+                moduleFavor.setMstatus(true);
+                moduleFavor.setList(list);
+                return new BaseResponse<ModuleFavor>(BaseResponse.STATUS_HANDLE_SUCCESS,moduleFavor,BaseResponse.STATUS_HANDLER_SUCCESS);
+            }else{
+                ModuleFavor moduleFavor = new ModuleFavor();
+                moduleFavor.setMstatus(true);
+                moduleFavor.setList(new ArrayList());
+                return new BaseResponse<ModuleFavor>(BaseResponse.STATUS_HANDLE_SUCCESS,moduleFavor,BaseResponse.STATUS_HANDLER_SUCCESS);
+
+            }
+        }else{
+            if(list!=null && list.size()!=0){
+                ModuleFavor moduleFavor = new ModuleFavor();
+                moduleFavor.setMstatus(moduleStatus.equals("1")?true:false);
+                moduleFavor.setList(list);
+                return new BaseResponse<ModuleFavor>(BaseResponse.STATUS_HANDLE_SUCCESS,moduleFavor,BaseResponse.STATUS_HANDLER_SUCCESS);
+            }else{
+                ModuleFavor moduleFavor = new ModuleFavor();
+                moduleFavor.setMstatus(moduleStatus.equals("1")?true:false);
+                moduleFavor.setList(new ArrayList());
+                return new BaseResponse<ModuleFavor>(BaseResponse.STATUS_HANDLE_SUCCESS,moduleFavor,BaseResponse.STATUS_HANDLER_SUCCESS);
+            }
+        }
+    }
+    /**
+    * 功能描述:一行视图区返回结果的实体类
+     * @param
+    * @return:
+    * @Author: qinwankang
+    * @Date: 2020/6/23 15:10
+    */
+    public class ModuleFavor{
+        private boolean mstatus;
+        private List list;
+
+        public boolean isMstatus() {
+            return mstatus;
+        }
+
+        public List getList() {
+            return list;
+        }
+
+        public void setMstatus(boolean mstatus) {
+            this.mstatus = mstatus;
+        }
+
+        public void setList(List list) {
+            this.list = list;
+        }
     }
     /**
     * 功能描述:首页“我的足迹”视图显示（最多放7个），以及最后一个更多点击，（最多显示视图图标20个）。
@@ -214,22 +299,69 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public BaseResponse<List<HopeModule>> queryMyFoot(HopeUserHistory hopeUserHistory) {
+    public BaseResponse<List<ModuleGroupSub>> queryMyFoot(HopeUserHistory hopeUserHistory) {
         //入参非空校验
-        for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserHistory.getAamid()) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-        }
+        /*for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {*/
+            if ( StringUtils.isEmpty(hopeUserHistory.getAamid()) )
+                return new BaseResponse<>(HopeUserFavorRequestEnum.aamid.getReturnCode(), null, HopeUserFavorRequestEnum.aamid.getMsg());
+      /*  }*/
         if (HopeUserHistoryRequestEnum.status.isNotEmpty() && StringUtils.isEmpty(hopeUserHistory.getStatus()) )
             return new BaseResponse<>(HopeUserHistoryRequestEnum.status.getReturnCode(), null, HopeUserHistoryRequestEnum.status.getMsg());
 
         List<HopeModule>list =   hopeModuleMapper.queryMyFoot(hopeUserHistory);
+
         if(list==null || list.size()==0)
-            return new BaseResponse<List<HopeModule>>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+            return new BaseResponse<List<ModuleGroupSub>>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+     //   Set<HopeModule>moduleSet = new HashSet<>();
+        //list去重
+       // list =FiltrateUtil.quChongXianglin(list);
+        /*for(HopeModule hm:list){
+            hm.setIcon(webUrlq+hm.getIcon());
+      //      moduleSet.add(hm);
+        }*/
+      //  BaseResponse<List<HopeModule>> response = checkFoot(list,hopeUserHistory);
+       // String mStatus = hopeModuleStatusMapper.selectByaamidAndtype(hopeUserHistory.getAamid(),HopeModuleTypeEnum.yihang.getKey());
+        /*List<HopeModule>hlist= new ArrayList<HopeModule>();
+
+        for(HopeModule hopeModule:moduleSet){
+            hlist.add(hopeModule);
+        }*/
         BaseResponse<List<HopeModule>> response = checkFoot(list,hopeUserHistory);
-        return response;
+        List<ModuleGroupSub>footlist=getFootType(response.getData(),hopeUserHistory.getAamid());
+     //   BaseResponse<ModuleFavor>moduleFavorBaseResponse=checkModuelStauts(footlist,mStatus);
+        return new BaseResponse<List<ModuleGroupSub>>(BaseResponse.STATUS_HANDLE_SUCCESS,footlist,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
-/**
+
+    private List<ModuleGroupSub> getFootType(List<HopeModule> data, String aamid) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        List<ModuleGroupSub>sublist = new ArrayList<ModuleGroupSub>();
+        for(HopeModule hopeModule: data){
+                    ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
+                    moduleGroupSub.setModuleid(hopeModule.getModuleid());
+                    moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
+                    moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
+                    moduleGroupSub.setUrl(hopeModule.getUrl());
+                    moduleGroupSub.setModulename(hopeModule.getModulename());
+                    moduleGroupSub.setShortname(hopeModule.getShortname());
+                    moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
+                    IdentifySub identifySub = new IdentifySub();
+                    Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
+                    identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
+                    identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
+                    identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
+                    moduleGroupSub.setIdentifySub(identifySub);
+                    moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                    moduleGroupSub.setText(hopeModule.getDescription());
+                    moduleGroupSub.setTitle(hopeModule.getModulename());
+                    sublist.add(moduleGroupSub);
+        }
+        return sublist;
+    }
+
+    /**
 * 功能描述:首页（视图）搜索功能
  * @param hopeModule
 * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.util.List<com.icbc.zsyw.hope3.dto.HopeModule>>
@@ -259,7 +391,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
 */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public BaseResponse<List<ModuleGroup>> searchMoudleByGroup(HopeviewModulePriv hopeviewModulePriv) {
+    public BaseResponse<ModuleFavor> searchMoudleByGroup(HopeviewModulePriv hopeviewModulePriv) {
         //入参非空校验
         String aamid = hopeviewModulePriv.getAamid();
         String deptid = hopeviewModulePriv.getDeptid();
@@ -276,12 +408,15 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         if(hopeModuleList==null || hopeModuleList.size()==0)
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
         List<ModuleGroup>relist = new ArrayList<ModuleGroup>();
-        ModuleGroup moduleGroup1 = insertQuanbu(hopeModuleList,aamid);
+        String mStatus = hopeModuleStatusMapper.selectByaamidAndtype(aamid,HopeModuleTypeEnum.fenzu.getKey());
+        ModuleGroup moduleGroup1 = insertQuanbu(hopeModuleList,aamid,mStatus);
         relist.add(moduleGroup1);
-        List<ModuleGroup>relist1 = insertViewByGroup(relist,hopeModuleList,aamid);
-        if(relist1!=null && relist1.size()!=0)
-         return new BaseResponse<List<ModuleGroup>>(BaseResponse.STATUS_HANDLE_SUCCESS,relist,BaseResponse.STATUS_HANDLE_SUCCESS);
-        return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+        List<ModuleGroup>relist1 = insertViewByGroup(relist,hopeModuleList,aamid,mStatus);
+       // String mStatus = hopeModuleStatusMapper.selectByaamidAndtype(aamid,HopeModuleTypeEnum.fenzu.getKey());
+        //List<ModuleGroup>relist1 = checkModuleImage(relist1,mStatus);
+        BaseResponse<ModuleFavor>moduleFavorBaseResponse = checkModuelStauts(relist1,mStatus);
+        return moduleFavorBaseResponse;
+
     }
 /**
 * 功能描述:首页点击视图返回url
@@ -363,17 +498,30 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         if(list==null || list.size()==0)
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
         List<HopeUserFavor> hopeUserFavors = hopeUserFavorMapper.queryModuleByAamid(hopePrivGroup.getAamid(),UserFavorTypeEnum.shitu.getKey());
-        if(hopeUserFavors==null || hopeUserFavors.size()==0)
-            return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
-       if(hopeUserFavors!=null && hopeUserFavors.size()!=0){
-            list.stream().forEach(new Consumer<HopeModule>() {
+        /*if(hopeUserFavors==null || hopeUserFavors.size()==0)
+            return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);*/
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        if(hopeUserFavors!=null && hopeUserFavors.size()!=0){
+            for(HopeModule hopeModule:list){
+                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
+                for(HopeUserFavor hopeUserFavor:hopeUserFavors){
+                    if(hopeUserFavor.getModuleid()==hopeModule.getModuleid()){
+                        hopeModule.setWstatus(ModuleStatusEnum.yiguanzhu.getKey());
+                        hopeModule.setSequence(hopeUserFavor.getModulesequence());
+                       break;
+                    }
+                }
+            }
+           /* list.stream().forEach(new Consumer<HopeModule>() {
                 @Override
                 public void accept(HopeModule hopeModule) {
+                    hopeModule.setIcon(webUrlq+hopeModule.getIcon());
                     hopeUserFavors.stream().forEach(new Consumer<HopeUserFavor>() {
                         @Override
                         public void accept(HopeUserFavor hopeUserFavor) {
                             if(hopeUserFavor.getModuleid()==hopeModule.getModuleid()){
-                                hopeModule.setStatus(ModuleStatusEnum.yiguanzhu.getKey());
+                                hopeModule.setWstatus(ModuleStatusEnum.yiguanzhu.getKey());
                                 hopeModule.setSequence(hopeUserFavor.getModulesequence());
                                 return;
                             }
@@ -382,10 +530,12 @@ public class HopeModuleServiceImpl implements HopeModuleService {
 
                     });
                 }
-            });
+            });*/
         }
         return new BaseResponse<List<HopeModule>>(BaseResponse.STATUS_HANDLE_SUCCESS,list,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
+
+
 /**
 * 功能描述:（视图二级页面）添加视图，删除视图，改变视图顺序，该方法被editModuleSubV2替代，暂时没用；
  * @param jsonObject
@@ -459,9 +609,12 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         if(StringUtils.isEmpty(aamid)){
             return new BaseResponse<>(HopePrivRequestEnum.aamid.getReturnCode(),HopePrivRequestEnum.aamid.getMsg());
         }
+        if(addModuleArr==null || addModuleArr.size()==0){
+            hopeUserFavorMapper.deleteMoudelByAamidAndType(aamid,UserFavorTypeEnum.shitu.getKey());
+        }
         if(addModuleArr!=null && addModuleArr.size()!=0){
             List<HopeUserFavor>hflist = hopeUserFavorMapper.queryModuleByAamid(aamid,UserFavorTypeEnum.shitu.getKey());
-            if(hflist==null && hflist.size()==0){
+            if(hflist==null || hflist.size()==0){
                 for(int i = 0;i<addModuleArr.size();i++){
                     HopeUserFavor hopeUserFavor = new HopeUserFavor();
                     hopeUserFavor.setAamid(aamid);
@@ -499,6 +652,1140 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         }
         return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
+/**
+* 功能描述:修改一行视图（或者分类视图）展开或者收起的状态
+ * @param hopeModuleStatus
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
+* @Author: qinwankang
+* @Date: 2020/6/23 16:07
+*/
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public BaseResponse<Object> editModuleStatus(HopeModuleStatus hopeModuleStatus) {
+        //入参校验
+        BaseResponse<Object> response=checkStatusP(hopeModuleStatus);
+        if(!response.getStatus().equals(BaseResponse.STATUS_HANDLE_SUCCESS)||!response.getMessage().equals(BaseResponse.STATUS_HANDLER_SUCCESS)){
+            return response;
+        }
+        HopeModuleStatus hopeModuleStatus1 = hopeModuleStatusMapper.selectByaamidAndtype1(hopeModuleStatus.getAamid(),hopeModuleStatus.getModuletype());
+        if(hopeModuleStatus1!=null){
+            if(!hopeModuleStatus1.getModulestatus().equals(hopeModuleStatus.getModulestatus())){
+                try {
+                    hopeModuleStatusMapper.updateMstatus(hopeModuleStatus);
+                }catch (Exception e){
+                    return new BaseResponse<Object>(BaseResponse.STATUS_SYSTEM_FAILUREE,BaseResponse.STATUS_SYSTEM_FAILUREE);
+                }
+            }
+        }else if(hopeModuleStatus1==null){
+            try {
+                hopeModuleStatusMapper.insert(hopeModuleStatus);
+            }catch (Exception e){
+                return new BaseResponse<Object>(BaseResponse.STATUS_SYSTEM_FAILUREE,BaseResponse.STATUS_SYSTEM_FAILUREE);
+            }
+        }
+        return new BaseResponse<Object>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+/**
+* 功能描述:首页搜索，名称模糊匹配视图，文章两个维度，每个维度又分为模糊匹配视图和关键字
+ * @param jsonObject
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Object>
+* @Author: qinwankang
+* @Date: 2020/6/29 14:28
+*/
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public BaseResponse<JSONObject> searchModuleByName(JSONObject jsonObject) {
+        //入参校验
+        BaseResponse response =  checkModuleKey(jsonObject);
+        if(!response.getStatus().equals(BaseResponse.STATUS_HANDLE_SUCCESS)||!response.getMessage().equals(BaseResponse.STATUS_HANDLER_SUCCESS)){
+            return response;
+        }
+        String name = jsonObject.getString("name");
+        String aamid = jsonObject.getString("aamid");
+        String deptid = jsonObject.getString("deptid");
+        String odeptid = jsonObject.getString("odeptid");
+        //视图维度结果
+        SearchDto searchDtoModule = getModuleByDim(name,aamid,deptid,odeptid);
+        //文章维度结果
+        SearchDto searchDtoacti = getActivByDim(name,aamid,deptid,odeptid);
+        JSONObject rejson = new JSONObject();
+        rejson.put(HopeSearchEnum.module.getValue(),searchDtoModule);
+        rejson.put(HopeSearchEnum.article.getValue(),searchDtoacti);
+        return new BaseResponse<JSONObject>(BaseResponse.STATUS_HANDLE_SUCCESS,rejson,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+/**
+* 功能描述:跳转新搜索页，和首页搜索功能一样，名称模糊匹配视图，文章两个维度，每个维度又分为模糊匹配视图和关键字
+ * @param jsonObject
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<com.alibaba.fastjson.JSONObject>
+* @Author: qinwankang
+* @Date: 2020/7/3 9:39
+*/
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public BaseResponse<JSONObject> searchModuleByNameSec(JSONObject jsonObject) {
+        //入参校验
+        BaseResponse response =  checkModuleKey(jsonObject);
+        if(!response.getStatus().equals(BaseResponse.STATUS_HANDLE_SUCCESS)||!response.getMessage().equals(BaseResponse.STATUS_HANDLER_SUCCESS)){
+            return response;
+        }
+        String name = jsonObject.getString("name");
+        String aamid = jsonObject.getString("aamid");
+        String deptid = jsonObject.getString("deptid");
+        String odeptid = jsonObject.getString("odeptid");
+        //视图维度结果
+        SearchDto searchDtoModule = getModuleByDimSec(name,aamid,deptid,odeptid);
+        //文章维度结果
+        SearchDto searchDtoacti = getActivByDimSec(name,aamid,deptid,odeptid);
+        JSONObject rejson = new JSONObject();
+        rejson.put(HopeSearchEnum.module.getValue(),searchDtoModule);
+        rejson.put(HopeSearchEnum.article.getValue(),searchDtoacti);
+        return new BaseResponse<JSONObject>(BaseResponse.STATUS_HANDLE_SUCCESS,rejson,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+/**
+* 功能描述:发现页搜索功能
+ * @param jsonObject
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.SearchDto>
+* @Author: qinwankang
+* @Date: 2020/7/3 15:40
+*/
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public BaseResponse<SearchDto> findPageSearch(JSONObject jsonObject) {
+        //入参校验
+        BaseResponse response =  checFindsearch(jsonObject);
+        if(!response.getStatus().equals(BaseResponse.STATUS_HANDLE_SUCCESS)||!response.getMessage().equals(BaseResponse.STATUS_HANDLER_SUCCESS)){
+            return response;
+        }
+        Integer textclass = jsonObject.getInteger("textclass");
+        String name = jsonObject.getString("name");
+        String aamid = jsonObject.getString("aamid");
+        String deptid = jsonObject.getString("deptid");
+        String odeptid = jsonObject.getString("odeptid");
+        //文章维度结果
+        SearchDto searchDtoacti = getActivByDimFind(textclass,name,aamid,deptid,odeptid);
+        return new BaseResponse<SearchDto>(BaseResponse.STATUS_HANDLE_SUCCESS,searchDtoacti,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+/**
+* 功能描述:点击三大块跳转对应视图页面，页面渲染所需接口
+ * @param jsonObject
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.SearchDto>
+* @Author: qinwankang
+* @Date: 2020/7/10 17:22
+*/
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public BaseResponse<List<ModuleGroupSub>> getModuleByShortCutBar(JSONObject jsonObject) {
+        String aamid = jsonObject.getString("aamid");
+        String deptid = jsonObject.getString("deptid");
+        String odeptid = jsonObject.getString("odeptid");
+        String shortname = jsonObject.getString("shortname");
+        JSONArray jsonArray = jsonObject.getJSONArray("moduleidArr");
+        //参数校验
+        BaseResponse response=  checkJsonParam(jsonObject);
+        if(!response.getMessage().equals(BaseResponse.STATUS_HANDLE_SUCCESS)||!response.getStatus().equals(BaseResponse.STATUS_HANDLER_SUCCESS)){
+            return response;
+        }
+        // List<HopeModule>mlist= hopeModuleMapper.selectbyIdAndPri(aamid,deptid,odeptid,jsonArray);
+        List<HopeModule>mlist=new ArrayList<>();
+        if(mlist==null||mlist.size()==0){
+            return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+        }
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        List<ModuleGroupSub>sublist = new ArrayList<ModuleGroupSub>();
+        for(HopeModule hopeModule:mlist){
+            ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
+            moduleGroupSub.setModuleid(hopeModule.getModuleid());
+            moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
+            moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
+            moduleGroupSub.setUrl(hopeModule.getUrl());
+            moduleGroupSub.setModulename(hopeModule.getModulename());
+            moduleGroupSub.setShortname(hopeModule.getShortname());
+            moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
+            IdentifySub identifySub = new IdentifySub();
+            Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
+            identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
+            identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
+            identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
+            moduleGroupSub.setIdentifySub(identifySub);
+            moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+            moduleGroupSub.setText(hopeModule.getDescription());
+            moduleGroupSub.setTitle(hopeModule.getModulename());
+            sublist.add(moduleGroupSub);
+        }
+        return new BaseResponse<List<ModuleGroupSub>>(BaseResponse.STATUS_HANDLE_SUCCESS,sublist,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+
+    private BaseResponse checkJsonParam(JSONObject jsonObject) {
+        if(StringUtils.isEmpty(jsonObject.getString("aamid"))){
+            return new BaseResponse(HopePrivRequestEnum.aamid.getReturnCode(),HopePrivRequestEnum.aamid.getMsg());
+        }
+        if(StringUtils.isEmpty(jsonObject.getString("deptid"))){
+            return new BaseResponse(HopePrivRequestEnum.deptid.getReturnCode(),HopePrivRequestEnum.deptid.getMsg());
+        }
+        if(StringUtils.isEmpty(jsonObject.getString("odeptid"))){
+            return new BaseResponse(HopePrivRequestEnum.odeptid.getReturnCode(),HopePrivRequestEnum.odeptid.getMsg());
+        }
+        if(StringUtils.isEmpty(jsonObject.getString("odeptid"))){
+            return new BaseResponse(HopePrivRequestEnum.odeptid.getReturnCode(),HopePrivRequestEnum.odeptid.getMsg());
+        }
+        if(StringUtils.isEmpty(jsonObject.getString("shortname"))){
+            return new BaseResponse(HopeShortcutbarReqEnum.shortname.getReturnCode(),HopeShortcutbarReqEnum.shortname.getMsg());
+        }
+        if(StringUtils.isEmpty(jsonObject.getString("moduleidArr"))||jsonObject.getString("moduleidArr")==null){
+            return new BaseResponse(HopeShortcutbarReqEnum.jsonArray.getReturnCode(),HopeShortcutbarReqEnum.jsonArray.getMsg());
+        }
+        return new BaseResponse(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+
+    private SearchDto getActivByDimFind(Integer textclass,String name, String aamid, String deptid, String odeptid) {
+        //文章表维度
+        //有权限
+        List<HopeActicity>acticities= hopeActicityMapper.searchActiciByNameAndClass(aamid,deptid,odeptid,textclass,name);
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        //上墙/下墙时间判断
+        List<HopeActicity>reacticitiesNo = new ArrayList<HopeActicity>();
+        if(acticities!=null && acticities.size()!=0){
+            Date now =new Date();
+            for(HopeActicity hopeActicity:acticities){
+                if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
+                    //点赞量
+                    Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                    hopeActicity.setDianzanliang(dianzangliang);
+                    //是否收藏
+                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                    if(hopeUserFavors!=0){
+                        hopeActicity.setShoucang(true);
+                    }
+                    //收藏量
+                    Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                    hopeActicity.setShoucangliang(shoucangliang);
+                    //图片路径
+                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    hopeActicity.setImagename(webUrlend);
+                    //文章路径
+                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                    hopeActicity.setTextpath(textpath);
+                    reacticitiesNo.add(hopeActicity);
+                    continue;
+                }
+                if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
+                    if(hopeActicity.getEndtime().after(now)){
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
+                        //图片路径
+                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                        reacticitiesNo.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
+                    if(hopeActicity.getStarttime().before(now)){
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
+                        //图片路径
+                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                        reacticitiesNo.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
+                    //点赞量
+                    Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                    hopeActicity.setDianzanliang(dianzangliang);
+                    //是否收藏
+                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                    if(hopeUserFavors!=0){
+                        hopeActicity.setShoucang(true);
+                    }
+                    //收藏量
+                    Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                    hopeActicity.setShoucangliang(shoucangliang);
+                    //图片路径
+                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    hopeActicity.setImagename(webUrlend);
+                    //文章路径
+                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                    hopeActicity.setTextpath(textpath);
+                    reacticitiesNo.add(hopeActicity);
+                    continue;
+                }
+            }
+        }
+
+        //关键字表维度
+        //有权限
+        List<HopeActicity>acticities1 = hopeActicityMapper.searchActiciByKeyandClass(name,aamid,deptid,odeptid,textclass);
+        //上墙/下墙时间判断
+        List<HopeActicity>reacticities1No = new ArrayList<HopeActicity>();
+        if(acticities1!=null && acticities1.size()!=0){
+            for(HopeActicity hopeActicity:acticities1){
+                Date now = new Date();
+                if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
+                    //点赞量
+                    Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                    hopeActicity.setDianzanliang(dianzangliang);
+                    //是否收藏
+                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                    if(hopeUserFavors!=0){
+                        hopeActicity.setShoucang(true);
+                    }
+                    //收藏量
+                    Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                    hopeActicity.setShoucangliang(shoucangliang);
+                    //图片路径
+                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    hopeActicity.setImagename(webUrlend);
+                    //文章路径
+                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                    hopeActicity.setTextpath(textpath);
+                    reacticities1No.add(hopeActicity);
+                    continue;
+                }
+                if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
+                    if(hopeActicity.getEndtime().after(now)){
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
+                        //图片路径
+                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                        reacticities1No.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
+                    if(hopeActicity.getStarttime().before(now)){
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
+                        //图片路径
+                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                        reacticities1No.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
+                    //点赞量
+                    Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                    hopeActicity.setDianzanliang(dianzangliang);
+                    //是否收藏
+                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                    if(hopeUserFavors!=0){
+                        hopeActicity.setShoucang(true);
+                    }
+                    //收藏量
+                    Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                    hopeActicity.setShoucangliang(shoucangliang);
+                    //图片路径
+                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    hopeActicity.setImagename(webUrlend);
+                    //文章路径
+                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                    hopeActicity.setTextpath(textpath);
+                    reacticities1No.add(hopeActicity);
+                    continue;
+                }
+            }
+        }
+        //对模糊匹配表得到记录和关键字表匹配去重
+        List<HopeActicity>ackeylist = new ArrayList<HopeActicity>();
+        if(reacticitiesNo!=null && reacticitiesNo.size()!=0 && reacticities1No!=null && reacticities1No.size()!=0){
+            for(HopeActicity hopeActicity:reacticities1No){
+                int count =0;
+                for(HopeActicity hopeActicity1: reacticitiesNo){
+                    if(!hopeActicity1.getTextname().equals(hopeActicity.getTextname())){
+                        count++;
+                    }
+                }
+                if(count==reacticitiesNo.size()){
+                    ackeylist.add(hopeActicity);
+                }
+            }
+        }else{
+            ackeylist=reacticities1No;
+        }
+        //acticitiesNo+ackeylist
+        SearchDtoSub searchDtoSub2 = new SearchDtoSub();
+        searchDtoSub2.setSearchStyle(HopeSearchEnum.chabiao.getValue());
+        if(reacticitiesNo==null || reacticitiesNo.size()==0){
+            searchDtoSub2.setStyleList(new ArrayList());
+        }else{
+            searchDtoSub2.setStyleList(reacticitiesNo);
+        }
+        SearchDtoSub searchDtoSub3 = new SearchDtoSub();
+        searchDtoSub3.setSearchStyle(HopeSearchEnum.keyname.getValue());
+        if(ackeylist==null || ackeylist.size()==0){
+            searchDtoSub3.setStyleList(new ArrayList());
+        }else{
+            searchDtoSub3.setStyleList(ackeylist);
+        }
+        List activlist = new ArrayList();
+        activlist.add(searchDtoSub2);
+        activlist.add(searchDtoSub3);
+        SearchDto searchDto =new SearchDto();
+        searchDto.setSearchType(HopeSearchEnum.article.getValue());
+        searchDto.setList(activlist);
+        return searchDto;
+    }
+
+    private BaseResponse checFindsearch(JSONObject jsonObject) {
+        String textclass = jsonObject.getString("textclass");
+        String name = jsonObject.getString("name");
+        String aamid = jsonObject.getString("aamid");
+        String deptid = jsonObject.getString("deptid");
+        String odeptid = jsonObject.getString("odeptid");
+        if(StringUtils.isEmpty(name)){
+            return new BaseResponse(HopeModuleRequestEnum.name.getReturnCode(),HopeModuleRequestEnum.name.getMsg());
+        }
+        if(StringUtils.isEmpty(aamid)){
+            return new BaseResponse(HopePrivRequestEnum.aamid.getReturnCode(),HopePrivRequestEnum.aamid.getMsg());
+        }
+        if(StringUtils.isEmpty(deptid)){
+            return new BaseResponse(HopePrivRequestEnum.deptid.getReturnCode(),HopePrivRequestEnum.deptid.getMsg());
+        }
+        if(StringUtils.isEmpty(odeptid)){
+            return new BaseResponse(HopePrivRequestEnum.odeptid.getReturnCode(),HopePrivRequestEnum.odeptid.getMsg());
+        }
+        if(StringUtils.isEmpty(textclass)){
+            return new BaseResponse(HopeActivityReqEnum.textclass.getReturnCode(),HopeActivityReqEnum.textclass.getMsg());
+        }
+        return new BaseResponse(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+
+    /**
+* 功能描述:新搜索页文章维度结果
+ * @param name
+ * @param aamid
+ * @param deptid
+ * @param odeptid
+* @return: com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.SearchDto
+* @Author: qinwankang
+* @Date: 2020/7/3 10:32
+*/
+    private SearchDto getActivByDimSec(String name, String aamid, String deptid, String odeptid) {
+        //文章表维度
+        //有权限
+        List<HopeActicity>acticities= hopeActicityMapper.searchActiciByName(aamid,deptid,odeptid,name);
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        //上墙/下墙时间判断
+        List<HopeActicity>reacticitiesNo = new ArrayList<HopeActicity>();
+        if(acticities!=null && acticities.size()!=0){
+            Date now =new Date();
+            for(HopeActicity hopeActicity:acticities){
+                if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
+                    //点赞量
+                    Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                    hopeActicity.setDianzanliang(dianzangliang);
+                    //是否收藏
+                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                    if(hopeUserFavors!=0){
+                        hopeActicity.setShoucang(true);
+                    }
+                    //收藏量
+                    Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                    hopeActicity.setShoucangliang(shoucangliang);
+                    //图片路径
+                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    hopeActicity.setImagename(webUrlend);
+                    //文章路径
+                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                    hopeActicity.setTextpath(textpath);
+                    hopeActicity.setQuanxianC(1);
+                    reacticitiesNo.add(hopeActicity);
+                    continue;
+                }
+                if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
+                    if(hopeActicity.getEndtime().after(now)){
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
+                        //图片路径
+                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                        hopeActicity.setQuanxianC(1);
+                        reacticitiesNo.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
+                    if(hopeActicity.getStarttime().before(now)){
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
+                        //图片路径
+                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                        hopeActicity.setQuanxianC(1);
+                        reacticitiesNo.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
+                    //点赞量
+                    Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                    hopeActicity.setDianzanliang(dianzangliang);
+                    //是否收藏
+                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                    if(hopeUserFavors!=0){
+                        hopeActicity.setShoucang(true);
+                    }
+                    //收藏量
+                    Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                    hopeActicity.setShoucangliang(shoucangliang);
+                    //图片路径
+                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    hopeActicity.setImagename(webUrlend);
+                    //文章路径
+                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                    hopeActicity.setTextpath(textpath);
+                    hopeActicity.setQuanxianC(1);
+                    reacticitiesNo.add(hopeActicity);
+                    continue;
+                }
+            }
+        }
+
+        //关键字表维度
+        //有权限
+        List<HopeActicity>acticities1 = hopeActicityMapper.searchActiciByKey(name,aamid,deptid,odeptid);
+        //上墙/下墙时间判断
+        List<HopeActicity>reacticities1No = new ArrayList<HopeActicity>();
+        if(acticities1!=null && acticities1.size()!=0){
+            for(HopeActicity hopeActicity:acticities1){
+                Date now = new Date();
+                if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
+                    //点赞量
+                    Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                    hopeActicity.setDianzanliang(dianzangliang);
+                    //是否收藏
+                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                    if(hopeUserFavors!=0){
+                        hopeActicity.setShoucang(true);
+                    }
+                    //收藏量
+                    Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                    hopeActicity.setShoucangliang(shoucangliang);
+                    //图片路径
+                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    hopeActicity.setImagename(webUrlend);
+                    //文章路径
+                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                    hopeActicity.setTextpath(textpath);
+                    hopeActicity.setQuanxianC(1);
+                    reacticities1No.add(hopeActicity);
+                    continue;
+                }
+                if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
+                    if(hopeActicity.getEndtime().after(now)){
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
+                        //图片路径
+                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                        hopeActicity.setQuanxianC(1);
+                        reacticities1No.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
+                    if(hopeActicity.getStarttime().before(now)){
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
+                        //是否收藏
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
+                        //图片路径
+                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        hopeActicity.setTextpath(textpath);
+                        hopeActicity.setQuanxianC(1);
+                        reacticities1No.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
+                    //点赞量
+                    Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                    hopeActicity.setDianzanliang(dianzangliang);
+                    //是否收藏
+                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(aamid,hopeActicity.getActivityid());
+                    if(hopeUserFavors!=0){
+                        hopeActicity.setShoucang(true);
+                    }
+                    //收藏量
+                    Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                    hopeActicity.setShoucangliang(shoucangliang);
+                    //图片路径
+                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    hopeActicity.setImagename(webUrlend);
+                    //文章路径
+                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                    hopeActicity.setTextpath(textpath);
+                    hopeActicity.setQuanxianC(1);
+                    reacticities1No.add(hopeActicity);
+                    continue;
+                }
+            }
+        }
+        //对模糊匹配表得到记录和关键字表匹配去重
+        List<HopeActicity>ackeylist = new ArrayList<HopeActicity>();
+        if(reacticitiesNo!=null && reacticitiesNo.size()!=0 && reacticities1No!=null && reacticities1No.size()!=0){
+            for(HopeActicity hopeActicity:reacticities1No){
+                int count =0;
+                for(HopeActicity hopeActicity1: reacticitiesNo){
+                    if(!hopeActicity1.getTextname().equals(hopeActicity.getTextname())){
+                        count++;
+                    }
+                }
+                if(count==reacticitiesNo.size()){
+                    ackeylist.add(hopeActicity);
+                }
+            }
+        }else{
+            ackeylist=reacticities1No;
+        }
+        //acticitiesNo+ackeylist
+        SearchDtoSub searchDtoSub2 = new SearchDtoSub();
+        searchDtoSub2.setSearchStyle(HopeSearchEnum.chabiao.getValue());
+        if(reacticitiesNo==null || reacticitiesNo.size()==0){
+            searchDtoSub2.setStyleList(null);
+        }else{
+            searchDtoSub2.setStyleList(reacticitiesNo);
+        }
+        SearchDtoSub searchDtoSub3 = new SearchDtoSub();
+        searchDtoSub3.setSearchStyle(HopeSearchEnum.keyname.getValue());
+        if(ackeylist==null || ackeylist.size()==0){
+            searchDtoSub3.setStyleList(null);
+        }else{
+            searchDtoSub3.setStyleList(ackeylist);
+        }
+        List activlist = new ArrayList();
+        activlist.add(searchDtoSub2);
+        activlist.add(searchDtoSub3);
+        SearchDto searchDto =new SearchDto();
+        searchDto.setSearchType(HopeSearchEnum.article.getValue());
+        searchDto.setList(activlist);
+        return searchDto;
+    }
+
+    /**
+* 功能描述:新搜索页面视图维度结果
+ * @param name
+ * @param aamid
+ * @param deptid
+ * @param odeptid
+* @return: com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.SearchDto
+* @Author: qinwankang
+* @Date: 2020/7/3 10:14
+*/
+    private SearchDto getModuleByDimSec(String name, String aamid, String deptid, String odeptid) {
+        //视图表维度
+        //有权限
+        List<HopeModule>moduleList=hopeModuleMapper.searchMoudleByName1(aamid,deptid,odeptid,name);
+        //无需权限
+        List<HopeModule>moduleListNo=hopeModuleMapper.searchMoudleByName1No(name);
+        //权限判断,url判断
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        if(moduleList!=null && moduleList.size()!=0 && moduleListNo!=null && moduleListNo.size()!=0){
+            for(HopeModule hopeModule:moduleListNo){
+                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
+                hopeModule.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
+                hopeModule.setFangwenTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                if(null!=hopeModule.getUseurltype()&&hopeModule.getUseurltype()==1){
+                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(hopeModule.getUrl(),aamid,deptid));
+                }
+                for(HopeModule hopeModule1:moduleList){
+                    if(hopeModule.getModuleid()==hopeModule1.getModuleid()){
+                        hopeModule.setQuanxianC(1);
+                    }
+                }
+            }
+        }
+        //
+        //关键字表维度
+        //有权限
+        List<HopeModule>moduleList1=hopeSearchkeyMapper.searchModuleByKey(name,aamid,deptid,odeptid);
+
+        //无需权限
+        List<HopeModule>moduleList1No=hopeSearchkeyMapper.searchModuleByKeyNo(name);
+        //权限判断
+        if(moduleList1!=null && moduleList1.size()!=0 && moduleList1No!=null && moduleList1No.size()!=0){
+            for(HopeModule hopeModule:moduleList1No){
+                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
+                hopeModule.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
+                hopeModule.setFangwenTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                if(null!=hopeModule.getUseurltype()&&hopeModule.getUseurltype()==1){
+                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(hopeModule.getUrl(),aamid,deptid));
+                }
+                for(HopeModule hopeModule1:moduleList1){
+                    if(hopeModule.getModuleid()==hopeModule1.getModuleid()){
+                        hopeModule.setQuanxianC(1);
+                    }
+                }
+            }
+        }
+        //对模糊匹配表得到记录和关键字表匹配去重
+        List<HopeModule>keylist = new ArrayList<HopeModule>();
+        if(moduleListNo!=null && moduleListNo.size()!=0 && moduleList1No!=null && moduleList1No.size()!=0){
+            for(HopeModule hopeModule:moduleList1No){
+                int count =0;
+                for(HopeModule hopeModule1: moduleListNo){
+                    if(!hopeModule1.getModulename().equals(hopeModule.getModulename())){
+                        count++;
+                    }
+                }
+                if(count==moduleListNo.size()){
+                    keylist.add(hopeModule);
+                }
+            }
+        }else{
+            keylist=moduleList1No;
+        }
+        //moduleListNo+keylist
+        SearchDtoSub searchDtoSub = new SearchDtoSub();
+        searchDtoSub.setSearchStyle(HopeSearchEnum.chabiao.getValue());
+        if(moduleListNo==null || moduleListNo.size()==0){
+            searchDtoSub.setStyleList(null);
+        }else{
+            searchDtoSub.setStyleList(moduleListNo);
+        }
+        SearchDtoSub searchDtoSub1 = new SearchDtoSub();
+        searchDtoSub1.setSearchStyle(HopeSearchEnum.keyname.getValue());
+        if(keylist==null || keylist.size()==0){
+            searchDtoSub1.setStyleList(null);
+        }else{
+            searchDtoSub1.setStyleList(keylist);
+        }
+        List moulelist = new ArrayList();
+        moulelist.add(searchDtoSub);
+        moulelist.add(searchDtoSub1);
+        SearchDto searchDto =new SearchDto();
+        searchDto.setSearchType(HopeSearchEnum.module.getValue());
+        searchDto.setList(moulelist);
+        return searchDto;
+    }
+
+    /**
+* 功能描述:搜索文章维度结果
+ * @param name
+ * @param aamid
+ * @param deptid
+ * @param odeptid
+* @return: com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.SearchDto
+* @Author: qinwankang
+* @Date: 2020/6/30 10:25
+*/
+    private SearchDto getActivByDim(String name, String aamid, String deptid, String odeptid) {
+        //文章表维度
+        //有权限
+        List<HopeActicity>acticities= hopeActicityMapper.searchActiciByName(aamid,deptid,odeptid,name);
+        /*//无需权限
+        List<HopeActicity>acticitiesNo= hopeActicityMapper.searchActiciByNameNo(name);
+        //权限判断
+        if(acticities!=null && acticities.size()!=0 && acticitiesNo!=null && acticitiesNo.size()!=0){
+            for(HopeActicity hopeActicity:acticitiesNo){
+                for(HopeActicity hopeActicity1:acticities){
+                    if(hopeActicity.getActivityid()==hopeActicity1.getActivityid()){
+                        hopeActicity.setQuanxianC(1);
+                    }
+                }
+            }
+        }*/
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        //上墙/下墙时间判断
+        List<HopeActicity>reacticitiesNo = new ArrayList<HopeActicity>();
+        if(acticities!=null && acticities.size()!=0){
+            for(HopeActicity hopeActicity:acticities){
+                Date now = new Date();
+                if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
+                    hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                    hopeActicity.setQuanxianC(1);
+                    reacticitiesNo.add(hopeActicity);
+                    continue;
+                }
+                if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
+                    if(hopeActicity.getEndtime().after(now)){
+                        hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                        hopeActicity.setQuanxianC(1);
+                        reacticitiesNo.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
+                    if(hopeActicity.getStarttime().before(now)){
+                        hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                        hopeActicity.setQuanxianC(1);
+                        reacticitiesNo.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
+                    hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                    hopeActicity.setQuanxianC(1);
+                    reacticitiesNo.add(hopeActicity);
+                    continue;
+                }
+            }
+        }
+
+        //关键字表维度
+        //有权限
+        List<HopeActicity>acticities1 = hopeActicityMapper.searchActiciByKey(name,aamid,deptid,odeptid);
+        //无权限
+      /*  List<HopeActicity>acticities1No = hopeActicityMapper.searchActiciByKeyNo(name);
+        //权限判断
+        if(acticities1!=null && acticities1.size()!=0 && acticities1No!=null && acticities1No.size()!=0){
+            for(HopeActicity hopeActicity:acticities1No){
+                for(HopeActicity hopeActicity1:acticities1){
+                    if(hopeActicity.getActivityid()==hopeActicity1.getActivityid()){
+                        hopeActicity.setQuanxianC(1);
+                    }
+                }
+            }
+        }*/
+        //上墙/下墙时间判断
+        List<HopeActicity>reacticities1No = new ArrayList<HopeActicity>();
+        if(acticities1!=null && acticities1.size()!=0){
+            for(HopeActicity hopeActicity:acticities1){
+                Date now = new Date();
+                if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
+                    hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                    hopeActicity.setQuanxianC(1);
+                    reacticities1No.add(hopeActicity);
+                    continue;
+                }
+                if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
+                    if(hopeActicity.getEndtime().after(now)){
+                        hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                        hopeActicity.setQuanxianC(1);
+                        reacticities1No.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
+                    if(hopeActicity.getStarttime().before(now)){
+                        hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                        hopeActicity.setQuanxianC(1);
+                        reacticities1No.add(hopeActicity);
+                        continue;
+                    }
+                }
+                if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
+                    hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                    hopeActicity.setQuanxianC(1);
+                    reacticities1No.add(hopeActicity);
+                    continue;
+                }
+            }
+        }
+        //对模糊匹配表得到记录和关键字表匹配去重
+        List<HopeActicity>ackeylist = new ArrayList<HopeActicity>();
+        if(reacticitiesNo!=null && reacticitiesNo.size()!=0 && reacticities1No!=null && reacticities1No.size()!=0){
+            for(HopeActicity hopeActicity:reacticities1No){
+                int count =0;
+                for(HopeActicity hopeActicity1: reacticitiesNo){
+                    if(!hopeActicity1.getTextname().equals(hopeActicity.getTextname())){
+                        count++;
+                    }
+                }
+                if(count==reacticitiesNo.size()){
+                    ackeylist.add(hopeActicity);
+                }
+            }
+        }else{
+            ackeylist=reacticities1No;
+        }
+        //acticitiesNo+ackeylist
+        SearchDtoSub searchDtoSub2 = new SearchDtoSub();
+        searchDtoSub2.setSearchStyle(HopeSearchEnum.chabiao.getValue());
+        if(reacticitiesNo==null || reacticitiesNo.size()==0){
+            searchDtoSub2.setStyleList(null);
+        }else{
+            searchDtoSub2.setStyleList(reacticitiesNo);
+        }
+        SearchDtoSub searchDtoSub3 = new SearchDtoSub();
+        searchDtoSub3.setSearchStyle(HopeSearchEnum.keyname.getValue());
+        if(ackeylist==null || ackeylist.size()==0){
+            searchDtoSub3.setStyleList(null);
+        }else{
+            searchDtoSub3.setStyleList(ackeylist);
+        }
+        List activlist = new ArrayList();
+        activlist.add(searchDtoSub2);
+        activlist.add(searchDtoSub3);
+        SearchDto searchDto =new SearchDto();
+        searchDto.setSearchType(HopeSearchEnum.article.getValue());
+        searchDto.setList(activlist);
+        return searchDto;
+    }
+/**
+* 功能描述:搜索视图维度结果
+ * @param name
+ * @param aamid
+ * @param deptid
+ * @param odeptid
+* @return: com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.SearchDto
+* @Author: qinwankang
+* @Date: 2020/6/30 10:25
+*/
+    private SearchDto getModuleByDim(String name, String aamid, String deptid, String odeptid) {
+        //视图表维度
+        //有权限
+        List<HopeModule>moduleList=hopeModuleMapper.searchMoudleByName1(aamid,deptid,odeptid,name);
+        //无需权限
+        List<HopeModule>moduleListNo=hopeModuleMapper.searchMoudleByName1No(name);
+        //权限判断,url判断
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        if(moduleList!=null && moduleList.size()!=0 && moduleListNo!=null && moduleListNo.size()!=0){
+            for(HopeModule hopeModule:moduleListNo){
+                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
+                if(null!=hopeModule.getUseurltype()&&hopeModule.getUseurltype()==1){
+                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(hopeModule.getUrl(),aamid,deptid));
+                }
+                for(HopeModule hopeModule1:moduleList){
+                    if(hopeModule.getModuleid()==hopeModule1.getModuleid()){
+                        hopeModule.setQuanxianC(1);
+                    }
+                }
+            }
+        }
+        //
+        //关键字表维度
+        //有权限
+        List<HopeModule>moduleList1=hopeSearchkeyMapper.searchModuleByKey(name,aamid,deptid,odeptid);
+        //无需权限
+        List<HopeModule>moduleList1No=hopeSearchkeyMapper.searchModuleByKeyNo(name);
+        //权限判断
+        if(moduleList1!=null && moduleList1.size()!=0 && moduleList1No!=null && moduleList1No.size()!=0){
+            for(HopeModule hopeModule:moduleList1No){
+                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
+                if(null!=hopeModule.getUseurltype()&&hopeModule.getUseurltype()==1){
+                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(hopeModule.getUrl(),aamid,deptid));
+                }
+                for(HopeModule hopeModule1:moduleList1){
+                    if(hopeModule.getModuleid()==hopeModule1.getModuleid()){
+                        hopeModule.setQuanxianC(1);
+                    }
+                }
+            }
+        }
+        //对模糊匹配表得到记录和关键字表匹配去重
+        List<HopeModule>keylist = new ArrayList<HopeModule>();
+        if(moduleListNo!=null && moduleListNo.size()!=0 && moduleList1No!=null && moduleList1No.size()!=0){
+            for(HopeModule hopeModule:moduleList1No){
+                int count =0;
+                for(HopeModule hopeModule1: moduleListNo){
+                    if(!hopeModule1.getModulename().equals(hopeModule.getModulename())){
+                        count++;
+                    }
+                }
+                if(count==moduleListNo.size()){
+                    keylist.add(hopeModule);
+                }
+            }
+        }else{
+            keylist=moduleList1No;
+        }
+        //moduleListNo+keylist
+        SearchDtoSub searchDtoSub = new SearchDtoSub();
+        searchDtoSub.setSearchStyle(HopeSearchEnum.chabiao.getValue());
+        if(moduleListNo==null || moduleListNo.size()==0){
+            searchDtoSub.setStyleList(null);
+        }else{
+            searchDtoSub.setStyleList(moduleListNo);
+        }
+        SearchDtoSub searchDtoSub1 = new SearchDtoSub();
+        searchDtoSub1.setSearchStyle(HopeSearchEnum.keyname.getValue());
+        if(keylist==null || keylist.size()==0){
+            searchDtoSub1.setStyleList(null);
+        }else{
+            searchDtoSub1.setStyleList(keylist);
+        }
+        List moulelist = new ArrayList();
+        moulelist.add(searchDtoSub);
+        moulelist.add(searchDtoSub1);
+        SearchDto searchDto =new SearchDto();
+        searchDto.setSearchType(HopeSearchEnum.module.getValue());
+        searchDto.setList(moulelist);
+        return searchDto;
+    }
+
+    //搜索结果按照模糊匹配和关键字返回的实体类
+    public class SearchDtoSub{
+        private String searchStyle;
+        private List styleList;
+
+        public String getSearchStyle() {
+            return searchStyle;
+        }
+
+        public List getStyleList() {
+            return styleList;
+        }
+
+        public void setSearchStyle(String searchStyle) {
+            this.searchStyle = searchStyle;
+        }
+
+        public void setStyleList(List styleList) {
+            this.styleList = styleList;
+        }
+    }
+//搜索模糊匹配返回结果实体类
+    public class SearchDto{
+        private String searchType;
+        private List list;
+
+    public String getSearchType() {
+        return searchType;
+    }
+    public void setSearchType(String searchType) {
+        this.searchType = searchType;
+    }
+
+    public List getList() {
+        return list;
+    }
+
+    public void setList(List list) {
+        this.list = list;
+    }
+}
+    private BaseResponse checkModuleKey(JSONObject jsonObject) {
+        String name = jsonObject.getString("name");
+        String aamid = jsonObject.getString("aamid");
+        String deptid = jsonObject.getString("deptid");
+        String odeptid = jsonObject.getString("odeptid");
+        if(StringUtils.isEmpty(name)){
+            return new BaseResponse(HopeModuleRequestEnum.name.getReturnCode(),HopeModuleRequestEnum.name.getMsg());
+        }
+        if(StringUtils.isEmpty(aamid)){
+            return new BaseResponse(HopePrivRequestEnum.aamid.getReturnCode(),HopePrivRequestEnum.aamid.getMsg());
+        }
+        if(StringUtils.isEmpty(deptid)){
+            return new BaseResponse(HopePrivRequestEnum.deptid.getReturnCode(),HopePrivRequestEnum.deptid.getMsg());
+        }if(StringUtils.isEmpty(odeptid)){
+            return new BaseResponse(HopePrivRequestEnum.odeptid.getReturnCode(),HopePrivRequestEnum.odeptid.getMsg());
+        }
+        return new BaseResponse(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+
+    private BaseResponse<Object> checkStatusP(HopeModuleStatus hopeModuleStatus) {
+        JSONObject input = (JSONObject) JSONObject.parse(JSON.toJSONString(hopeModuleStatus));
+        if (input.size() == 0) {
+            return new BaseResponse<Object>(BaseResponse.ALL_BLANK, null,
+                    BaseResponse.ALL_BLANKER);
+
+        } else {
+            for (ModuleStatusRequestEnum applyCreditQuotaRequestEnum : ModuleStatusRequestEnum.values()) {
+                if (applyCreditQuotaRequestEnum.isNotEmpty()
+                        && (StringUtils.isEmpty(input.getString(applyCreditQuotaRequestEnum.name()))
+                        || null==input.getString(applyCreditQuotaRequestEnum.name()))) {
+                    return new BaseResponse<Object>(applyCreditQuotaRequestEnum.getReturnCode(), null,
+                            applyCreditQuotaRequestEnum.getMsg());
+                }
+            }
+        }
+        return new BaseResponse(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+
     /**
     * 功能描述:该方法暂时作废
      * @param hopeUserFavor
@@ -562,28 +1849,16 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         }
         return new BaseResponse(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
-
     public static void main(String[] args) {
-        List<HopeUserFavor> list = new ArrayList<HopeUserFavor>();
-        HopeUserFavor hopeUserFavor = new HopeUserFavor();
-        HopeUserFavor hopeUserFavor1 = new HopeUserFavor();
-        HopeUserFavor hopeUserFavor2 = new HopeUserFavor();
-        HopeUserFavor hopeUserFavor3 = new HopeUserFavor();
-        HopeUserFavor hopeUserFavor4 = new HopeUserFavor();
-        hopeUserFavor.setModuleid(1);
-        hopeUserFavor1.setModuleid(2);
-        hopeUserFavor2.setModuleid(3);  hopeUserFavor3.setModuleid(4);
-        list.add(hopeUserFavor);list.add(hopeUserFavor1);list.add(hopeUserFavor2);
-        list.add(hopeUserFavor3);
-        list.stream().forEach(new Consumer<HopeUserFavor>() {
-            @Override
-            public void accept(HopeUserFavor hopeUserFavor) {
-                System.out.println("第一次显示"+hopeUserFavor.getModuleid());
-                if (hopeUserFavor.getModuleid()==3)
-                    return;
-                System.out.println("第二次显示"+hopeUserFavor.getModuleid());
+        for(int i=1;i<10;i++){
+            System.out.println("我是i"+i);
+            for(int h=1;h<10;h++){
+                System.out.println("我是h"+h);
+                if(h==5){
+                    break;
+                }
             }
-        });
+        }
     }
     /**
     * 功能描述:将数据库返回的视图按照视图分组名称分类然后组成集合返回
@@ -594,28 +1869,70 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     * @Author: qinwankang
     * @Date: 2020/5/22 16:52
     */
-    private List<ModuleGroup> insertViewByGroup(List<ModuleGroup>relist,List<HopeModule> hopeModuleList,String aamid){
+    private List<ModuleGroup> insertViewByGroup(List<ModuleGroup>relist,List<HopeModule> hopeModuleList,String aamid,String mStatus){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
         for (HopeModuleGroupEnum hopeModuleGroupEnum : HopeModuleGroupEnum.values()) {
             if(hopeModuleGroupEnum.getKey().equals(HopeModuleGroupEnum.quanbu.getKey()))
                 continue;
             List<ModuleGroupSub>sublist = new ArrayList<ModuleGroupSub>();
             for(HopeModule hopeModule: hopeModuleList){
                 if (hopeModuleGroupEnum.getValue().equals(hopeModule.getModulegroupname())){
-                    ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
-                    moduleGroupSub.setModuleid(hopeModule.getModuleid());
-                    moduleGroupSub.setIcon(hopeModule.getIcon());
-                    moduleGroupSub.setImage(hopeModule.getImage());
-                    moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule));
-                    IdentifySub identifySub = new IdentifySub();
-                    Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
-                    identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
-                    identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
-                    identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
-                    moduleGroupSub.setIdentifySub(identifySub);
-                    moduleGroupSub.setTel(hopeUserLog_hMapper.queryUserLog_h(hopeModule.getModuleid()));
-                    moduleGroupSub.setText(hopeModule.getDescription());
-                    moduleGroupSub.setTitle(hopeModule.getModulename());
-                    sublist.add(moduleGroupSub);
+                    if(StringUtils.isEmpty(mStatus)||null==mStatus){
+                        ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
+                        moduleGroupSub.setModuleid(hopeModule.getModuleid());
+                        moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
+                        moduleGroupSub.setImage(webUrlq+hopeModule.getImage());
+                        moduleGroupSub.setUrl(hopeModule.getUrl());
+                        moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
+                        IdentifySub identifySub = new IdentifySub();
+                        Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
+                        identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
+                        identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
+                        identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
+                        moduleGroupSub.setIdentifySub(identifySub);
+                        moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                        moduleGroupSub.setText(hopeModule.getDescription());
+                        moduleGroupSub.setTitle(hopeModule.getModulename());
+                        sublist.add(moduleGroupSub);
+                    }else{
+                        if(mStatus.equals("1")){
+                            ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
+                            moduleGroupSub.setModuleid(hopeModule.getModuleid());
+                            moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
+                            moduleGroupSub.setImage(webUrlq+hopeModule.getImage());
+                            moduleGroupSub.setUrl(hopeModule.getUrl());
+                            moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
+                            IdentifySub identifySub = new IdentifySub();
+                            Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
+                            identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
+                            identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
+                            identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
+                            moduleGroupSub.setIdentifySub(identifySub);
+                            moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                            moduleGroupSub.setText(hopeModule.getDescription());
+                            moduleGroupSub.setTitle(hopeModule.getModulename());
+                            sublist.add(moduleGroupSub);
+                        }else if(mStatus.equals("0")){
+                            ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
+                            moduleGroupSub.setModuleid(hopeModule.getModuleid());
+                            moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
+                            moduleGroupSub.setUrl(hopeModule.getUrl());
+                            moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
+                            moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
+                            IdentifySub identifySub = new IdentifySub();
+                            Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
+                            identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
+                            identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
+                            identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
+                            moduleGroupSub.setIdentifySub(identifySub);
+                            moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                            moduleGroupSub.setText(hopeModule.getDescription());
+                            moduleGroupSub.setTitle(hopeModule.getModulename());
+                            sublist.add(moduleGroupSub);
+                        }
+                    }
+
                 }
             }
             ModuleGroup moduleGroup = new ModuleGroup();
@@ -633,24 +1950,66 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     * @Author: qinwankang
     * @Date: 2020/5/22 16:43
     */
-    private ModuleGroup insertQuanbu(List<HopeModule> hopeModuleList,String aamid){
+    private ModuleGroup insertQuanbu(List<HopeModule> hopeModuleList,String aamid,String mStatus){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
         List<ModuleGroupSub>sublist = new ArrayList<ModuleGroupSub>();
         for(HopeModule hopeModule: hopeModuleList){
+            if(StringUtils.isEmpty(mStatus)|| null==mStatus){
                 ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
                 moduleGroupSub.setModuleid(hopeModule.getModuleid());
-                moduleGroupSub.setIcon(hopeModule.getIcon());
-                moduleGroupSub.setImage(hopeModule.getImage());
-                moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule));
+                moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
+                moduleGroupSub.setImage(webUrlq+hopeModule.getImage());
+                moduleGroupSub.setUrl(hopeModule.getUrl());
+                moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
                 IdentifySub identifySub = new IdentifySub();
                 Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
                 identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
                 identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
                 identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
                 moduleGroupSub.setIdentifySub(identifySub);
-                moduleGroupSub.setTel(hopeUserLog_hMapper.queryUserLog_h(hopeModule.getModuleid()));
+                moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
                 moduleGroupSub.setText(hopeModule.getDescription());
                 moduleGroupSub.setTitle(hopeModule.getModulename());
                 sublist.add(moduleGroupSub);
+            }else{
+                if(mStatus.equals("1")){
+                    ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
+                    moduleGroupSub.setModuleid(hopeModule.getModuleid());
+                    moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
+                    moduleGroupSub.setImage(webUrlq+hopeModule.getImage());
+                    moduleGroupSub.setUrl(hopeModule.getUrl());
+                    moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
+                    IdentifySub identifySub = new IdentifySub();
+                    Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
+                    identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
+                    identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
+                    identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
+                    moduleGroupSub.setIdentifySub(identifySub);
+                    moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                    moduleGroupSub.setText(hopeModule.getDescription());
+                    moduleGroupSub.setTitle(hopeModule.getModulename());
+                    sublist.add(moduleGroupSub);
+                }else if(mStatus.equals("0")){
+                    ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
+                    moduleGroupSub.setModuleid(hopeModule.getModuleid());
+                    moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
+                    moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
+                    moduleGroupSub.setUrl(hopeModule.getUrl());
+                    moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
+                    IdentifySub identifySub = new IdentifySub();
+                    Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
+                    identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
+                    identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
+                    identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
+                    moduleGroupSub.setIdentifySub(identifySub);
+                    moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                    moduleGroupSub.setText(hopeModule.getDescription());
+                    moduleGroupSub.setTitle(hopeModule.getModulename());
+                    sublist.add(moduleGroupSub);
+                }
+            }
+
         }
 
         ModuleGroup moduleGroup = new ModuleGroup();
@@ -681,8 +2040,8 @@ public class HopeModuleServiceImpl implements HopeModuleService {
       if(hopeUserFavor1!=null){
           sureMap.put(HopeCommentsEnum.guanzhu.getKey(),true);
       }
-      if(hopeCommentsList==null){
-          //该用户没有点过赞
+      if(hopeCommentsList==null||hopeCommentsList.size()==0){
+          //该用户没有点过赞或者点过踩
              return sureMap;
       }
         Calendar calendar = Calendar.getInstance();
@@ -705,6 +2064,8 @@ public class HopeModuleServiceImpl implements HopeModuleService {
       }
         return sureMap;
     }
+
+
     /**
     * 功能描述:视图按组分类返回，其中每个分组所需的实体类
      * @param
@@ -752,7 +2113,37 @@ public class HopeModuleServiceImpl implements HopeModuleService {
 
         private String image;
 
+        private String url;
+
+        private String modulename;
+
+        private String shortname;
+
+        public String getModulename() {
+            return modulename;
+        }
+
+        public String getShortname() {
+            return shortname;
+        }
+
+        public void setModulename(String modulename) {
+            this.modulename = modulename;
+        }
+
+        public void setShortname(String shortname) {
+            this.shortname = shortname;
+        }
+
         private IdentifySub identifySub;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
 
         public Integer getModuleid() {
             return moduleid;

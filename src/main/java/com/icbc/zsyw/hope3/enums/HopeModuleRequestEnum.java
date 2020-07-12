@@ -22,7 +22,9 @@ public enum HopeModuleRequestEnum {
 
     modulegroupname("002007", true, "视图分类属组参数为空"),
 
-    url("002008", true, "视图url为空");
+    url("002008", true, "视图url为空"),
+
+    name("002009", true, "搜索名称为空");
 
     /**
      * 功能描述:请求参数校验返回码

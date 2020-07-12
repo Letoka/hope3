@@ -6,6 +6,7 @@ import com.icbc.zsyw.hope3.dto.HopeCommentsKey;
 import java.util.List;
 
 import com.icbc.zsyw.hope3.dto.HopeModule;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -31,8 +32,8 @@ public interface HopeCommentsMapper {
     int updateByPrimaryKeySelective(HopeComments record);
 
     int updateByPrimaryKey(HopeComments record);
-    @Select("SELECT COUNT(*) FROM hopecomments WHERE moduleid = #{moduleid}\n")
-    Integer sureCount(HopeModule hopeModule);
-    @Select("SELECT logtime,comments FROM hopecomments WHERE aamid = #{aamid} AND moduleid = #{moduleid}\n")
+   // @Select("SELECT COUNT(*) FROM hopecomments WHERE moduleid = #{moduleid} AND comments = #{key}\n")
+    Integer sureCount(Integer moduleid,Integer comments);
+   // @Select("SELECT logtime,comments FROM hopecomments WHERE aamid = #{aamid} AND moduleid = #{moduleid}\n")
     List<HopeComments> checkAamSure(String aamid, Integer moduleid);
 }

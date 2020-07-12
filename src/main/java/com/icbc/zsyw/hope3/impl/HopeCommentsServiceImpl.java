@@ -48,15 +48,15 @@ public class HopeCommentsServiceImpl implements HopeCommentsService {
         if(StringUtils.isEmpty(aamid)){
             return new BaseResponse<>(HopeviewImagebarPrivRequestEnum.aamid.getReturnCode(),HopeviewImagebarPrivRequestEnum.aamid.getMsg());
         }
-        if(StringUtils.isEmpty(moduleid)){
+        if(moduleid==null){
             return new BaseResponse<>(HopeModuleRequestEnum.moduleid.getReturnCode(),HopeModuleRequestEnum.moduleid.getMsg());
         }
-        for(HopeCommentsRequestEnum hopeCommentsRequestEnum: HopeCommentsRequestEnum.values()){
-            if (hopeCommentsRequestEnum.isNotEmpty() && logtime==null && hopeCommentsRequestEnum.name().toString().equals("logtime"))
-                return new BaseResponse<>(hopeCommentsRequestEnum.getReturnCode(), null, hopeCommentsRequestEnum.getMsg());
-            if(hopeCommentsRequestEnum.isNotEmpty() && StringUtils.isEmpty(comments) && hopeCommentsRequestEnum.name().toString().equals("comments"))
-                return new BaseResponse<>(hopeCommentsRequestEnum.getReturnCode(), null, hopeCommentsRequestEnum.getMsg());
-        }
+        //for(HopeCommentsRequestEnum hopeCommentsRequestEnum: HopeCommentsRequestEnum.values()){
+            if (HopeCommentsRequestEnum.logtime.isNotEmpty() && logtime==null )
+                return new BaseResponse<>(HopeCommentsRequestEnum.logtime.getReturnCode(), null, HopeCommentsRequestEnum.logtime.getMsg());
+            if(HopeCommentsRequestEnum.comments.isNotEmpty() && comments==null)
+                return new BaseResponse<>(HopeCommentsRequestEnum.comments.getReturnCode(), null, HopeCommentsRequestEnum.comments.getMsg());
+        //}
 
         try {
             hopeCommentsMapper.insert(hopeComments);

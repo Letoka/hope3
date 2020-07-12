@@ -1,6 +1,11 @@
 package com.icbc.zsyw.hope3.dto;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+//@Entity
 public class HopeModulePriv {
+    //@Id
     private Integer moduleprivid;
 
     private Integer moduleid;

@@ -51,4 +51,7 @@
       </if>
     </trim>
   </insert>
+  <select id="queryPrivgroupid" resultType="java.lang.String" parameterType="com.icbc.zsyw.hope3.dto.HopePrivGroup" >
+SELECT privgroupid FROM hopeprivgroup WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid =#{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY privgroupid
+  </select>
 </mapper>

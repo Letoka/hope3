@@ -38,9 +38,9 @@ public class HopeImagebarController {
 */
     @RequestMapping(path = {"/queryHopeImagebar"},method = RequestMethod.POST)
     public BaseResponse<List<HopeImagebar>> queryHopeImagebar(HttpServletRequest request, @RequestBody HopeviewImagebarPriv hopeviewImagebarPriv){
-        log.info("queryHopeImagebarStart hopeviewImagebarPriv:"+JSON.toJSONString(hopeviewImagebarPriv));
-        BaseResponse<List<HopeImagebar>> response = hopeImagebarService.queryHopeImagebar(hopeviewImagebarPriv.getAamid(),hopeviewImagebarPriv.getDeptid());
-        log.info("queryHopeImagebarEnd Result:"+JSON.toJSONString(response));
+      //  log.info("queryHopeImagebarStart hopeviewImagebarPriv:"+JSON.toJSONString(hopeviewImagebarPriv));
+        BaseResponse<List<HopeImagebar>> response = hopeImagebarService.queryHopeImagebar(hopeviewImagebarPriv.getAamid(),hopeviewImagebarPriv.getDeptid(),hopeviewImagebarPriv.getOdeptid());
+       // log.info("queryHopeImagebarEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -54,9 +54,9 @@ public class HopeImagebarController {
     @RequestMapping(path = {"/queryModuleUrl"},method = RequestMethod.POST)
     public BaseResponse<String> queryModuleUrl(HttpServletRequest request, @RequestBody HopeImagebar hopeImagebar){
         Integer imagebarid = hopeImagebar.getImagebarid();
-        log.info("queryModuleUrlStart hopeImagebar:"+JSON.toJSONString(hopeImagebar));
+       // log.info("queryModuleUrlStart hopeImagebar:"+JSON.toJSONString(hopeImagebar));
         BaseResponse<String> response = hopeImagebarService.queryModuleUrl(imagebarid);
-        log.info("queryModuleUrlEnd Result:"+ JSON.toJSONString(response));
+      //  log.info("queryModuleUrlEnd Result:"+ JSON.toJSONString(response));
         return response;
     }
     

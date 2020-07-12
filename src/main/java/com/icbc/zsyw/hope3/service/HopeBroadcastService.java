@@ -25,7 +25,7 @@ public interface HopeBroadcastService {
     * @Author: qinwankang
     * @Date: 2020/5/20 16:05
     */
-    BaseResponse<List<HopeBroadcast>> queryHopeBroadcast(String aamid, String deptid);
+    BaseResponse<List<HopeBroadcast>> queryHopeBroadcast(String aamid, String deptid,String odeptid);
 /**
 * 功能描述:查询“掌上播报”详情
  * @param aamid
@@ -34,5 +34,5 @@ public interface HopeBroadcastService {
 * @Author: qinwankang
 * @Date: 2020/5/21 10:12
 */
-    BaseResponse<List<HopeBroadcastServiceImpl.BroadcastNameResult>> queryHopeBroadcastDetail(String aamid, String deptid);
+    BaseResponse<List<HopeBroadcastServiceImpl.BroadcastNameResult>> queryHopeBroadcastDetail(String aamid, String deptid,String odeptid);
 }

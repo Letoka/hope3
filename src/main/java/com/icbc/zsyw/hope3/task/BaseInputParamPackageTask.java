@@ -22,7 +22,7 @@ public abstract class BaseInputParamPackageTask extends BaseTask {
     }
     private Map<String,Object> packageBaseInfo(){
         Map<String,Object> packBaseMap = new HashMap<String,Object>();
-        packBaseMap.put("11",hopeImagebar.getModuleurl());
+      //  packBaseMap.put("11",hopeImagebar.getModuleurl());
         return packBaseMap;
     }
     protected abstract Map<String,Object> packageSpecialInfo();

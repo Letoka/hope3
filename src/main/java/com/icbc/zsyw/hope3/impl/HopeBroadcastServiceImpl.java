@@ -25,7 +25,8 @@ import java.util.List;
  * @Version V1.0
  **/
 @Service
-public class HopeBroadcastServiceImpl implements HopeBroadcastService {
+public class
+HopeBroadcastServiceImpl implements HopeBroadcastService {
     @Resource
     private HopeBroadcastMapper hopeBroadcastMapper;
     /**
@@ -50,15 +51,17 @@ public class HopeBroadcastServiceImpl implements HopeBroadcastService {
 */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public BaseResponse<List<HopeBroadcast>> queryHopeBroadcast(String aamid, String deptid) {
+    public BaseResponse<List<HopeBroadcast>> queryHopeBroadcast(String aamid, String deptid,String odeptid) {
         //入参非空校验
-        for (HopePrivRequestEnum headCheckEnum : HopePrivRequestEnum.values()) {
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(aamid) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-            if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(deptid) && headCheckEnum.name().toString().equals("deptid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-        }
-        List<HopeBroadcast>list =   hopeBroadcastMapper.queryHopeBroadcast(aamid,deptid);
+        //for (HopePrivRequestEnum headCheckEnum : HopePrivRequestEnum.values()) {
+            if (HopePrivRequestEnum.aamid.isNotEmpty() && StringUtils.isEmpty(aamid) )
+                return new BaseResponse<>(HopePrivRequestEnum.aamid.getReturnCode(), null, HopePrivRequestEnum.aamid.getMsg());
+            if(HopePrivRequestEnum.deptid.isNotEmpty() && StringUtils.isEmpty(deptid) )
+                return new BaseResponse<>(HopePrivRequestEnum.deptid.getReturnCode(), null, HopePrivRequestEnum.deptid.getMsg());
+            if(HopePrivRequestEnum.odeptid.isNotEmpty() && StringUtils.isEmpty(odeptid) )
+                return new BaseResponse<>(HopePrivRequestEnum.odeptid.getReturnCode(), null, HopePrivRequestEnum.odeptid.getMsg());
+       // }
+        List<HopeBroadcast>list =   hopeBroadcastMapper.queryHopeBroadcast(aamid,deptid,odeptid);
         BaseResponse<List<HopeBroadcast>> response = checkHopeBroadcast(list);
         return response;
     }
@@ -72,15 +75,17 @@ public class HopeBroadcastServiceImpl implements HopeBroadcastService {
 */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public BaseResponse<List<BroadcastNameResult>> queryHopeBroadcastDetail(String aamid, String deptid) {
+    public BaseResponse<List<BroadcastNameResult>> queryHopeBroadcastDetail(String aamid, String deptid,String odeptid) {
         //入参非空校验
-        for (HopePrivRequestEnum headCheckEnum : HopePrivRequestEnum.values()) {
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(aamid) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-            if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(deptid) && headCheckEnum.name().toString().equals("deptid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-        }
-        List<HopeBroadcast>list =   hopeBroadcastMapper.queryHopeBroadcast(aamid,deptid);
+      //  for (HopePrivRequestEnum headCheckEnum : HopePrivRequestEnum.values()) {
+            if (HopePrivRequestEnum.aamid.isNotEmpty() && StringUtils.isEmpty(aamid) )
+                return new BaseResponse<>(HopePrivRequestEnum.aamid.getReturnCode(), null, HopePrivRequestEnum.aamid.getMsg());
+            if(HopePrivRequestEnum.deptid.isNotEmpty() && StringUtils.isEmpty(deptid) )
+                return new BaseResponse<>(HopePrivRequestEnum.deptid.getReturnCode(), null, HopePrivRequestEnum.deptid.getMsg());
+            if(HopePrivRequestEnum.odeptid.isNotEmpty() && StringUtils.isEmpty(odeptid) )
+                return new BaseResponse<>(HopePrivRequestEnum.odeptid.getReturnCode(), null, HopePrivRequestEnum.odeptid.getMsg());
+        //}
+        List<HopeBroadcast>list =   hopeBroadcastMapper.queryHopeBroadcast(aamid,deptid,odeptid);
         BaseResponse<List<BroadcastNameResult>> response = handleHopeBroadcast(list);
         return response;
     }
@@ -122,15 +127,15 @@ public class HopeBroadcastServiceImpl implements HopeBroadcastService {
     * @Date: 2020/5/21 14:57
     */
     private BaseResponse<List<HopeBroadcast>> checkHopeBroadcast(List<HopeBroadcast> list){
-        if(list!=null){
+        if(list!=null && list.size()!=0){
             List<HopeBroadcast>relist = new ArrayList<HopeBroadcast>();
             Date date = new Date();
             for (HopeBroadcast hopeBroadcast:list){
-                if(hopeBroadcast.getStarttime().before(date) || hopeBroadcast.getStarttime().compareTo(date)==0 && hopeBroadcast.getEndtime().after(date)){
+                if((hopeBroadcast.getStarttime().before(date) || hopeBroadcast.getStarttime().compareTo(date)==0) && hopeBroadcast.getEndtime().after(date)){
                     relist.add(hopeBroadcast);
                 }
             }
-            if(relist!=null){
+            if(relist!=null&&relist.size()!=0){
                return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,relist,BaseResponse.STATUS_HANDLER_SUCCESS);
             }
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);

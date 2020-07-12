@@ -55,7 +55,7 @@ public interface HopeModuleService {
 * @Author: qinwankang
 * @Date: 2020/5/19 17:01
 */
-    BaseResponse<List<HopeModule>> queryWatchHopeModule(HopeUserFavor hopeUserFavor);
+    BaseResponse<HopeModuleServiceImpl.ModuleFavor> queryWatchHopeModule(HopeUserFavor hopeUserFavor);
 /**
 * 功能描述:首页“我的足迹”视图显示（最多放7个），以及最后一个更多点击，（最多显示视图图标20个）。
  * @param hopeUserHistory
@@ -63,7 +63,7 @@ public interface HopeModuleService {
 * @Author: qinwankang
 * @Date: 2020/5/19 17:47
 */
-    BaseResponse<List<HopeModule>> queryMyFoot(HopeUserHistory hopeUserHistory);
+    BaseResponse<List<HopeModuleServiceImpl.ModuleGroupSub>> queryMyFoot(HopeUserHistory hopeUserHistory);
 /**
 * 功能描述:首页（视图）搜索功能
  * @param hopeModule
@@ -79,7 +79,7 @@ public interface HopeModuleService {
 * @Author: qinwankang
 * @Date: 2020/5/22 9:35
 */
-    BaseResponse<List<HopeModuleServiceImpl.ModuleGroup>> searchMoudleByGroup(HopeviewModulePriv hopeviewModulePriv);
+    BaseResponse<HopeModuleServiceImpl.ModuleFavor> searchMoudleByGroup(HopeviewModulePriv hopeviewModulePriv);
 /**
 * 功能描述:首页点击视图返回url
  * @param jsonObject
@@ -121,4 +121,44 @@ BaseResponse<String> queryUrlBymoduleid(JSONObject jsonObject);
 * @Date: 2020/6/1 16:00
 */
     BaseResponse<Integer> editModuleSubV2(JSONObject jsonObject);
+/**
+* 功能描述:修改一行视图（或者分类视图）展开或者收起的状态
+ * @param hopeModuleStatus
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
+* @Author: qinwankang
+* @Date: 2020/6/23 16:06
+*/
+    BaseResponse<Object> editModuleStatus(HopeModuleStatus hopeModuleStatus);
+/**
+* 功能描述:首页搜索，名称模糊匹配视图，文章两个维度，每个维度又分为模糊匹配视图和关键字
+ * @param jsonObject
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Object>
+* @Author: qinwankang
+* @Date: 2020/6/29 14:27
+*/
+    BaseResponse<JSONObject> searchModuleByName(JSONObject jsonObject);
+    /**
+    * 功能描述:跳转新搜索页，和首页搜索功能一样，名称模糊匹配视图，文章两个维度，每个维度又分为模糊匹配视图和关键字
+     * @param jsonObject
+    * @return: com.icbc.zsyw.hope3.common.BaseResponse<com.alibaba.fastjson.JSONObject>
+    * @Author: qinwankang
+    * @Date: 2020/7/3 9:38
+    */
+    BaseResponse<JSONObject> searchModuleByNameSec(JSONObject jsonObject);
+/**
+* 功能描述:文章发现页搜索功能
+ * @param jsonObject
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<com.alibaba.fastjson.JSONObject>
+* @Author: qinwankang
+* @Date: 2020/7/3 11:09
+*/
+    BaseResponse<HopeModuleServiceImpl.SearchDto> findPageSearch(JSONObject jsonObject);
+/**
+* 功能描述:点击三大块跳转对应视图页面，页面渲染所需接口
+ * @param jsonObject
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.SearchDto>
+* @Author: qinwankang
+* @Date: 2020/7/10 17:18
+*/
+    BaseResponse<List<HopeModuleServiceImpl.ModuleGroupSub>> getModuleByShortCutBar(JSONObject jsonObject);
 }

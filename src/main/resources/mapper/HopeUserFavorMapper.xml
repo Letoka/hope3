@@ -19,6 +19,35 @@
     from hopeuserfavor
     where favorid = #{favorid,jdbcType=INTEGER}
   </select>
+  <select id="queryWatchHopeModule" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
+  SELECT hm.* from hopemodule hm INNER JOIN
+  (SELECT moduleid FROM hopeuserfavor WHERE aamid = #{aamid,jdbcType=VARCHAR} AND favortype = #{favortype,jdbcType=INTEGER}  ORDER BY modulesequence DESC) b ON hm.moduleid = b.moduleid WHERE hm.enabled = 1
+
+  </select>
+  <select id="queryModuleByAamid" resultType="com.icbc.zsyw.hope3.dto.HopeUserFavor" parameterType="com.alibaba.fastjson.JSONObject" >
+ SELECT hu.aamid,hu.moduleid,hu.modulesequence FROM hopeuserfavor hu WHERE aamid = #{aamid,jdbcType=VARCHAR} AND favortype = #{key,jdbcType=INTEGER}
+  </select>
+  <select id="selectWatchModule" resultType="com.icbc.zsyw.hope3.dto.HopeUserFavor" parameterType="com.alibaba.fastjson.JSONObject" >
+SELECT favorid FROM hopeuserfavor WHERE aamid = #{aamid,jdbcType=VARCHAR} AND moduleid = #{moduleid,jdbcType=INTEGER} AND favortype = 0
+  </select>
+  <select id="checkShoucang" resultType="java.lang.Integer" parameterType="com.alibaba.fastjson.JSONObject" >
+SELECT COUNT(*) FROM hopeuserfavor h WHERE aamid = #{aamid,jdbcType=VARCHAR}  AND activityid = #{activityid,jdbcType=INTEGER} AND favortype = 1
+  </select>
+  <select id="selectModuleMaxSequence" resultType="java.lang.Integer">
+SELECT MAX(modulesequence) FROM hopeuserfavor WHERE favortype = 0
+  </select>
+  <select id="getshoucangliang" resultType="java.lang.Integer" parameterType="com.alibaba.fastjson.JSONObject" >
+SELECT COUNT(*) FROM hopeuserfavor WHERE activityid=#{activityid,jdbcType=INTEGER} AND favortype = 1
+  </select>
+  <delete id="deleteByAamidAndAcid" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
+ DELETE FROM hopeuserfavor WHERE aamid = #{aamid,jdbcType=VARCHAR} AND activityid=#{activityid,jdbcType=INTEGER} AND favortype=1
+  </delete>
+  <delete id="deleteByAamAndModule" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
+ DELETE  FROM hopeuserfavor WHERE aamid  = #{aamid,jdbcType=VARCHAR} AND moduleid= #{moduleid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteMoudelByAamidAndType" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
+ DELETE  FROM hopeuserfavor WHERE aamid  = #{aamid,jdbcType=VARCHAR} AND favortype= #{favortype,jdbcType=INTEGER}
+  </delete>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from hopeuserfavor
     where favorid = #{favorid,jdbcType=INTEGER}
@@ -113,5 +142,8 @@
       modulesequence = #{modulesequence,jdbcType=INTEGER},
       activitysequence = #{activitysequence,jdbcType=TIMESTAMP}
     where favorid = #{favorid,jdbcType=INTEGER}
+  </update>
+  <update id="updateHopeUserFavor" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
+   UPDATE hopeuserfavor SET modulesequence = #{modulesequence,jdbcType=INTEGER} WHERE aamid = #{aamid,jdbcType=VARCHAR} AND moduleid = #{moduleid,jdbcType=INTEGER} AND favortype = #{favortype,jdbcType=INTEGER}
   </update>
 </mapper>
