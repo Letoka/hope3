@@ -161,4 +161,12 @@ BaseResponse<String> queryUrlBymoduleid(JSONObject jsonObject);
 * @Date: 2020/7/10 17:18
 */
     BaseResponse<List<HopeModuleServiceImpl.ModuleGroupSub>> getModuleByShortCutBar(JSONObject jsonObject);
+/**
+* 功能描述:修改一行视图（或者分类视图）展开或者收起的状态
+ * @param hopeUserConf
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Object>
+* @Author: qinwankang
+* @Date: 2020/7/13 15:51
+*/
+    BaseResponse<Object> editModuleConf(HopeUserConf hopeUserConf);
 }

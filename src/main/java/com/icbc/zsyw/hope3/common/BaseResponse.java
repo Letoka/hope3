@@ -31,7 +31,7 @@ public class BaseResponse<T> {
      * @fieldType: String
      * @Description: 系统异常
      */
-    public static final String STATUS_SYSTEM_FAILUREE    = "系统异常";
+    public static final String STATUS_SYSTEM_FAILUREE    = "系统异常,提示：参数数据和数据库主键冲突或者别的异常";
     /**
      * @fieldName: DATA_STATUS_NULL
      * @fieldType: String

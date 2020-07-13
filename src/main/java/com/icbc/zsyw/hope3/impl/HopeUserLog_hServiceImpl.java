@@ -86,7 +86,11 @@ public class HopeUserLog_hServiceImpl implements HopeUserLog_hService {
         hopeUserLog_h.setModuleid(hopeUserLog.getModuleid());
         hopeUserLog_hMapper.insert(hopeUserLog_h);
   //新增我的足迹
-
+//查询该用户的足迹，如果足迹超过20条，则删除最早的足迹
+        List<HopeUserHistory>userHistories= hopeUserHistoryMapper.queryFootByAamid(hopeUserLog.getAamid());
+        if(userHistories!=null&&userHistories.size()>19){
+            hopeUserHistoryMapper.deleteMinFoot(hopeUserLog.getAamid(),userHistories.get(0).getLogtime());
+        }
          List<HopeUserHistory>hopeUserHistories=   hopeUserHistoryMapper.queryByaamidAndModuleid(hopeUserLog.getAamid(),hopeUserLog.getModuleid());
          if(hopeUserHistories!=null || hopeUserHistories.size()!=0){
              hopeUserHistoryMapper.updateUserHistory(hopeUserLog.getAamid(),hopeUserLog.getModuleid(),hopeUserLog.getLogtime());

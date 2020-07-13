@@ -43,5 +43,5 @@ public interface HopeModuleMapper {
     */
 String queryUrlBymoduleids( String aamid, String deptid, String odeptid,Integer moduleid);
 
-   // List<HopeModule> selectbyIdAndPri(String aamid, String deptid, String odeptid, JSONArray jsonArray);
+    List<HopeModule> selectbyIdAndPri(String aamid, String deptid, String odeptid, JSONArray jsonArray);
 }

@@ -8,8 +8,9 @@ package com.icbc.zsyw.hope3.enums;
  * @Version V1.0
  **/
 public enum HopeModuleTypeEnum {
-    yihang("1","一行视图"),
-    fenzu("0", "分组视图");
+    yihang("1","关注"),
+    zuji("1","足迹"),
+    fenzu("0", "分组");
 
 
     private String  key;

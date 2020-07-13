@@ -32,7 +32,19 @@
     WHERE enabled = 1 AND published=1
 
   </select>
+  <select id="selectbyIdAndPri" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.icbc.zsyw.hope3.dto.HopeUserHistory" >
 
+    SELECT hm.moduleid,hm.modulename,hm.shortname,hm.description,hm.icon,hm.image,hm.modulegroupname,hm.url,hm.modulestatus FROM hopemodule hm INNER JOIN
+    (SELECT moduleid FROM hopeviewmodulepriv WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY moduleid) b
+    ON hm.moduleid = b.moduleid  WHERE hm.enabled = 1 AND hm.published=0
+
+    UNION
+    SELECT moduleid,modulename,shortname,description,icon,image,modulegroupname,url,modulestatus FROM hopemodule
+    WHERE enabled = 1 AND published=1
+    AND
+    moduleid in <foreach collection="jsonArray" item="item" index="index"
+                         open="(" separator="," close=")">#{item}</foreach>
+  </select>
   <select id="queryMyFoot" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.icbc.zsyw.hope3.dto.HopeUserHistory" >
    SELECT hm.moduleid,hm.modulename,hm.shortname,hm.description,hm.icon,hm.image,hm.modulegroupname,hm.url,hm.modulestatus
    FROM hopemodule hm INNER JOIN

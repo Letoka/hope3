@@ -6,6 +6,7 @@ import com.icbc.zsyw.hope3.enums.HopePrivRequestEnum;
 import com.icbc.zsyw.hope3.enums.HopeUserInfoReqEnum;
 import com.icbc.zsyw.hope3.mapper.HopeUserInfoMapper;
 import com.icbc.zsyw.hope3.service.HopeUserInfoService;
+import com.icbc.zsyw.hope3.util.FiltrateUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -28,9 +29,14 @@ public class HopeUserInfoServiceImpl implements HopeUserInfoService {
         BaseResponse checkresponse = checkParam(hopeUserInfo);
         if(!checkresponse.getStatus().equals(BaseResponse.STATUS_HANDLE_SUCCESS)||!checkresponse.getMessage().equals(BaseResponse.STATUS_HANDLER_SUCCESS))
             return checkresponse;
-        hopeUserInfoMapper.insert(hopeUserInfo);
-        return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
-    }
+        try {
+            hopeUserInfoMapper.insert(hopeUserInfo);
+        }catch (Exception e){
+            return new BaseResponse<>(BaseResponse.STATUS_SYSTEM_FAILURE,BaseResponse.STATUS_SYSTEM_FAILUREE);
+
+        }
+       return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
+   }
 
     private BaseResponse checkParam(HopeUserInfo hopeUserInfo) {
         if(StringUtils.isEmpty(hopeUserInfo.getAamid())){
@@ -49,13 +55,31 @@ public class HopeUserInfoServiceImpl implements HopeUserInfoService {
             return new BaseResponse(HopeUserInfoReqEnum.odeptname.getReturnCode(),HopeUserInfoReqEnum.odeptname.getMsg());
         }if(StringUtils.isEmpty(hopeUserInfo.getOfficephone())){
             return new BaseResponse(HopeUserInfoReqEnum.officephone.getReturnCode(),HopeUserInfoReqEnum.officephone.getMsg());
-        }if(StringUtils.isEmpty(hopeUserInfo.getTdeptname())){
+        }/*else if(!StringUtils.isEmpty(hopeUserInfo.getOfficephone())){
+            BaseResponse response = FiltrateUtil.matchOfficeMobile(hopeUserInfo.getOfficephone());
+            if(!response.getStatus().equals(BaseResponse.STATUS_HANDLE_SUCCESS)||!response.getMessage().equals(BaseResponse.STATUS_HANDLER_SUCCESS)){
+                return response;
+            }
+        }*/
+        if(StringUtils.isEmpty(hopeUserInfo.getTdeptname())){
             return new BaseResponse(HopeUserInfoReqEnum.tdeptname.getReturnCode(),HopeUserInfoReqEnum.tdeptname.getMsg());
         }if(StringUtils.isEmpty(hopeUserInfo.getUseremail())){
             return new BaseResponse(HopeUserInfoReqEnum.useremail.getReturnCode(),HopeUserInfoReqEnum.useremail.getMsg());
-        }if(StringUtils.isEmpty(hopeUserInfo.getUsermobile())){
+        }/*else if(!StringUtils.isEmpty(hopeUserInfo.getUseremail())){
+            BaseResponse response = FiltrateUtil.matchmail(hopeUserInfo.getUseremail());
+            if(!response.getStatus().equals(BaseResponse.STATUS_HANDLE_SUCCESS)||!response.getMessage().equals(BaseResponse.STATUS_HANDLER_SUCCESS)){
+                return response;
+            }
+        }*/
+        if(StringUtils.isEmpty(hopeUserInfo.getUsermobile())){
             return new BaseResponse(HopeUserInfoReqEnum.usermobile.getReturnCode(),HopeUserInfoReqEnum.usermobile.getMsg());
-        }
+        }/*else if(!StringUtils.isEmpty(hopeUserInfo.getUsermobile())){
+            String userMobile = hopeUserInfo.getUsermobile();
+              BaseResponse response = FiltrateUtil.matchMobile(userMobile);
+              if(!response.getStatus().equals(BaseResponse.STATUS_HANDLE_SUCCESS)||!response.getMessage().equals(BaseResponse.STATUS_HANDLER_SUCCESS)){
+                  return response;
+              }
+        }*/
         if(StringUtils.isEmpty(hopeUserInfo.getUsername())){
             return new BaseResponse(HopeUserInfoReqEnum.username.getReturnCode(),HopeUserInfoReqEnum.username.getMsg());
         }

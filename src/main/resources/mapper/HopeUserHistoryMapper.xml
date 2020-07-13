@@ -21,6 +21,15 @@
     from hopeuserhistory
     where aamid = #{aamid,jdbcType=VARCHAR} and moduleid=#{moduleid,jdbcType=INTEGER}
   </select>
+  <select id="queryFootByAamid" resultType="com.icbc.zsyw.hope3.dto.HopeUserHistory" parameterType="java.lang.String" >
+    select userhistoryid,logtime
+    from hopeuserhistory
+    where aamid = #{aamid,jdbcType=VARCHAR} ORDER BY logtime ASC
+  </select>
+  <delete id="deleteMinFoot" parameterType="com.icbc.zsyw.hope3.dto.HopeUserHistory" >
+    delete from hopeuserhistory
+    where aamid = #{aamid,jdbcType=VARCHAR} and logtime = #{logtime,jdbcType=TIMESTAMP}
+  </delete>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from hopeuserhistory
     where userhistoryid = #{userhistoryid,jdbcType=INTEGER}

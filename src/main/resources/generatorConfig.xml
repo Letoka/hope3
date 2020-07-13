@@ -179,11 +179,10 @@
                enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false">
         </table>-->
-<!--<table schema="zsyw" tableName="hopeuserinfo"
-               domainObjectName="HopeUserInfo" enableCountByExample="false"
+<!--<table schema="zsyw" tableName="hopeuserconf"
+               domainObjectName="HopeUserConf" enableCountByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
-               enableUpdate
-               ByExample="false">
+               enableUpdateByExample="false">
         </table>-->
         <table schema="xxx" tableName="xxx"
                domainObjectName="xxx" enableCountByExample="false"

@@ -245,6 +245,21 @@ public class HopeModuleController {
         //log.info("editModuleStatusEnd Result:"+JSON.toJSONString(response));
         return response;
     }
+    /**
+    * 功能描述:修改一行视图（或者分类视图）展开或者收起的状态
+     * @param request
+     * @param hopeUserConf
+    * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Object>
+    * @Author: qinwankang
+    * @Date: 2020/7/13 15:51
+    */
+   @RequestMapping(path = {"/editModuleConf"},method = RequestMethod.POST)
+    public BaseResponse<Object> editModuleConf(HttpServletRequest request, @RequestBody HopeUserConf hopeUserConf){
+        // log.info("editModuleStatusStart hopeModuleStatus:"+JSON.toJSONString(hopeModuleStatus));
+        BaseResponse<Object> response = hopeModuleService.editModuleConf(hopeUserConf);
+        //log.info("editModuleStatusEnd Result:"+JSON.toJSONString(response));
+        return response;
+    }
 /**
 * 功能描述:首页搜索，名称模糊匹配视图，文章两个维度，每个维度又分为模糊匹配视图和关键字
  * @param request

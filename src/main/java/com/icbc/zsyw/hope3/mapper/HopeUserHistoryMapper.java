@@ -23,4 +23,9 @@ public interface HopeUserHistoryMapper {
     List<HopeUserHistory> queryByaamidAndModuleid(String aamid, Integer moduleid);
 
     void updateUserHistory(String aamid, Integer moduleid, Date logtime);
+
+    List<HopeUserHistory> queryFootByAamid(String aamid);
+
+
+    void deleteMinFoot(String aamid, Date logtime);
 }

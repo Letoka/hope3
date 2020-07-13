@@ -17,22 +17,22 @@ public class MyPicMyWebAppConfigurer implements WebMvcConfigurer  {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //外部访问路径映射到本地磁盘路径--windows系统映射
-      /* registry.addResourceHandler("/static/upload/**")
+       registry.addResourceHandler("/static/upload/**")
                .addResourceLocations("file:D:\\icbc\\image\\")
                .addResourceLocations("file:D:\\icbc\\image\\moduleicon\\")
                .addResourceLocations("file:D:\\icbc\\image\\moduleimage\\")
                .addResourceLocations("file:D:\\icbc\\image\\imagebar\\")
                .addResourceLocations("file:D:\\icbc\\image\\shortcutimage\\")
-                .addResourceLocations("file:D:\\icbc\\image\\activity\\");*/
+                .addResourceLocations("file:D:\\icbc\\image\\activity\\");
         //外部访问路径映射到本地磁盘路径--Linux系统映射
         //registry.addResourceHandler("/static/upload/**").addResourceLocations("file:/data/tmp/image/");
-      registry.addResourceHandler("/static/upload/**").addResourceLocations("file:/data/mobile/article/")
+     /* registry.addResourceHandler("/static/upload/**").addResourceLocations("file:/data/mobile/article/")
                 .addResourceLocations("file:/data/mobile/article/pictures/")
                 .addResourceLocations("file:/data/mobile/resource/")
                 .addResourceLocations("file:/data/mobile/resource/assets/")
                 .addResourceLocations("file:/data/mobile/resource/assets/images/")
                 .addResourceLocations("file:/data/mobile/resource/index/")
-                .addResourceLocations("file:/data/mobile/resource/my2019/");
+                .addResourceLocations("file:/data/mobile/resource/my2019/");*/
         //外部访问路径映射到项目路径--windows系统映射
         //外部访问路径映射到项目路径--Linux系统映射
         //registry.addResourceHandler("/static/upload/**").addResourceLocations("classpath:/static/");
