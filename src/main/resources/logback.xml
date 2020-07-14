@@ -78,7 +78,8 @@
         </encoder>
     </appender>
     <!--sql日志打印级别-->
-    <logger name="java.sql.Connection" level="INFO">
+    <!--注掉的<logger></logger>都是防止日志产生-->
+    <!--<logger name="java.sql.Connection" level="INFO">
         <appender-ref ref="SqlStatistics" />
     </logger>
     <logger name="java.sql.Statement" level="INFO">
@@ -86,7 +87,7 @@
     </logger>
     <logger name="java.sql.PreparedStatement" level="INFO">
         <appender-ref ref="SqlStatistics" />
-    </logger>
+    </logger>-->
 
     <!-- ###################### SQL日志监控 ###################### -->
     <!-- ###################### DAO日志监控 ###################### -->
@@ -104,9 +105,10 @@
 
 
     <!--sql日志打印级别-->
-    <logger name="com.icbc.zsyw.hope3.mapper" level="DEBUG">
+    <!--注掉的<logger></logger>都是防止日志产生-->
+   <!-- <logger name="com.icbc.zsyw.hope3.mapper" level="DEBUG">
         <appender-ref ref="DaoStatistics" />
-    </logger>
+    </logger>-->
     <!-- ###################### DAO日志监控 ###################### -->
     <!-- 错误日志-->
     <appender name="errorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -127,15 +129,16 @@
     </appender>
     <!-- 错误日志-->
     <!-- 控制台输出日志级别 -->
-    <root level="info">
+  <!--  <root level="info">
         <appender-ref ref="STDOUT" />
-    </root>
+    </root>-->
     <!-- 指定项目中某个包，当有日志操作行为时的日志记录级别 -->
     <!-- com.appley为根包，也就是只要是发生在这个根包下面的所有日志操作行为的权限都是DEBUG -->
     <!-- 级别依次为【从高到低】：FATAL > ERROR > WARN > INFO > DEBUG > TRACE  -->
-    <logger name="com.icbc.zsyw.hope3" level="DEBUG">
+    <!--注掉的<logger></logger>都是防止日志产生-->
+    <!--<logger name="com.icbc.zsyw.hope3" level="DEBUG">
         <appender-ref ref="syslog" />
-    </logger>
+    </logger>-->
     <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
   <!-- <springProfile name="dev">
         <root level="INFO">

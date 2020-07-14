@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeUserConfMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeUserConf" >
+    <id column="confid" property="confid" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="confvalue" property="confvalue" jdbcType="INTEGER" />
+    <result column="setname" property="setname" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    confid, aamid, confvalue, setname
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopeuserconf
+    where confid = #{confid,jdbcType=INTEGER}
+  </select>
+  <select id="selectByaamidAndName" resultType="java.lang.Integer" parameterType="com.icbc.zsyw.hope3.dto.HopeUserConf" >
+    select confvalue
+    from hopeuserconf
+    where aamid = #{aamid,jdbcType=VARCHAR} and setname=#{setname,jdbcType=VARCHAR}
+  </select>
+  <select id="queryByAamidAndName" resultMap="BaseResultMap" parameterType="com.icbc.zsyw.hope3.dto.HopeUserConf" >
+    select
+    <include refid="Base_Column_List" />
+    from hopeuserconf
+    where aamid = #{aamid,jdbcType=VARCHAR} and setname=#{setname,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hopeuserconf
+    where confid = #{confid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeUserConf" >
+    insert into hopeuserconf (confid, aamid, confvalue, 
+      setname)
+    values (#{confid,jdbcType=INTEGER}, #{aamid,jdbcType=VARCHAR}, #{confvalue,jdbcType=INTEGER}, 
+      #{setname,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserConf" >
+    insert into hopeuserconf
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="confid != null" >
+        confid,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="confvalue != null" >
+        confvalue,
+      </if>
+      <if test="setname != null" >
+        setname,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="confid != null" >
+        #{confid,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="confvalue != null" >
+        #{confvalue,jdbcType=INTEGER},
+      </if>
+      <if test="setname != null" >
+        #{setname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserConf" >
+    update hopeuserconf
+    <set >
+      <if test="aamid != null" >
+        aamid = #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="confvalue != null" >
+        confvalue = #{confvalue,jdbcType=INTEGER},
+      </if>
+      <if test="setname != null" >
+        setname = #{setname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where confid = #{confid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeUserConf" >
+    update hopeuserconf
+    set aamid = #{aamid,jdbcType=VARCHAR},
+      confvalue = #{confvalue,jdbcType=INTEGER},
+      setname = #{setname,jdbcType=VARCHAR}
+    where confid = #{confid,jdbcType=INTEGER}
+  </update>
+  <update id="updateConfvalue" parameterType="com.icbc.zsyw.hope3.dto.HopeUserConf" >
+    update hopeuserconf
+    set
+      confvalue = #{confvalue,jdbcType=INTEGER}
+    where aamid = #{aamid,jdbcType=VARCHAR} and setname = #{setname,jdbcType=VARCHAR}
+  </update>
+</mapper>
