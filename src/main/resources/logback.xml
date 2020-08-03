@@ -46,6 +46,32 @@
             <charset>UTF-8</charset> <!-- 此处设置字符集 -->
         </encoder>
     </appender>
+    <appender name="imglog"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${file_path}/imglog.log</File>
+        <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
+        <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
+            <!-- 文件名：log/sys.2017-12-05.0.log -->
+            <fileNamePattern>${file_path}/imglog.%d.%i.log</fileNamePattern>
+            <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- maxFileSize:这是活动文件的大小，默认值是10MB -->
+                <maxFileSize>1GB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <!-- pattern节点，用来设置日志的输入格式 -->
+            <pattern>
+                %d %p (%file:%line\)- %m%n
+            </pattern>
+            <!-- 记录日志的编码 -->
+            <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+        </encoder>
+    </appender>
+
     <!-- 所有日志第二种方案 -->
     <!--<appender name="RollingFile"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -77,9 +103,24 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+    <!--impl类日志-->
+    <appender name="ImplStatistics"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${file_path}/${project.artifactId}/impl/${project.artifactId}_impl_%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <!-- <maxHistory>3</maxHistory> -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.icbc.zsyw.hope3.impl" level="DEBUG">
+        <appender-ref ref="ImplStatistics" />
+    </logger>
     <!--sql日志打印级别-->
-    <!--注掉的<logger></logger>都是防止日志产生-->
-    <!--<logger name="java.sql.Connection" level="INFO">
+
+   <logger name="java.sql.Connection" level="INFO">
         <appender-ref ref="SqlStatistics" />
     </logger>
     <logger name="java.sql.Statement" level="INFO">
@@ -87,7 +128,7 @@
     </logger>
     <logger name="java.sql.PreparedStatement" level="INFO">
         <appender-ref ref="SqlStatistics" />
-    </logger>-->
+    </logger>
 
     <!-- ###################### SQL日志监控 ###################### -->
     <!-- ###################### DAO日志监控 ###################### -->
@@ -105,10 +146,10 @@
 
 
     <!--sql日志打印级别-->
-    <!--注掉的<logger></logger>都是防止日志产生-->
-   <!-- <logger name="com.icbc.zsyw.hope3.mapper" level="DEBUG">
+
+ <logger name="com.icbc.zsyw.hope3.mapper" level="DEBUG">
         <appender-ref ref="DaoStatistics" />
-    </logger>-->
+    </logger>
     <!-- ###################### DAO日志监控 ###################### -->
     <!-- 错误日志-->
     <appender name="errorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -129,16 +170,22 @@
     </appender>
     <!-- 错误日志-->
     <!-- 控制台输出日志级别 -->
-  <!--  <root level="info">
+    <root level="info">
         <appender-ref ref="STDOUT" />
-    </root>-->
+    </root>
     <!-- 指定项目中某个包，当有日志操作行为时的日志记录级别 -->
     <!-- com.appley为根包，也就是只要是发生在这个根包下面的所有日志操作行为的权限都是DEBUG -->
     <!-- 级别依次为【从高到低】：FATAL > ERROR > WARN > INFO > DEBUG > TRACE  -->
-    <!--注掉的<logger></logger>都是防止日志产生-->
-    <!--<logger name="com.icbc.zsyw.hope3" level="DEBUG">
+
+   <logger name="com.icbc.zsyw.hope3" level="DEBUG">
         <appender-ref ref="syslog" />
-    </logger>-->
+    </logger>
+    <logger name="com.icbc.zsyw.hope3.controller" level="DEBUG">
+        <appender-ref ref="syslog" />
+    </logger>
+    <logger name="com.icbc.zsyw.hope3.util" level="DEBUG">
+        <appender-ref ref="syslog" />
+    </logger>
     <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
   <!-- <springProfile name="dev">
         <root level="INFO">

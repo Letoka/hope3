@@ -20,4 +20,12 @@ public interface HopeUserInfoService {
      * @Date: 2020/5/22 10:53
      */
     BaseResponse<Integer> insertHopeUserInfo(HopeUserInfo hopeUserInfo);
+/**
+* 功能描述:查询首页用户信息，有返回1，无返回0
+ * @param hopeUserInfo
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
+* @Author: qinwankang
+* @Date: 2020/7/31 14:24
+*/
+  BaseResponse<Integer> queryHopeUserInfo(HopeUserInfo hopeUserInfo);
 }

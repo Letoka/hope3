@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeViewTimesMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeViewTimes" >
+    <result column="viewtimeid" property="viewtimeid" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="moduleid" property="moduleid" jdbcType="INTEGER" />
+    <result column="viewtimes" property="viewtimes" jdbcType="INTEGER" />
+    <result column="lastviewtime" property="lastviewtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeViewTimes" >
+    insert into hopeviewtimes (viewtimeid, aamid, moduleid, 
+      viewtimes, lastviewtime)
+    values (#{viewtimeid,jdbcType=INTEGER}, #{aamid,jdbcType=VARCHAR}, #{moduleid,jdbcType=INTEGER}, 
+      #{viewtimes,jdbcType=INTEGER}, #{lastviewtime,jdbcType=TIMESTAMP})
+  </insert>
+  <select id="queryViewTimes" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+  SELECT SUM(viewtimes) AS viewtimes FROM hopeviewtimes WHERE moduleid = #{moduleid,jdbcType=INTEGER}
+  </select>
+  <select id="queryViewTimesByGroup" resultType="com.icbc.zsyw.hope3.dto.HopeViewTimes" >
+ SELECT moduleid,viewtimes FROM hopeviewtimes
+  </select>
+  <select id="queryTimeByaaAndmoid" resultType="java.lang.Integer" parameterType="com.icbc.zsyw.hope3.dto.HopeViewTimes" >
+ SELECT viewtimes FROM hopeviewtimes WHERE aamid = #{aamid,jdbcType=VARCHAR} AND moduleid = #{moduleid,jdbcType=INTEGER}
+  </select>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeViewTimes" >
+    insert into hopeviewtimes
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="viewtimeid != null" >
+        viewtimeid,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="moduleid != null" >
+        moduleid,
+      </if>
+      <if test="viewtimes != null" >
+        viewtimes,
+      </if>
+      <if test="lastviewtime != null" >
+        lastviewtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="viewtimeid != null" >
+        #{viewtimeid,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="viewtimes != null" >
+        #{viewtimes,jdbcType=INTEGER},
+      </if>
+      <if test="lastviewtime != null" >
+        #{lastviewtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateViewTimes" parameterType="com.icbc.zsyw.hope3.dto.HopeViewTimes" >
+   UPDATE hopeviewtimes SET viewtimes = #{reVtimes,jdbcType=INTEGER},lastviewtime= #{logtime,jdbcType=TIMESTAMP} WHERE aamid = #{aamid,jdbcType=VARCHAR} AND moduleid = #{moduleid,jdbcType=INTEGER}
+   </update>
+</mapper>

@@ -8,6 +8,8 @@ import com.icbc.zsyw.hope3.enums.HopeviewImagebarPrivRequestEnum;
 import com.icbc.zsyw.hope3.mapper.HopeImagebarMapper;
 import com.icbc.zsyw.hope3.mapper.HopeModuleMapper;
 import com.icbc.zsyw.hope3.service.HopeImagebarService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,6 +20,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,11 +33,14 @@ import java.util.List;
  * @Version V1.0
  **/
 @Service
+@Slf4j
 public class HopeImagebarServiceImpl implements HopeImagebarService {
     @Resource
     private HopeImagebarMapper hopeImagebarMapper;
     @Resource
     private HopeModuleMapper hopeModuleMapper;
+    @Value("${img.local.path}")
+    private String imgLoaclPath;
     /**
     * 功能描述:查询头图
      * @param aamid
@@ -56,7 +62,8 @@ public class HopeImagebarServiceImpl implements HopeImagebarService {
                 return new BaseResponse<>(HopePrivRequestEnum.odeptid.getReturnCode(), null, HopePrivRequestEnum.odeptid.getMsg());
        // }
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
+        log.info("requestServerName {} requestServerPort {}", request.getServerName(),request.getServerPort());
         List<HopeImagebar> list= hopeImagebarMapper.queryHopeImagebar(aamid,deptid,odeptid);
 
         if(list!=null && list.size()!=0){
@@ -67,13 +74,32 @@ public class HopeImagebarServiceImpl implements HopeImagebarService {
                     if(hopeImagebar.getEndtime().after(date)){
                         if(null!=hopeImagebar.getModuleid()){
                             String iUrl= hopeModuleMapper.queryUrlBymoduleids(aamid,deptid,odeptid,hopeImagebar.getModuleid());
+
+
                             if(!StringUtils.isEmpty(iUrl)){
+                                try {
+                                    iUrl=  java.net.URLDecoder.decode(iUrl,"utf-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
                                 hopeImagebar.setImagebarurl(iUrl);
-                                hopeImagebar.setIcon(webUrlq+hopeImagebar.getIcon());
+                                String icon = hopeImagebar.getIcon();
+                                try {
+                                    icon=java.net.URLDecoder.decode(icon,"utf-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                hopeImagebar.setIcon(webUrlq+icon);
                                 relist.add(hopeImagebar);
                             }
                         }else if(null==hopeImagebar.getModuleid()){
-                            hopeImagebar.setIcon(webUrlq+hopeImagebar.getIcon());
+                            String icon = hopeImagebar.getIcon();
+                            try {
+                                icon=java.net.URLDecoder.decode(icon,"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            hopeImagebar.setIcon(webUrlq+icon);
                             relist.add(hopeImagebar);
                         }
 
@@ -82,14 +108,31 @@ public class HopeImagebarServiceImpl implements HopeImagebarService {
                    if((hopeImagebar.getStarttime().before(date) || hopeImagebar.getStarttime().compareTo(date)==0) && hopeImagebar.getEndtime().after(date)){
                        if(null!=hopeImagebar.getModuleid()){
                            String iUrl= hopeModuleMapper.queryUrlBymoduleids(aamid,deptid,odeptid,hopeImagebar.getModuleid());
+                           try {
+                               iUrl=  java.net.URLDecoder.decode(iUrl,"utf-8");
+                           } catch (UnsupportedEncodingException e) {
+                               e.printStackTrace();
+                           }
                            if(!StringUtils.isEmpty(iUrl)){
                                hopeImagebar.setImagebarurl(iUrl);
-                               hopeImagebar.setIcon(webUrlq+hopeImagebar.getIcon());
+                               String icon = hopeImagebar.getIcon();
+                               try {
+                                   icon=java.net.URLDecoder.decode(icon,"utf-8");
+                               } catch (UnsupportedEncodingException e) {
+                                   e.printStackTrace();
+                               }
+                               hopeImagebar.setIcon(webUrlq+icon);
                                relist.add(hopeImagebar);
                            }
 
                        }else if(null==hopeImagebar.getModuleid()){
-                           hopeImagebar.setIcon(webUrlq+hopeImagebar.getIcon());
+                           String icon = hopeImagebar.getIcon();
+                           try {
+                               icon=java.net.URLDecoder.decode(icon,"utf-8");
+                           } catch (UnsupportedEncodingException e) {
+                               e.printStackTrace();
+                           }
+                           hopeImagebar.setIcon(webUrlq+icon);
                            relist.add(hopeImagebar);
                        }
 

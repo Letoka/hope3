@@ -28,7 +28,7 @@ public interface HopeActicityMapper {
     List<HopeActicity> queryWatchActivity(JSONObject jsonObject);
     /*@Select("SELECT hc.* FROM hopeacticity hc INNER JOIN\n" +
             "(SELECT MAX(timeori) AS timeori FROM hopeacticity ) b ON hc.timeori = b.timeori")*/
-    HopeActicity queryLatestActivity();
+    List<HopeActicity> queryLatestActivity();
     /*@Select("SELECT * FROM hopeacticity ORDER BY timeori DESC")*/
     List<HopeActicity> getHopeActivitys();
     /*@Select("SELECT hc.* FROM hopeacticity hc  INNER JOIN\n" +
@@ -69,4 +69,6 @@ public interface HopeActicityMapper {
         "(SELECT keyname,contentclass,contentid,weight FROM hopesearchkey WHERE keyname LIKE CONCAT('%',#{name},'%') AND contentclass=1 ) b ON b.contentid=ha.activityid\n" +
         "WHERE ha.activitytype=0 AND ha.showed=1 AND ha.textclass =#{textclass} ORDER BY weight DESC")*/
     List<HopeActicity> searchActiciByKeyandClass(String name, String aamid, String deptid, String odeptid,Integer textclass);
+
+    List<Integer> queryActivityClass();
 }

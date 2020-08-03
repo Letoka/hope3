@@ -35,7 +35,7 @@ public interface HopeUserFavorMapper {
 //@Update("UPDATE hopeuserfavor SET modulesequence = #{modulesequence} WHERE aamid = #{aamid} AND moduleid = #{moduleid} AND favortype = #{favortype}")
     int updateHopeUserFavor(HopeUserFavor hopeUserFavor2);
   // @Select("SELECT favorid FROM hopeuserfavor WHERE aamid = #{aamid} AND moduleid = #{moduleid} AND favortype = 0\n")
-    HopeUserFavor selectWatchModule(HopeUserFavor hopeUserFavor);
+  Integer selectWatchModule(HopeUserFavor hopeUserFavor);
    // @Select("SELECT COUNT(*) FROM hopeuserfavor h WHERE aamid = #{aamid}  AND activityid = #{activityid} AND favortype = 1\n")
     Integer checkShoucang( String aamid,Integer activityid);
   // @Select("SELECT MAX(modulesequence) FROM hopeuserfavor WHERE favortype = 0\n")

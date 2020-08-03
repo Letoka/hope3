@@ -27,4 +27,8 @@ public interface HopeSearchHistoryMapper {
     List<HopeSearchHistory> queryHotSearch(HopeSearchHistory hopeSearchHistory);
 
     void delSearchRecord(JSONArray jsonArray,String aamid);
+
+    List<Integer> querySearchHistory(HopeSearchHistory hopeSearchHistory);
+
+    void deleteByAamidAndText(HopeSearchHistory hopeSearchHistory);
 }

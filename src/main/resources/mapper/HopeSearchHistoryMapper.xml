@@ -17,21 +17,28 @@
     where searchhistoryid = #{searchhistoryid,jdbcType=INTEGER}
   </select>
   <select id="queryHotSearch" resultType="com.icbc.zsyw.hope3.dto.HopeSearchHistory"  >
-   SELECT searchtext,COUNT(*) as hotSearchcount FROM hopesearchhistory GROUP BY searchtext ORDER BY hotSearchcount DESC
+   SELECT searchtext,COUNT(*) as hotSearchcount FROM hopesearchhistory_h GROUP BY searchtext ORDER BY hotSearchcount DESC
+  </select>
+  <select id="querySearchHistory" resultType="java.lang.Integer"  parameterType="com.icbc.zsyw.hope3.dto.HopeSearchHistory">
+  SELECT searchhistoryid FROM hopesearchhistory WHERE aamid = #{aamid,jdbcType=VARCHAR} AND searchtext = #{searchtext,jdbcType=VARCHAR}
   </select>
   <select id="querySearchRecord" resultType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" >
 SELECT searchtext FROM hopesearchhistory WHERE aamid = #{aamid,jdbcType=VARCHAR} ORDER BY logtime DESC
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from hopesearchhistory
-    where searchhistoryid = #{searchhistoryid,jdbcType=INTEGER}
+    where  searchhistoryid = #{searchhistoryid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByAamidAndText" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" >
+    delete from hopesearchhistory
+    where aamid = #{aamid,jdbcType=VARCHAR} and searchtext = #{searchtext,jdbcType=VARCHAR}
   </delete>
   <delete id="delSearchRecord" parameterType="com.alibaba.fastjson.JSONObject" >
     delete from hopesearchhistory
     <where>
       searchtext in <foreach collection="jsonArray" item="item" index="index"
-                     open="(" separator="," close=")">#{item}</foreach>
-      and aamid = #{aamid}
+                     open="(" separator="," close=")">#{item,jdbcType=VARCHAR}</foreach>
+      and aamid = #{aamid,jdbcType=VARCHAR}
     </where>
   </delete>
   <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeSearchHistory" >

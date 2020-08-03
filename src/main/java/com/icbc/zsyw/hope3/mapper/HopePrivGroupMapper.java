@@ -13,4 +13,6 @@ public interface HopePrivGroupMapper {
     int insertSelective(HopePrivGroup record);
 //@Select("SELECT privgroupid FROM hopeprivgroup WHERE aamid = #{aamid} OR deptid =#{deptid} OR odeptid = #{odeptid} GROUP BY privgroupid")
     List<String> queryPrivgroupid(String aamid, String deptid, String odeptid);
+
+    List<String> queryHopePrivgroup(String aamid, String deptid, String odeptid);
 }

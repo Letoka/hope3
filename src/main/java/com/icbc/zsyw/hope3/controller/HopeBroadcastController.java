@@ -6,6 +6,7 @@ import com.icbc.zsyw.hope3.dto.*;
 import com.icbc.zsyw.hope3.impl.HopeBroadcastServiceImpl;
 import com.icbc.zsyw.hope3.service.HopeBroadcastService;
 
+import com.icbc.zsyw.hope3.util.FileToHtmlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -45,12 +47,12 @@ public class HopeBroadcastController {
 
     @RequestMapping(path = {"/hello"},method = RequestMethod.POST)
     public HopeBroadcast checkUserSex(HttpServletRequest request){
-      float s = 1f/3f;
-         float ss = 0.33333334f;
-        float ss1 = 0.3333337f;
-
-
-return null;
+        try {
+         //   FileToHtmlUtil.Word2003ToHtml();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -63,6 +65,13 @@ return null;
      */
     @RequestMapping(path = {"/helloword"},method = RequestMethod.POST)
     public Map<String,Object> helloword(HttpServletRequest request){
+        String lll ="";
+        try {
+           lll = java.net.URLDecoder.decode("packagePath我是sss","utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        System.out.println(lll);
        /* String name = request.getParameter("name");
         String classtype = request.getParameter("classtype");
         System.out.println(name);
@@ -119,9 +128,9 @@ return null;
 
     @RequestMapping(path = {"/queryHopeBroadcast"},method = RequestMethod.POST)
     public BaseResponse<List<HopeBroadcast>> queryHopeBroadcast(HttpServletRequest request, @RequestBody HopeviewBroadcastPriv hopeviewBroadcastPriv){
-     //   log.info("queryHopeBroadcastStart hopeviewBroadcastPriv:"+JSON.toJSONString(hopeviewBroadcastPriv));
+        log.info("queryHopeBroadcastStart hopeviewBroadcastPriv:"+JSON.toJSONString(hopeviewBroadcastPriv));
         BaseResponse<List<HopeBroadcast>> response = hopeBroadcastService.queryHopeBroadcast(hopeviewBroadcastPriv.getAamid(),hopeviewBroadcastPriv.getDeptid(),hopeviewBroadcastPriv.getOdeptid());
-      //  log.info("queryHopeBroadcastEnd Result:"+ JSON.toJSONString(response));
+        log.info("queryHopeBroadcastEnd Result:"+ JSON.toJSONString(response));
         return response;
 
     }
@@ -135,9 +144,9 @@ return null;
 */
     @RequestMapping(path = {"/queryHopeBroadcastDetail"},method = RequestMethod.POST)
     public BaseResponse<List<HopeBroadcastServiceImpl.BroadcastNameResult>> queryHopeBroadcastDetail(HttpServletRequest request, @RequestBody HopeviewBroadcastPriv hopeviewBroadcastPriv){
-      //  log.info("queryHopeBroadcastDetailStart hopeviewBroadcastPriv:"+JSON.toJSONString(hopeviewBroadcastPriv));
+       log.info("queryHopeBroadcastDetailStart hopeviewBroadcastPriv:"+JSON.toJSONString(hopeviewBroadcastPriv));
         BaseResponse<List<HopeBroadcastServiceImpl.BroadcastNameResult>> response = hopeBroadcastService.queryHopeBroadcastDetail(hopeviewBroadcastPriv.getAamid(),hopeviewBroadcastPriv.getDeptid(),hopeviewBroadcastPriv.getOdeptid());
-      //  log.info("queryHopeBroadcastDetailEnd Result:"+JSON.toJSONString(response));
+       log.info("queryHopeBroadcastDetailEnd Result:"+JSON.toJSONString(response));
         return response;
 
     }

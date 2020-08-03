@@ -8,6 +8,9 @@
     <result column="deptid" property="deptid" jdbcType="VARCHAR" />
     <result column="odeptid" property="odeptid" jdbcType="VARCHAR" />
   </resultMap>
+  <select id="queryHopePrivgroup" resultType="java.lang.String"  >
+ SELECT privgroupid FROM hopeprivgroup WHERE #{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR}
+  </select>
   <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopePrivGroup" >
     insert into hopeprivgroup (privgroupid, privtype, aamid, 
       deptid, odeptid)

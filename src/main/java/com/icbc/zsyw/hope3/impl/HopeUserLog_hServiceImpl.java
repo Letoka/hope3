@@ -1,10 +1,7 @@
 package com.icbc.zsyw.hope3.impl;
 
 import com.icbc.zsyw.hope3.common.BaseResponse;
-import com.icbc.zsyw.hope3.dto.HopeBroadcast;
-import com.icbc.zsyw.hope3.dto.HopeUserHistory;
-import com.icbc.zsyw.hope3.dto.HopeUserLog;
-import com.icbc.zsyw.hope3.dto.HopeUserLog_h;
+import com.icbc.zsyw.hope3.dto.*;
 import com.icbc.zsyw.hope3.enums.HopeModuleRequestEnum;
 import com.icbc.zsyw.hope3.enums.HopePrivRequestEnum;
 import com.icbc.zsyw.hope3.enums.HopeUserFavorRequestEnum;
@@ -12,6 +9,7 @@ import com.icbc.zsyw.hope3.enums.HopeUserLog_hEnum;
 import com.icbc.zsyw.hope3.mapper.HopeUserHistoryMapper;
 import com.icbc.zsyw.hope3.mapper.HopeUserLogMapper;
 import com.icbc.zsyw.hope3.mapper.HopeUserLog_hMapper;
+import com.icbc.zsyw.hope3.mapper.HopeViewTimesMapper;
 import com.icbc.zsyw.hope3.service.HopeUserLog_hService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -39,6 +37,8 @@ public class HopeUserLog_hServiceImpl implements HopeUserLog_hService {
     private HopeUserHistoryMapper hopeUserHistoryMapper;
     @Resource
     private HopeUserLog_hMapper hopeUserLog_hMapper;
+    @Resource
+    private HopeViewTimesMapper hopeViewTimesMapper;
     /**
     * 功能描述:查询视图访问量
      * @param hopeUserLog_h
@@ -85,13 +85,25 @@ public class HopeUserLog_hServiceImpl implements HopeUserLog_hService {
         hopeUserLog_h.setLogtime(hopeUserLog.getLogtime());
         hopeUserLog_h.setModuleid(hopeUserLog.getModuleid());
         hopeUserLog_hMapper.insert(hopeUserLog_h);
+        //新增hopeviewtimes表
+        Integer vTimes = hopeViewTimesMapper.queryTimeByaaAndmoid(hopeUserLog.getAamid(),hopeUserLog.getModuleid());
+        if(vTimes==null){
+            HopeViewTimes hopeViewTimes = new HopeViewTimes();
+            hopeViewTimes.setAamid(hopeUserLog.getAamid());
+            hopeViewTimes.setLastviewtime(hopeUserLog.getLogtime());
+            hopeViewTimes.setModuleid(hopeUserLog.getModuleid());
+            hopeViewTimes.setViewtimes(1);
+            hopeViewTimesMapper.insert(hopeViewTimes);
+        }
+        Integer reVtimes=vTimes+1;
+        hopeViewTimesMapper.updateViewTimes(reVtimes,hopeUserLog.getLogtime(),hopeUserLog.getAamid(),hopeUserLog.getModuleid());
   //新增我的足迹
 //查询该用户的足迹，如果足迹超过20条，则删除最早的足迹
         List<HopeUserHistory>userHistories= hopeUserHistoryMapper.queryFootByAamid(hopeUserLog.getAamid());
         if(userHistories!=null&&userHistories.size()>19){
             hopeUserHistoryMapper.deleteMinFoot(hopeUserLog.getAamid(),userHistories.get(0).getLogtime());
         }
-         List<HopeUserHistory>hopeUserHistories=   hopeUserHistoryMapper.queryByaamidAndModuleid(hopeUserLog.getAamid(),hopeUserLog.getModuleid());
+         List<Integer>hopeUserHistories=   hopeUserHistoryMapper.queryByaamidAndModuleid(hopeUserLog.getAamid(),hopeUserLog.getModuleid());
          if(hopeUserHistories!=null || hopeUserHistories.size()!=0){
              hopeUserHistoryMapper.updateUserHistory(hopeUserLog.getAamid(),hopeUserLog.getModuleid(),hopeUserLog.getLogtime());
          }

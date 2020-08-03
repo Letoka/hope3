@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeUserApplyMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeUserApply" >
+    <id column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <id column="moduleid" property="moduleid" jdbcType="INTEGER" />
+    <id column="logtime" property="logtime" jdbcType="TIMESTAMP" />
+    <result column="message" property="message" jdbcType="VARCHAR" />
+    <result column="privinfo" property="privinfo" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    aamid, moduleid, logtime, message, privinfo
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.icbc.zsyw.hope3.dto.HopeUserApplyKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopeuserapply
+    where aamid = #{aamid,jdbcType=VARCHAR}
+      and moduleid = #{moduleid,jdbcType=INTEGER}
+      and logtime = #{logtime,jdbcType=TIMESTAMP}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeUserApplyKey" >
+    delete from hopeuserapply
+    where aamid = #{aamid,jdbcType=VARCHAR}
+      and moduleid = #{moduleid,jdbcType=INTEGER}
+      and logtime = #{logtime,jdbcType=TIMESTAMP}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeUserApply" >
+    insert into hopeuserapply (aamid, moduleid, logtime, 
+      message, privinfo)
+    values (#{aamid,jdbcType=VARCHAR}, #{moduleid,jdbcType=INTEGER}, #{logtime,jdbcType=TIMESTAMP}, 
+      #{message,jdbcType=VARCHAR}, #{privinfo,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserApply" >
+    insert into hopeuserapply
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="moduleid != null" >
+        moduleid,
+      </if>
+      <if test="logtime != null" >
+        logtime,
+      </if>
+      <if test="message != null" >
+        message,
+      </if>
+      <if test="privinfo != null" >
+        privinfo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="logtime != null" >
+        #{logtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="message != null" >
+        #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="privinfo != null" >
+        #{privinfo,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserApply" >
+    update hopeuserapply
+    <set >
+      <if test="message != null" >
+        message = #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="privinfo != null" >
+        privinfo = #{privinfo,jdbcType=INTEGER},
+      </if>
+    </set>
+    where aamid = #{aamid,jdbcType=VARCHAR}
+      and moduleid = #{moduleid,jdbcType=INTEGER}
+      and logtime = #{logtime,jdbcType=TIMESTAMP}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeUserApply" >
+    update hopeuserapply
+    set message = #{message,jdbcType=VARCHAR},
+      privinfo = #{privinfo,jdbcType=INTEGER}
+    where aamid = #{aamid,jdbcType=VARCHAR}
+      and moduleid = #{moduleid,jdbcType=INTEGER}
+      and logtime = #{logtime,jdbcType=TIMESTAMP}
+  </update>
+</mapper>

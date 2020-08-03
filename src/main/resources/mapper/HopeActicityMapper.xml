@@ -52,7 +52,7 @@
   </select>
   <select id="queryLatestActivity" resultMap="BaseResultMap"  >
  SELECT hc.* FROM hopeacticity hc INNER JOIN
-            (SELECT MAX(starttime) AS starttime FROM hopeacticity ) b ON hc.starttime = b.starttime
+            (SELECT MAX(starttime) AS starttime FROM hopeacticity ) b ON hc.starttime = b.starttime ORDER BY hc.activityid ASC
   </select>
   <select id="getHopeActivitys" resultMap="BaseResultMap"  >
  SELECT * FROM hopeacticity ORDER BY starttime DESC
@@ -104,6 +104,9 @@ c.activitytype=0 AND
          SELECT ha.activityid,ha.textname,ha.textpath,ha.privgroupid,ha.activitytype,ha.showed,ha.starttime,ha.endtime,ha.textclass,b.keyname,b.weight FROM hopeacticity ha INNER JOIN
         (SELECT keyname,contentclass,contentid,weight FROM hopesearchkey WHERE keyname LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%') AND contentclass=1 ) b ON b.contentid=ha.activityid
         WHERE ha.activitytype=1 AND ha.showed=1 AND ha.textclass =#{textclass,jdbcType=INTEGER} ORDER BY weight DESC
+  </select>
+    <select id="queryActivityClass" resultType="java.lang.Integer"  >
+SELECT textclass FROM hopeacticity GROUP BY textclass
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from hopeacticity

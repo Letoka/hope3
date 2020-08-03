@@ -20,7 +20,7 @@ public interface HopeUserHistoryMapper {
 
     int updateByPrimaryKey(HopeUserHistory record);
 
-    List<HopeUserHistory> queryByaamidAndModuleid(String aamid, Integer moduleid);
+    List<Integer> queryByaamidAndModuleid(String aamid, Integer moduleid);
 
     void updateUserHistory(String aamid, Integer moduleid, Date logtime);
 

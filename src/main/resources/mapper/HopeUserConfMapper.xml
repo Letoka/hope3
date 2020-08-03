@@ -23,7 +23,7 @@
   </select>
   <select id="queryByAamidAndName" resultMap="BaseResultMap" parameterType="com.icbc.zsyw.hope3.dto.HopeUserConf" >
     select
-    <include refid="Base_Column_List" />
+   confid,confvalue
     from hopeuserconf
     where aamid = #{aamid,jdbcType=VARCHAR} and setname=#{setname,jdbcType=VARCHAR}
   </select>

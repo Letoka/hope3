@@ -25,8 +25,7 @@ import java.util.List;
  * @Version V1.0
  **/
 @Service
-public class
-HopeBroadcastServiceImpl implements HopeBroadcastService {
+public class HopeBroadcastServiceImpl implements HopeBroadcastService {
     @Resource
     private HopeBroadcastMapper hopeBroadcastMapper;
     /**

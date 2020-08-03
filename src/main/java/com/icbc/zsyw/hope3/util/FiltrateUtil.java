@@ -1,14 +1,13 @@
 package com.icbc.zsyw.hope3.util;
 
 import com.icbc.zsyw.hope3.common.BaseResponse;
-import com.icbc.zsyw.hope3.dto.HopeModule;
-import com.icbc.zsyw.hope3.dto.HopeSearchHistory;
-import com.icbc.zsyw.hope3.dto.HopeSearchHistory_h;
+import com.icbc.zsyw.hope3.dto.*;
 import com.icbc.zsyw.hope3.enums.EmailReqEnum;
 import com.icbc.zsyw.hope3.enums.UserMobileReqEnum;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -173,5 +172,63 @@ public class FiltrateUtil {
             return new BaseResponse<>(UserMobileReqEnum.officemobileNumStyle.getReturnCode(),UserMobileReqEnum.officemobileNumStyle.getMsg());
         }
         return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
+    }
+    //视图选择概率算法
+    public static List<HopeRecommend> getRecommedMoudle(float mWeight, List<HopeRecommend>midList){
+        float mProb = mWeight/10;
+        List<Integer>iList = new ArrayList<Integer>();
+        for(float i = 0;i<10;i++){
+            if(i<10f-mProb){
+                iList.add(3);
+            }else {
+                iList.add(7);
+            }
+        }
+       /* for(Integer integer:iList){
+            System.out.println(integer);
+        }*/
+        Random random = new Random();
+        Integer h = random.nextInt(10);
+        // System.out.println(h);
+        Integer re=iList.get(h);
+        if(re==7){
+            return midList;
+        }
+        return null;
+    }
+    //shortcutbar正序排序--冒泡排序算法
+    public static  List<HopeShortcutBar> sortShortcutbarSet(List<HopeShortcutBar> sList){
+
+        for(int i=0;i<sList.size()-1;i++)
+        {
+            for(int j=0;j<sList.size()-1-i;j++)
+            {
+                if(sList.get(j).getWeight()>sList.get(j+1).getWeight())
+                {
+                    HopeShortcutBar temp=sList.get(j);
+                    sList.set(j,sList.get(j+1));
+                    sList.set(j+1,temp);
+
+                }
+            }
+        }
+        return sList;
+    }
+    //module正序排序冒--泡排序算法
+    public static List<HopeModule> sortModule(List<HopeModule> sList) {
+        for(int i=0;i<sList.size()-1;i++)
+        {
+            for(int j=0;j<sList.size()-1-i;j++)
+            {
+                if(sList.get(j).getModuleid()>sList.get(j+1).getModuleid())
+                {
+                    HopeModule temp=sList.get(j);
+                    sList.set(j,sList.get(j+1));
+                    sList.set(j+1,temp);
+
+                }
+            }
+        }
+        return sList;
     }
 }

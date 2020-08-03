@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.icbc.zsyw.hope3.common.BaseResponse;
 import com.icbc.zsyw.hope3.dto.HopeSearchHistory;
+import com.icbc.zsyw.hope3.dto.HopeSearchHistory_h;
 import com.icbc.zsyw.hope3.enums.HopeModuleRequestEnum;
 import com.icbc.zsyw.hope3.enums.HopePrivRequestEnum;
 import com.icbc.zsyw.hope3.enums.HopeSearchhistoryReqEnum;
 import com.icbc.zsyw.hope3.mapper.HopeSearchHistoryMapper;
+import com.icbc.zsyw.hope3.mapper.HopeSearchHistory_hMapper;
 import com.icbc.zsyw.hope3.service.HopeSearchHistoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -30,6 +32,8 @@ import java.util.List;
 public class HopeSearchHistoryServiceImpl implements HopeSearchHistoryService {
     @Resource
     private HopeSearchHistoryMapper hopeSearchHistoryMapper;
+    @Resource
+    private HopeSearchHistory_hMapper hopeSearchHistory_hMapper;
     /**
     * 功能描述:搜索记录（如果多于10条取最近10条）
      * @param hopeSearchHistory
@@ -72,7 +76,17 @@ public class HopeSearchHistoryServiceImpl implements HopeSearchHistoryService {
         if(!checkresponse.getMessage().equals(BaseResponse.STATUS_HANDLER_SUCCESS)|| !checkresponse.getStatus().equals(BaseResponse.STATUS_HANDLE_SUCCESS)){
             return checkresponse;
         }
+        List<Integer>hList=hopeSearchHistoryMapper.querySearchHistory(hopeSearchHistory);
+        if(hList!=null&&hList.size()!=0){
+            hopeSearchHistoryMapper.deleteByAamidAndText(hopeSearchHistory);
+        }
         hopeSearchHistoryMapper.insert(hopeSearchHistory);
+        //同时入库hopesearchhistory_h表
+        HopeSearchHistory_h h = new HopeSearchHistory_h();
+        h.setAamid(hopeSearchHistory.getAamid());
+        h.setSearchtext(hopeSearchHistory.getSearchtext());
+        h.setLogtime(hopeSearchHistory.getLogtime());
+        hopeSearchHistory_hMapper.insert(h);
         return new BaseResponse(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
 /**

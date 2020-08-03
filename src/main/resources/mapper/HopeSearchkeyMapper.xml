@@ -21,7 +21,7 @@
    SELECT hx.* FROM
     (SELECT hm.moduleid,hm.modulename,hm.url,hm.useurltype,hm.icon,hm.image,hm.description,hl.contentclass,hl.weight,hl.keyname FROM hopemodule hm INNER JOIN
     (SELECT hs.keyname,hs.contentclass,hs.contentid,hs.weight FROM hopesearchkey hs WHERE hs.keyname LIKE  CONCAT('%',#{name,jdbcType=VARCHAR},'%') AND hs.contentclass=0) hl ON hl.contentid = hm.moduleid WHERE hm.enabled=1) hx INNER JOIN
-    (SELECT moduleid FROM hopeviewmodulepriv WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY moduleid) b ON hx.moduleid = b.moduleid  ORDER BY hx.weight DESC
+    (SELECT moduleid FROM hopeviewmodulepriv WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY moduleid) b ON hx.moduleid = b.moduleid
   </select>
   <select id="searchModuleByKeyNo" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.alibaba.fastjson.JSONObject" >
    SELECT hm.moduleid,hm.modulename,hm.url,hm.useurltype,hm.icon,hm.image,hm.description,hl.contentclass,hl.weight,hl.keyname FROM hopemodule hm INNER JOIN

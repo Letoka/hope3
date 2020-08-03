@@ -3,6 +3,8 @@ package com.icbc.zsyw.hope3.dto;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import java.util.Date;
+
 //@Entity
 public class HopeModule {
     //@Id
@@ -39,6 +41,16 @@ public class HopeModule {
     private Integer fangwenTel;
     @Transient//视图/文章分类区分
     private Integer contentclass;
+    @Transient//视图/文章分类区分
+    private Date footTime;
+
+    public Date getFootTime() {
+        return footTime;
+    }
+
+    public void setFootTime(Date footTime) {
+        this.footTime = footTime;
+    }
 
     public Integer getContentclass() {
         return contentclass;

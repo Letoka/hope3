@@ -27,34 +27,34 @@
   <select id="queryShortcutBarByAamid" resultType ="com.icbc.zsyw.hope3.dto.HopeShortcutBar" parameterType="com.alibaba.fastjson.JSONObject" >
     SELECT hs.shortcutbarname,hs.shortcut_image AS shortcutImage,hs.shortcutbardescript,hs.moduleid,b.weight FROM hopeshortcutbar hs INNER JOIN
        (SELECT shortcutbarname,weight FROM hopeshortcutbarseq WHERE aamid = #{aamid,jdbcType=VARCHAR}) b
-      ON hs.shortcutbarname = b.shortcutbarname ORDER BY b.weight ASC
+      ON hs.shortcutbarname = b.shortcutbarname
   </select>
   <select id="queryShortcutBarByDeptid" resultType ="com.icbc.zsyw.hope3.dto.HopeShortcutBar" parameterType="com.alibaba.fastjson.JSONObject" >
     SELECT hs.shortcutbarname,hs.shortcut_image AS shortcutImage,hs.shortcutbardescript,hs.moduleid,b.weight FROM hopeshortcutbar hs INNER JOIN
        (SELECT shortcutbarname,weight FROM hopeshortcutbarseq WHERE deptid = #{deptid,jdbcType=VARCHAR}) b
-      ON hs.shortcutbarname = b.shortcutbarname ORDER BY b.weight ASC
+      ON hs.shortcutbarname = b.shortcutbarname
   </select>
   <select id="queryShortcutBarByPrivtype" resultType ="com.icbc.zsyw.hope3.dto.HopeShortcutBar" parameterType="com.alibaba.fastjson.JSONObject" >
     SELECT hs.shortcutbarname,hs.shortcut_image AS shortcutImage,hs.shortcutbardescript,hs.moduleid,b.weight FROM hopeshortcutbar hs INNER JOIN
        (SELECT shortcutbarname,weight FROM hopeshortcutbarseq WHERE privtype = 4) b
-      ON hs.shortcutbarname = b.shortcutbarname ORDER BY b.weight ASC
+      ON hs.shortcutbarname = b.shortcutbarname
   </select>
   <select id="queryShortcutBarByOdeptid" resultType ="com.icbc.zsyw.hope3.dto.HopeShortcutBar" parameterType="com.alibaba.fastjson.JSONObject" >
     SELECT hs.shortcutbarname,hs.shortcut_image AS shortcutImage,hs.shortcutbardescript,hs.moduleid,b.weight FROM hopeshortcutbar hs INNER JOIN
        (SELECT shortcutbarname,weight FROM hopeshortcutbarseq WHERE odeptid = #{odeptid,jdbcType=VARCHAR}) b
-      ON hs.shortcutbarname = b.shortcutbarname ORDER BY b.weight ASC
+      ON hs.shortcutbarname = b.shortcutbarname
   </select>
   <select id="queryModuleByShortcutbar" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.alibaba.fastjson.JSONObject" >
    SELECT hm.moduleid,hm.modulename,hm.shortname,hm.description,hm.icon,hm.image,hm.modulegroupname,hm.url FROM hopemodule hm INNER JOIN
      (SELECT hs.moduleid FROM hopeshortcutbar hs INNER JOIN
     (SELECT moduleid FROM hopeviewmodulepriv WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid=#{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY moduleid) b ON hs.moduleid = b.moduleid
-     WHERE hs.shortcutbarname = #{shortcutbarname,jdbcType=VARCHAR} GROUP BY hs.moduleid) c ON c.moduleid = hm.moduleid WHERE hm.enabled = 1
+     WHERE hs.shortcutbarname = #{shortcutbarname,jdbcType=VARCHAR}) c ON c.moduleid = hm.moduleid WHERE hm.enabled = 1
   </select>
   <select id="queryByadoid" resultType="com.icbc.zsyw.hope3.dto.HopeShortcutBar" parameterType="com.alibaba.fastjson.JSONObject" >
   SELECT hs.shortcutbarname,hs.shortcut_image AS shortcutImage,hs.shortcutbardescript,hs.moduleid,c.weight FROM hopeshortcutbar hs INNER JOIN
 (SELECT hq.shortcutbarname,hq.weight,hq.privgroupid FROM hopeshortcutbarseq hq INNER JOIN
 (SELECT privgroupid FROM hopeprivgroup WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid=#{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY privgroupid) b ON b.privgroupid=hq.privgroupid) c
- ON hs.shortcutbarname = c.shortcutbarname ORDER BY c.weight ASC
+ ON hs.shortcutbarname = c.shortcutbarname
   </select>
   <delete id="deleteByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeShortcutBarKey" >
     delete from hopeshortcutbar

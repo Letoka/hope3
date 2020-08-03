@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -42,10 +43,11 @@ public class HopeactivityController {
     * @Date: 2020/6/2 15:08
     */
     @RequestMapping(path = {"/queryHopeActivity"},method = RequestMethod.POST)
-    public BaseResponse<List<HopeactivityServiceImpl.ActivityClass>> queryHopeActivity(HttpServletRequest request, @RequestBody JSONObject jsonObject){
-      //  log.info("queryHopeActivityStart hopePrivGroup {}", JSON.toJSONString(jsonObject));
+    public BaseResponse<List<HopeactivityServiceImpl.ActivityClass>> queryHopeActivity(HttpServletRequest request, @RequestBody JSONObject jsonObject, HttpServletResponse httpresponse){
+       // httpresponse.setHeader("Access-Control-Allow-Origin","*");
+        log.info("queryHopeActivityStart hopePrivGroup {}", JSON.toJSONString(jsonObject));
         BaseResponse<List<HopeactivityServiceImpl.ActivityClass>> response = hopeactivityService.queryHopeActivity(jsonObject);
-       // log.info("queryHopeActivityEnd Result:"+JSON.toJSONString(response));
+        log.info("queryHopeActivityEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -58,9 +60,9 @@ public class HopeactivityController {
     */
     @RequestMapping(path = {"/commendhopeActivity"},method = RequestMethod.POST)
     public BaseResponse<List<HopeactivityServiceImpl.ActivityClass>> commendhopeActivity(HttpServletRequest request, @RequestBody HopeActivityLog hopeActivityLog){
-        //log.info("commendhopeActivityStart hopeActivityLog:"+JSON.toJSONString(hopeActivityLog));
+        log.info("commendhopeActivityStart hopeActivityLog:"+JSON.toJSONString(hopeActivityLog));
         BaseResponse<List<HopeactivityServiceImpl.ActivityClass>> response = hopeactivityService.commendhopeActivity(hopeActivityLog);
-       // log.info("commendhopeActivityEnd Result:"+JSON.toJSONString(response));
+        log.info("commendhopeActivityEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -73,9 +75,9 @@ public class HopeactivityController {
     */
     @RequestMapping(path = {"/colletcthopeActivity"},method = RequestMethod.POST)
     public BaseResponse<List<HopeactivityServiceImpl.ActivityClass>> colletcthopeActivity(HttpServletRequest request, @RequestBody HopeUserFavor hopeUserFavor){
-      //  log.info("colletcthopeActivityStart hopeUserFavor:"+JSON.toJSONString(hopeUserFavor));
+        log.info("colletcthopeActivityStart hopeUserFavor:"+JSON.toJSONString(hopeUserFavor));
         BaseResponse<List<HopeactivityServiceImpl.ActivityClass>> response = hopeactivityService.colletcthopeActivity(hopeUserFavor);
-       // log.info("colletcthopeActivityEnd Result:"+JSON.toJSONString(response));
+        log.info("colletcthopeActivityEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -88,9 +90,9 @@ public class HopeactivityController {
     */
     @RequestMapping(path = {"/clickhopeActivity"},method = RequestMethod.POST)
     public BaseResponse<List<HopeactivityServiceImpl.ActivityClass>> clickhopeActivity(HttpServletRequest request, @RequestBody HopeActivityLog hopeActivityLog){
-       // log.info("clickhopeActivityStart hopeActivityLog:"+JSON.toJSONString(hopeActivityLog));
+        log.info("clickhopeActivityStart hopeActivityLog:"+JSON.toJSONString(hopeActivityLog));
         BaseResponse<List<HopeactivityServiceImpl.ActivityClass>> response = hopeactivityService.clickhopeActivity(hopeActivityLog);
-       // log.info("clickhopeActivityEnd Result:"+JSON.toJSONString(response));
+        log.info("clickhopeActivityEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -102,9 +104,9 @@ public class HopeactivityController {
     */
     @RequestMapping(path = {"/getHopeActivitys"},method = RequestMethod.POST)
     public BaseResponse<List<HopeActicity>> getHopeActivitys(HttpServletRequest request){
-       // log.info("getHopeActivitysStart");
+        log.info("getHopeActivitysStart");
         BaseResponse<List<HopeActicity>> response = hopeactivityService.getHopeActivitys();
-      //  log.info("getHopeActivitysEnd Result:"+JSON.toJSONString(response));
+        log.info("getHopeActivitysEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -116,9 +118,9 @@ public class HopeactivityController {
     */
     @RequestMapping(path = {"/deleteCollActivi"},method = RequestMethod.POST)
     public BaseResponse<Object> deleteCollActivi(HttpServletRequest request,@RequestBody HopeUserFavor hopeUserFavor){
-       // log.info("deleteCollActiviStart"+JSON.toJSONString(hopeUserFavor));
+        log.info("deleteCollActiviStart"+JSON.toJSONString(hopeUserFavor));
         BaseResponse<Object> response = hopeactivityService.deleteCollActivi(hopeUserFavor);
-       // log.info("deleteCollActiviEnd Result:"+JSON.toJSONString(response));
+        log.info("deleteCollActiviEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**

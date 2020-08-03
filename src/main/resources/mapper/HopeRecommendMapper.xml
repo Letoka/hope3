@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeRecommendMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeRecommend" >
+    <result column="moduleid" property="moduleid" jdbcType="INTEGER" />
+    <result column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="deptid" property="deptid" jdbcType="VARCHAR" />
+    <result column="odeptid" property="odeptid" jdbcType="VARCHAR" />
+    <result column="privgroupid" property="privgroupid" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="REAL" />
+  </resultMap>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeRecommend" >
+    insert into hoperecommend (moduleid, aamid, deptid, 
+      odeptid, privgroupid, weight
+      )
+    values (#{moduleid,jdbcType=INTEGER}, #{aamid,jdbcType=VARCHAR}, #{deptid,jdbcType=VARCHAR}, 
+      #{odeptid,jdbcType=VARCHAR}, #{privgroupid,jdbcType=VARCHAR}, #{weight,jdbcType=REAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeRecommend" >
+    insert into hoperecommend
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="moduleid != null" >
+        moduleid,
+      </if>
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="deptid != null" >
+        deptid,
+      </if>
+      <if test="odeptid != null" >
+        odeptid,
+      </if>
+      <if test="privgroupid != null" >
+        privgroupid,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="moduleid != null" >
+        #{moduleid,jdbcType=INTEGER},
+      </if>
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="odeptid != null" >
+        #{odeptid,jdbcType=VARCHAR},
+      </if>
+      <if test="privgroupid != null" >
+        #{privgroupid,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=REAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="selectAll" resultType ="com.icbc.zsyw.hope3.dto.HopeRecommend" >
+   SELECT moduleid,weight FROM hoperecommend
+  </select>
+</mapper>

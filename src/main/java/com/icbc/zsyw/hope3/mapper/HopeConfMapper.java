@@ -4,6 +4,8 @@ import com.icbc.zsyw.hope3.dto.HopeConf;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 
 public interface HopeConfMapper {
     int insert(HopeConf record);
@@ -13,4 +15,8 @@ public interface HopeConfMapper {
     String queryHopeConfUrl();
   //  @Select("SELECT value FROM hopeconf WHERE parameter = 'testuser'")
     String queryHopeConfUser();
+
+    String queryHopeConfNewhope();
+
+
 }

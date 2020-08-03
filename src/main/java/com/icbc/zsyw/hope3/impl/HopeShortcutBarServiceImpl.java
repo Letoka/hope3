@@ -10,6 +10,7 @@ import com.icbc.zsyw.hope3.enums.HopePrivRequestEnum;
 import com.icbc.zsyw.hope3.mapper.*;
 import com.icbc.zsyw.hope3.service.HopeShortcutBarService;
 import com.icbc.zsyw.hope3.util.FiltrateUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,6 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -40,6 +42,8 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
     private HopePrivGroupMapper hopePrivGroupMapper;
     @Resource
     private HopeModuleMapper hopeModuleMapper;
+    @Value("${img.local.path}")
+    private String imgLoaclPath;
 /**
 * 功能描述:查询三大块放的视图类别（如：分行，重点业务等等），其中第三块放置最新文章更新的广告，
  * 如果最新文章上下墙时间过期，则第三块仍显示原有的视图类别，
@@ -83,15 +87,47 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
         if(list==null || list.size()==0)
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
-       Set<String>shortcutBarSet=new HashSet<String>();
+        String webUrlq =imgLoaclPath;
+
+       List<HopeShortcutBar>shortList=new ArrayList<HopeShortcutBar>();
         for(HopeShortcutBar shortcutBar:list){
-            shortcutBar.setShortcutImage(webUrlq+shortcutBar.getShortcutImage());
-            shortcutBarSet.add(shortcutBar.getShortcutbarname());
+            String sImage = shortcutBar.getShortcutImage();
+            try {
+                sImage=java.net.URLDecoder.decode(sImage,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            shortcutBar.setShortcutImage(webUrlq+sImage);
+            //去重
+            if(shortList==null || shortList.size()==0){
+                HopeShortcutBar hopeShortcutBar = new HopeShortcutBar();
+                hopeShortcutBar.setShortcutbarname(shortcutBar.getShortcutbarname());
+                hopeShortcutBar.setWeight(shortcutBar.getWeight());
+                shortList.add(hopeShortcutBar);
+            }else {
+                int count =0;
+                for(HopeShortcutBar shortcutBar1:shortList){
+                        if(shortcutBar1.getShortcutbarname().equals(shortcutBar.getShortcutbarname())){
+                            break;
+                        }else {
+                            count++;
+                        }
+                }
+                if(count==shortList.size()){
+                    HopeShortcutBar hopeShortcutBar = new HopeShortcutBar();
+                    hopeShortcutBar.setShortcutbarname(shortcutBar.getShortcutbarname());
+                    hopeShortcutBar.setWeight(shortcutBar.getWeight());
+                    shortList.add(hopeShortcutBar);
+                }
+            }
+
         }
+        //排序
+        List<HopeShortcutBar>sortList=FiltrateUtil.sortShortcutbarSet(shortList);
         List<HopeShortcutBar>shortlist=new ArrayList<HopeShortcutBar>();
-        if(shortcutBarSet!=null&&shortcutBarSet.size()!=0){
-            for(String sname:shortcutBarSet){
+        if(sortList!=null&&sortList.size()!=0){
+            for(HopeShortcutBar shortcutBarS:sortList){
+                String sname = shortcutBarS.getShortcutbarname();
                 HopeShortcutBar hopeShortcutBar = new HopeShortcutBar();
                 List<Integer>list1=new ArrayList<Integer>();
                 Integer count = 0;
@@ -103,7 +139,13 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
                              hopeShortcutBar.setShortcutbarname(shortcutBar.getShortcutbarname());
                          }
                          if(StringUtils.isEmpty(hopeShortcutBar.getShortcutImage())){
-                             hopeShortcutBar.setShortcutImage(shortcutBar.getShortcutImage());
+                             String sImage = shortcutBar.getShortcutImage();
+                             try {
+                                 sImage=java.net.URLDecoder.decode(sImage,"utf-8");
+                             } catch (UnsupportedEncodingException e) {
+                                 e.printStackTrace();
+                             }
+                             hopeShortcutBar.setShortcutImage(sImage);
                          }
                          if(StringUtils.isEmpty(hopeShortcutBar.getShortcutbardescript())){
                              hopeShortcutBar.setShortcutbardescript(shortcutBar.getShortcutbardescript());
@@ -122,6 +164,13 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
                         String sUrl="";
                         if(!StringUtils.isEmpty(module.getUseurltype())&&module.getUseurltype()==1){
                             sUrl= FiltrateUtil.getModuleUrl(module.getUrl(),aamid,deptid);
+                        }else{
+                            sUrl = module.getUrl();
+                        }
+                        try {
+                            sUrl=java.net.URLDecoder.decode(sUrl,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
                         }
                         hopeShortcutBar.setShortModuleUrl(sUrl);
                     }
@@ -135,7 +184,11 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
         /*ShortcutBarSub shortcutBarSub = new ShortcutBarSub();
         shortcutBarSub.setList(shortlist);
         return new BaseResponse<ShortcutBarSub>(BaseResponse.STATUS_HANDLE_SUCCESS,shortcutBarSub,BaseResponse.STATUS_HANDLER_SUCCESS);*/
-        HopeActicity hopeActicity =  hopeActicityMapper.queryLatestActivity();
+        List<HopeActicity> hopeActicityS =  hopeActicityMapper.queryLatestActivity();
+        HopeActicity hopeActicity=null;
+        if(hopeActicityS!=null && hopeActicityS.size()!=0){
+            hopeActicity=hopeActicityS.get(hopeActicityS.size()-1);
+        }
         if(hopeActicity==null || hopeActicity.getShowed()==0){
             ShortcutBarSub shortcutBarSub = new ShortcutBarSub();
             shortcutBarSub.setList(shortlist);
@@ -147,24 +200,48 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
             shortcutBarSub.setList(shortlist);
             Date now = new Date();
             if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
-                hopeActicity.setImagename(webUrlq+hopeActicity.getImagename());
+                String sImage = hopeActicity.getImagename();
+                try {
+                    sImage=java.net.URLDecoder.decode(sImage,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                hopeActicity.setImagename(webUrlq+sImage);
                 shortcutBarSub.setHopeActicity(hopeActicity);
             }
             if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
                 if(hopeActicity.getEndtime().after(now)){
-                    hopeActicity.setImagename(webUrlq+hopeActicity.getImagename());
+                    String sImage = hopeActicity.getImagename();
+                    try {
+                        sImage=java.net.URLDecoder.decode(sImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    hopeActicity.setImagename(webUrlq+sImage);
                     shortcutBarSub.setHopeActicity(hopeActicity);
                 }
             }
             if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
                 if(hopeActicity.getStarttime().before(now)){
-                    hopeActicity.setImagename(webUrlq+hopeActicity.getImagename());
+                    String sImage = hopeActicity.getImagename();
+                    try {
+                        sImage=java.net.URLDecoder.decode(sImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    hopeActicity.setImagename(webUrlq+sImage);
                     shortcutBarSub.setHopeActicity(hopeActicity);
                 }
             }
             if(null!=hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
                 if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
-                    hopeActicity.setImagename(webUrlq+hopeActicity.getImagename());
+                    String sImage = hopeActicity.getImagename();
+                    try {
+                        sImage=java.net.URLDecoder.decode(sImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    hopeActicity.setImagename(webUrlq+sImage);
                     shortcutBarSub.setHopeActicity(hopeActicity);
                 }
             }
@@ -181,32 +258,59 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
                 ShortcutBarSub shortcutBarSub = new ShortcutBarSub();
                 shortcutBarSub.setList(shortlist);
                 for(String pr:prilist){
-                    if(hopeActicity.getPrivgroupid().equals(pr)){
-                        Date now = new Date();
-                        if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
-                            hopeActicity.setImagename(webUrlq+hopeActicity.getImagename());
-                            shortcutBarSub.setHopeActicity(hopeActicity);
-                        }
-                        if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
-                            if(hopeActicity.getEndtime().after(now)){
-                                hopeActicity.setImagename(webUrlq+hopeActicity.getImagename());
+                    if(!StringUtils.isEmpty(hopeActicity.getPrivgroupid())){
+                        if(hopeActicity.getPrivgroupid().equals(pr)){
+                            Date now = new Date();
+                            if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
+                                String sImage = hopeActicity.getImagename();
+                                try {
+                                    sImage=java.net.URLDecoder.decode(sImage,"utf-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                hopeActicity.setImagename(webUrlq+sImage);
                                 shortcutBarSub.setHopeActicity(hopeActicity);
                             }
-                        }
-                        if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
-                            if(hopeActicity.getStarttime().before(now)){
-                                hopeActicity.setImagename(webUrlq+hopeActicity.getImagename());
-                                shortcutBarSub.setHopeActicity(hopeActicity);
+                            if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
+                                if(hopeActicity.getEndtime().after(now)){
+                                    String sImage = hopeActicity.getImagename();
+                                    try {
+                                        sImage=java.net.URLDecoder.decode(sImage,"utf-8");
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+                                    hopeActicity.setImagename(webUrlq+sImage);
+                                    shortcutBarSub.setHopeActicity(hopeActicity);
+                                }
                             }
-                        }
-                        if(null!=hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
-                            if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
-                                hopeActicity.setImagename(webUrlq+hopeActicity.getImagename());
-                                shortcutBarSub.setHopeActicity(hopeActicity);
+                            if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
+                                if(hopeActicity.getStarttime().before(now)){
+                                    String sImage = hopeActicity.getImagename();
+                                    try {
+                                        sImage=java.net.URLDecoder.decode(sImage,"utf-8");
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+                                    hopeActicity.setImagename(webUrlq+sImage);
+                                    shortcutBarSub.setHopeActicity(hopeActicity);
+                                }
                             }
-                        }
+                            if(null!=hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
+                                if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
+                                    String sImage = hopeActicity.getImagename();
+                                    try {
+                                        sImage=java.net.URLDecoder.decode(sImage,"utf-8");
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+                                    hopeActicity.setImagename(webUrlq+sImage);
+                                    shortcutBarSub.setHopeActicity(hopeActicity);
+                                }
+                            }
 
+                        }
                     }
+
                 }
                 return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,shortcutBarSub,BaseResponse.STATUS_HANDLER_SUCCESS);
             }
@@ -215,18 +319,7 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
     }
 
     public static void main(String[] args) {
-        List<Integer> list = new ArrayList();
-        list.add(1);
-        list.add(1);
-        list.add(3);
-        list.add(3); list.add(3);
-        Set<Integer> set = new HashSet<Integer>();
-        for(Integer i:list){
-            set.add(i);
-        }
-        for(Integer i:set){
-            System.out.println(i);
-        }
+
 
     }
     /**

@@ -174,13 +174,13 @@
                enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false">
         </table>-->
-       <!--<table schema="mldb" tableName="hopeshortcutbarpriv"
+      <!-- <table schema="mldb" tableName="hopeshortcutbarpriv"
                domainObjectName="HopeShortcutBarPriv" enableCountByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false">
         </table>-->
-<!--<table schema="zsyw" tableName="hopeuserconf"
-               domainObjectName="HopeUserConf" enableCountByExample="false"
+        <!-- <table schema="zsyw" tableName="hopeuserstatus"
+               domainObjectName="HopeUserStatus" enableCountByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false">
         </table>-->

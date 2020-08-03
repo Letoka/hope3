@@ -43,9 +43,9 @@ public class HopeShortcutBarController {
     */
     @RequestMapping(path = {"/queryShortcutBar"},method = RequestMethod.POST)
     public BaseResponse<HopeShortcutBarServiceImpl.ShortcutBarSub> queryShortcutBar(HttpServletRequest request, @RequestBody HopeShortcutBarPriv hopeShortcutBarPriv){
-      //  log.info("queryShortcutBarStart hopeShortcutBarPriv:"+JSON.toJSONString(hopeShortcutBarPriv));
+        log.info("queryShortcutBarStart hopeShortcutBarPriv:"+JSON.toJSONString(hopeShortcutBarPriv));
         BaseResponse<HopeShortcutBarServiceImpl.ShortcutBarSub> response = hopeShortcutBarService.queryShortcutBar(hopeShortcutBarPriv);
-      //  log.info("queryShortcutBarEnd Result:"+ JSON.toJSONString(response));
+        log.info("queryShortcutBarEnd Result:"+ JSON.toJSONString(response));
         return response;
 
     }
@@ -59,9 +59,9 @@ public class HopeShortcutBarController {
     */
     @RequestMapping(path = {"/queryModuleByShortcutbar"},method = RequestMethod.POST)
     public BaseResponse<List<HopeModule>> queryModuleByShortcutbar(HttpServletRequest request, @RequestBody HopeShortcutBarPriv hopeShortcutBarPriv){
-       // log.info("queryModuleByShortcutbarStart hopeShortcutBarPriv:"+JSON.toJSONString(hopeShortcutBarPriv));
+        log.info("queryModuleByShortcutbarStart hopeShortcutBarPriv:"+JSON.toJSONString(hopeShortcutBarPriv));
         BaseResponse<List<HopeModule>> response = hopeShortcutBarService.queryModuleByShortcutbar(hopeShortcutBarPriv);
-      //  log.info("queryModuleByShortcutbarEnd Result:"+JSON.toJSONString(response));
+       log.info("queryModuleByShortcutbarEnd Result:"+JSON.toJSONString(response));
         return response;
 
     }

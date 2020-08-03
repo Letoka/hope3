@@ -53,9 +53,9 @@ public class HopeSearchHistory_hController {
      */
     @RequestMapping(path = {"/queryHotSearch"},method = RequestMethod.POST)
     public BaseResponse<List<HopeSearchHistory>>  queryHotSearch(HttpServletRequest request, @RequestBody HopeSearchHistory hopeSearchHistory){
-        //  log.info("queryHotSearchStart hopeSearchHistory_h:"+JSON.toJSONString(hopeSearchHistory_h));
+          log.info("queryHotSearchStart hopeSearchHistory_h:"+JSON.toJSONString(hopeSearchHistory));
         BaseResponse<List<HopeSearchHistory>> response = hopeSearchHistory_hService.queryHotSearch(hopeSearchHistory);
-        // log.info("queryHotSearchEnd Result:"+ JSON.toJSONString(response));
+         log.info("queryHotSearchEnd Result:"+ JSON.toJSONString(response));
         return response;
     }
 

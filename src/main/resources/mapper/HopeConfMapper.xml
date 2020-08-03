@@ -12,9 +12,13 @@
   <select id="queryHopeConfUrl" resultType="java.lang.String"  >
 SELECT value FROM hopeconf WHERE parameter = 'openimgurl'
   </select>
+  <select id="queryHopeConfNewhope" resultType="java.lang.String"  >
+SELECT value FROM hopeconf WHERE parameter = 'newhope'
+  </select>
   <select id="queryHopeConfUser" resultType="java.lang.String"  >
    SELECT value FROM hopeconf WHERE parameter = 'testuser'
   </select>
+
   <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeConf" >
     insert into hopeconf
     <trim prefix="(" suffix=")" suffixOverrides="," >

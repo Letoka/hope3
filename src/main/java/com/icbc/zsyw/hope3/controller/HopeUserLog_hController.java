@@ -40,9 +40,9 @@ public class HopeUserLog_hController {
     */
     @RequestMapping(path = {"/queryUserLog_h"},method = RequestMethod.POST)
     public BaseResponse<Integer> queryUserLog_h(HttpServletRequest request, @RequestBody HopeUserLog_h hopeUserLog_h){
-      //  log.info("queryUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog_h));
+        log.info("queryUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog_h));
         BaseResponse<Integer> response = hopeUserLog_hService.queryUserLog_h(hopeUserLog_h);
-      //  log.info("queryUserLog_hEnd Result:"+JSON.toJSONString(response));
+        log.info("queryUserLog_hEnd Result:"+JSON.toJSONString(response));
         return response;
 
     }
@@ -56,9 +56,9 @@ public class HopeUserLog_hController {
     */
     @RequestMapping(path = {"/insertUserLog_h"},method = RequestMethod.POST)
     public BaseResponse<Integer> insertUserLog_h(HttpServletRequest request, @RequestBody HopeUserLog hopeUserLog){
-      //  log.info("insertUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog));
+        log.info("insertUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog));
         BaseResponse<Integer> response = hopeUserLog_hService.insertUserLog_h(hopeUserLog);
-      //  log.info("insertUserLog_hEnd Result:"+ JSON.toJSONString(response));
+        log.info("insertUserLog_hEnd Result:"+ JSON.toJSONString(response));
         return response;
 
     }
@@ -72,9 +72,9 @@ public class HopeUserLog_hController {
     */
     @RequestMapping(path = {"/insertFourCh"},method = RequestMethod.POST)
     public BaseResponse<Integer> insertFourCh(HttpServletRequest request, @RequestBody HopeUserLog hopeUserLog){
-        //  log.info("insertUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog));
+          log.info("insertUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog));
         BaseResponse<Integer> response = hopeUserLog_hService.insertFourCh(hopeUserLog);
-        //  log.info("insertUserLog_hEnd Result:"+ JSON.toJSONString(response));
+          log.info("insertUserLog_hEnd Result:"+ JSON.toJSONString(response));
         return response;
 
     }

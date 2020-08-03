@@ -20,14 +20,15 @@
     where favorid = #{favorid,jdbcType=INTEGER}
   </select>
   <select id="queryWatchHopeModule" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
-  SELECT hm.* from hopemodule hm INNER JOIN
-  (SELECT moduleid FROM hopeuserfavor WHERE aamid = #{aamid,jdbcType=VARCHAR} AND favortype = #{favortype,jdbcType=INTEGER}  ORDER BY modulesequence DESC) b ON hm.moduleid = b.moduleid WHERE hm.enabled = 1
+SELECT hm.moduleid,hm.modulename,hm.shortname,hm.description,hm.icon,hm.image,hm.modulegroupname,hm.url,hm.useurltype,hm.modulestatus,
+b.modulesequence AS sequence from hopemodule hm INNER JOIN
+(SELECT moduleid,modulesequence FROM hopeuserfavor WHERE aamid = #{aamid,jdbcType=VARCHAR} AND favortype = #{favortype,jdbcType=INTEGER}) b ON hm.moduleid = b.moduleid
 
   </select>
   <select id="queryModuleByAamid" resultType="com.icbc.zsyw.hope3.dto.HopeUserFavor" parameterType="com.alibaba.fastjson.JSONObject" >
  SELECT hu.aamid,hu.moduleid,hu.modulesequence FROM hopeuserfavor hu WHERE aamid = #{aamid,jdbcType=VARCHAR} AND favortype = #{key,jdbcType=INTEGER}
   </select>
-  <select id="selectWatchModule" resultType="com.icbc.zsyw.hope3.dto.HopeUserFavor" parameterType="com.alibaba.fastjson.JSONObject" >
+  <select id="selectWatchModule" resultType="java.lang.Integer" parameterType="com.alibaba.fastjson.JSONObject" >
 SELECT favorid FROM hopeuserfavor WHERE aamid = #{aamid,jdbcType=VARCHAR} AND moduleid = #{moduleid,jdbcType=INTEGER} AND favortype = 0
   </select>
   <select id="checkShoucang" resultType="java.lang.Integer" parameterType="com.alibaba.fastjson.JSONObject" >

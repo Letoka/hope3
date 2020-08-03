@@ -79,7 +79,7 @@ public interface HopeModuleService {
 * @Author: qinwankang
 * @Date: 2020/5/22 9:35
 */
-    BaseResponse<HopeModuleServiceImpl.ModuleFavor> searchMoudleByGroup(HopeviewModulePriv hopeviewModulePriv);
+    BaseResponse<JSONObject> searchMoudleByGroup(HopeviewModulePriv hopeviewModulePriv);
 /**
 * 功能描述:首页点击视图返回url
  * @param jsonObject

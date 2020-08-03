@@ -9,6 +9,8 @@ import com.icbc.zsyw.hope3.enums.*;
 import com.icbc.zsyw.hope3.mapper.*;
 import com.icbc.zsyw.hope3.service.HopeModuleService;
 import com.icbc.zsyw.hope3.util.FiltrateUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,6 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -30,6 +33,7 @@ import java.util.function.Consumer;
  * @Version V1.0
  **/
 @Service
+@Slf4j
 public class HopeModuleServiceImpl implements HopeModuleService {
     @Resource
     private HopeModuleMapper hopeModuleMapper;
@@ -53,7 +57,10 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     private HopeUserLogMapper hopeUserLogMapper;
     @Resource
     private HopeUserConfMapper hopeUserConfMapper;
-
+    @Resource
+    private HopeViewTimesMapper hopeViewTimesMapper;
+    @Value("${img.local.path}")
+    private String imgLoaclPath;
 
     /**
      * 功能描述:我的关注模块(二级页面)全部视图，和queryModuleSub方法意义一样，现在被queryModuleSub替代
@@ -102,7 +109,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                 return new BaseResponse<>(HopeUserFavorRequestEnum.moduleid.getReturnCode(), null, HopeUserFavorRequestEnum.moduleid.getMsg());
 
        // }
-        HopeUserFavor hopeUserFavor1= hopeUserFavorMapper.selectWatchModule(hopeUserFavor);
+        Integer hopeUserFavor1= hopeUserFavorMapper.selectWatchModule(hopeUserFavor);
         if(hopeUserFavor1!=null)
             return new BaseResponse<Integer>(BaseResponse.DATA_STATUS_EXIST,BaseResponse.DATA_STATUS_EXISTER);
         Integer  maxSe =  hopeUserFavorMapper.selectModuleMaxSequence();
@@ -155,7 +162,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
             if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getModuleid()) && headCheckEnum.name().toString().equals("moduleid"))
                 return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
         }
-        HopeUserFavor hopeUserFavor1= hopeUserFavorMapper.selectWatchModule(hopeUserFavor);
+        Integer hopeUserFavor1= hopeUserFavorMapper.selectWatchModule(hopeUserFavor);
         if(hopeUserFavor1==null)
             return new BaseResponse<Integer>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
         hopeUserFavorMapper.deleteByAamAndModule(hopeUserFavor.getAamid(),hopeUserFavor.getModuleid());
@@ -212,17 +219,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     public BaseResponse<ModuleFavor> queryWatchHopeModule(HopeUserFavor hopeUserFavor) {
 
         //入参非空校验
-        for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getAamid()) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-        }
+       // for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
+            if (StringUtils.isEmpty(hopeUserFavor.getAamid()))
+                return new BaseResponse<>(HopeUserFavorRequestEnum.aamid.getReturnCode(), null, HopeUserFavorRequestEnum.aamid.getMsg());
+        //}
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         hopeUserFavor.setFavortype(UserFavorTypeEnum.shitu.getKey());
         List<HopeModule> list = hopeUserFavorMapper.queryWatchHopeModule(hopeUserFavor);
         if(list!=null && list.size()!=0){
             for(HopeModule hopeModule:list){
-                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
+                String icon = hopeModule.getIcon();
+                try {
+                    icon= java.net.URLDecoder.decode(icon,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                hopeModule.setIcon(webUrlq+icon);
             }
         }
         //String moduleStatus=   hopeModuleStatusMapper.selectByaamidAndtype(hopeUserFavor.getAamid(),HopeModuleTypeEnum.yihang.getKey());
@@ -255,12 +268,12 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         }else{
             if(list!=null && list.size()!=0){
                 ModuleFavor moduleFavor = new ModuleFavor();
-                moduleFavor.setMstatus(moduleStatus==1?true:false);
+                moduleFavor.setMstatus(moduleStatus==1?false:true);
                 moduleFavor.setList(list);
                 return new BaseResponse<ModuleFavor>(BaseResponse.STATUS_HANDLE_SUCCESS,moduleFavor,BaseResponse.STATUS_HANDLER_SUCCESS);
             }else{
                 ModuleFavor moduleFavor = new ModuleFavor();
-                moduleFavor.setMstatus(moduleStatus==1?true:false);
+                moduleFavor.setMstatus(moduleStatus==1?false:true);
                 moduleFavor.setList(new ArrayList());
                 return new BaseResponse<ModuleFavor>(BaseResponse.STATUS_HANDLE_SUCCESS,moduleFavor,BaseResponse.STATUS_HANDLER_SUCCESS);
             }
@@ -302,7 +315,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-        public BaseResponse<List<ModuleGroupSub>> queryMyFoot(HopeUserHistory hopeUserHistory) {
+    public BaseResponse<List<ModuleGroupSub>> queryMyFoot(HopeUserHistory hopeUserHistory) {
         //入参非空校验
         /*for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {*/
             if ( StringUtils.isEmpty(hopeUserHistory.getAamid()) )
@@ -316,7 +329,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         if(list==null || list.size()==0)
             return new BaseResponse<List<ModuleGroupSub>>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
      //   Set<HopeModule>moduleSet = new HashSet<>();
         //list去重
        // list =FiltrateUtil.quChongXianglin(list);
@@ -340,14 +353,32 @@ public class HopeModuleServiceImpl implements HopeModuleService {
 
     private List<ModuleGroupSub> getFootType(List<HopeModule> data, String aamid) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         List<ModuleGroupSub>sublist = new ArrayList<ModuleGroupSub>();
         for(HopeModule hopeModule: data){
                     ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
                     moduleGroupSub.setModuleid(hopeModule.getModuleid());
-                    moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
-                    moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
-                    moduleGroupSub.setUrl(hopeModule.getUrl());
+                    String icon = hopeModule.getIcon();
+            try {
+                icon=java.net.URLDecoder.decode(icon,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            moduleGroupSub.setIcon(webUrlq+icon);
+            String imageStr=hopeModule.getImage();
+            try {
+                imageStr=java.net.URLDecoder.decode(imageStr,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(imageStr));
+            String mUrl=hopeModule.getUrl();
+            try {
+                mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            moduleGroupSub.setUrl(mUrl);
                     moduleGroupSub.setModulename(hopeModule.getModulename());
                     moduleGroupSub.setShortname(hopeModule.getShortname());
                     moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
@@ -360,6 +391,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
                     moduleGroupSub.setText(hopeModule.getDescription());
                     moduleGroupSub.setTitle(hopeModule.getModulename());
+                    moduleGroupSub.setFootTime(hopeModule.getFootTime().getTime());
                     sublist.add(moduleGroupSub);
         }
         return sublist;
@@ -395,7 +427,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
 */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public BaseResponse<ModuleFavor> searchMoudleByGroup(HopeviewModulePriv hopeviewModulePriv) {
+    public BaseResponse<JSONObject> searchMoudleByGroup(HopeviewModulePriv hopeviewModulePriv) {
         //入参非空校验
         String aamid = hopeviewModulePriv.getAamid();
         String deptid = hopeviewModulePriv.getDeptid();
@@ -411,21 +443,84 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         List<HopeModule>hopeModuleList =   hopeModuleMapper.queryHopeModule(aamid,deptid,odeptid);
         if(hopeModuleList==null || hopeModuleList.size()==0)
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
-        List<ModuleGroup>relist = new ArrayList<ModuleGroup>();
-        String mStatus = hopeModuleStatusMapper.selectByaamidAndtype(aamid,HopeModuleTypeEnum.fenzu.getKey());
+        //视图排序
+        hopeModuleList=FiltrateUtil.sortModule(hopeModuleList);
+       Set<String>modulegroupSet=new HashSet<String>();
+       for(HopeModule m:hopeModuleList){
+           modulegroupSet.add(m.getModulegroupname());
+        }
+       if(modulegroupSet==null || modulegroupSet.size()==0){
+           return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+       }
+       //打乱视图顺序
+       // Collections.shuffle(hopeModuleList);
+     //   List<ModuleGroup>relist = new ArrayList<ModuleGroup>();
+      //  String mStatus = hopeModuleStatusMapper.selectByaamidAndtype(aamid,HopeModuleTypeEnum.fenzu.getKey());
         //String moduleStatus=   hopeModuleStatusMapper.selectByaamidAndtype(hopeUserFavor.getAamid(),HopeModuleTypeEnum.yihang.getKey());
         Integer mouleStautus= hopeUserConfMapper.selectByaamidAndName(aamid,HopeModuleTypeEnum.fenzu.getValue());
 
-        ModuleGroup moduleGroup1 = insertQuanbu(hopeModuleList,aamid,mStatus);
-        relist.add(moduleGroup1);
-        List<ModuleGroup>relist1 = insertViewByGroup(relist,hopeModuleList,aamid,mStatus);
+        List<ModuleGroupSub> moduleGroup1 = insertQuanbu(hopeModuleList,aamid,mouleStautus);
+
+        //relist.add(moduleGroup1);
+       // List<ModuleGroup>relist1 = insertViewByGroup(relist,hopeModuleList,aamid,mouleStautus);
        // String mStatus = hopeModuleStatusMapper.selectByaamidAndtype(aamid,HopeModuleTypeEnum.fenzu.getKey());
         //List<ModuleGroup>relist1 = checkModuleImage(relist1,mStatus);
-        BaseResponse<ModuleFavor>moduleFavorBaseResponse = checkModuelStauts(relist1,mouleStautus);
-        return moduleFavorBaseResponse;
+      //  BaseResponse<ModuleFavor>moduleFavorBaseResponse = checkModuelStauts(relist1,mouleStautus);
+        List<HopeViewTimes>reVlist=getHopeViewTimes();
+        List<HopeComments>dianzanList= getMoudledianZan(HopeCommentsEnum.dianzan.getKey());
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("allModules",moduleGroup1);
+        jsonObject.put("modulegroupSet",modulegroupSet);
+        jsonObject.put("reVlist",reVlist);
+        jsonObject.put("dianzanList",dianzanList);
+        if(!StringUtils.isEmpty(mouleStautus)){
+            jsonObject.put("mstatus",mouleStautus==1?false:true);
+        }else {
+            jsonObject.put("mstatus",true);
+        }
+        if(jsonObject.size()==0 || jsonObject==null){
+            return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+        }
+        return new BaseResponse<JSONObject>(BaseResponse.STATUS_HANDLE_SUCCESS,jsonObject,BaseResponse.STATUS_HANDLER_SUCCESS);
 
     }
-/**
+    //获取每个视图对应的访问量
+    private List<HopeViewTimes> getHopeViewTimes(){
+        List<HopeViewTimes>vList = hopeViewTimesMapper.queryViewTimesByGroup();
+        if(vList!=null&&vList.size()!=0){
+            List<HopeViewTimes>revList=new ArrayList<HopeViewTimes>();
+            Set<Integer>moduleSet = new HashSet<Integer>();
+            for(HopeViewTimes viewTimes:vList){
+                moduleSet.add(viewTimes.getModuleid());
+            }
+
+            if(moduleSet!=null&&moduleSet.size()!=0){
+                for(Integer mSet:moduleSet){
+                    Integer count=0;
+                    for(HopeViewTimes viewTimes:vList){
+                       if(mSet==viewTimes.getModuleid()){
+                           count+=viewTimes.getViewtimes();
+                       }
+                    }
+                    HopeViewTimes rVtime = new HopeViewTimes();
+                    rVtime.setModuleid(mSet);
+                    rVtime.setViewtimes(count);
+                    revList.add(rVtime);
+                }
+            }
+           return revList;
+        }
+        return null;
+    }
+    //获取每个视图对应的点赞量
+    private List<HopeComments> getMoudledianZan(Integer dianzan){
+        List<HopeComments>cList = hopeCommentsMapper.getDianzan(dianzan);
+        if(cList!=null&&cList.size()!=0){
+            return cList;
+        }
+        return null;
+    }
+    /**
 * 功能描述:首页点击视图返回url
  * @param jsonObject
  * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.util.List<com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.ModuleGroup>>
@@ -508,10 +603,16 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         /*if(hopeUserFavors==null || hopeUserFavors.size()==0)
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);*/
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         if(hopeUserFavors!=null && hopeUserFavors.size()!=0){
             for(HopeModule hopeModule:list){
-                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
+                String mIcon = hopeModule.getIcon();
+                try {
+                    mIcon= java.net.URLDecoder.decode(mIcon,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                hopeModule.setIcon(webUrlq+mIcon);
                 for(HopeUserFavor hopeUserFavor:hopeUserFavors){
                     if(hopeUserFavor.getModuleid()==hopeModule.getModuleid()){
                         hopeModule.setWstatus(ModuleStatusEnum.yiguanzhu.getKey());
@@ -538,6 +639,16 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     });
                 }
             });*/
+        }else {
+            for(HopeModule hopeModule:list){
+                String mIcon = hopeModule.getIcon();
+                try {
+                    mIcon= java.net.URLDecoder.decode(mIcon,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                hopeModule.setIcon(webUrlq+mIcon);
+            }
         }
         return new BaseResponse<List<HopeModule>>(BaseResponse.STATUS_HANDLE_SUCCESS,list,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
@@ -634,7 +745,20 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                 }
             }
             if(hflist!=null && hflist.size()!=0){
-                for(HopeUserFavor hopeUserFavor: hflist){
+                //====
+                hopeUserFavorMapper.deleteMoudelByAamidAndType(aamid,UserFavorTypeEnum.shitu.getKey());
+                for(int i = 0;i<addModuleArr.size();i++){
+                    HopeUserFavor hopeUserFavor = new HopeUserFavor();
+                    hopeUserFavor.setAamid(aamid);
+                    hopeUserFavor.setModuleid((Integer) addModuleArr.get(i));
+                    hopeUserFavor.setModulesequence(i);
+                    BaseResponse<Integer>addresponse=insertWatchHopeModuleV2(hopeUserFavor);
+                    if(!BaseResponse.STATUS_HANDLE_SUCCESS.equals(addresponse.getStatus()) || !BaseResponse.STATUS_HANDLER_SUCCESS.equals(addresponse.getMessage())){
+                        return addresponse;
+                    }
+                }
+                //==
+            /*    for(HopeUserFavor hopeUserFavor: hflist){
                     int count = 0;
                     for(int i = 0;i<addModuleArr.size();i++){
                        if(hopeUserFavor.getModuleid()==(Integer) addModuleArr.get(i) && hopeUserFavor.getAamid().equals(aamid)){
@@ -649,11 +773,12 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                        }else{
                            count++;
                        }
+
                     }
                     if(addModuleArr.size()==count){
                        hopeUserFavorMapper.deleteByAamAndModule(hopeUserFavor.getAamid(),hopeUserFavor.getModuleid());
                     }
-                }
+                }*/
             }
 
         }
@@ -798,14 +923,32 @@ public class HopeModuleServiceImpl implements HopeModuleService {
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
         }
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         List<ModuleGroupSub>sublist = new ArrayList<ModuleGroupSub>();
         for(HopeModule hopeModule:mlist){
             ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
             moduleGroupSub.setModuleid(hopeModule.getModuleid());
-            moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
-            moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
-            moduleGroupSub.setUrl(hopeModule.getUrl());
+            String mIcon = hopeModule.getIcon();
+            try {
+                mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            moduleGroupSub.setIcon(webUrlq+mIcon);
+            String mImage=hopeModule.getImage();
+            try {
+                mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(mImage));
+            String mUrl= hopeModule.getUrl();
+            try {
+                mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            moduleGroupSub.setUrl(mUrl);
             moduleGroupSub.setModulename(hopeModule.getModulename());
             moduleGroupSub.setShortname(hopeModule.getShortname());
             moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
@@ -896,7 +1039,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         //有权限
         List<HopeActicity>acticities= hopeActicityMapper.searchActiciByNameAndClass(aamid,deptid,odeptid,textclass,name);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         //上墙/下墙时间判断
         List<HopeActicity>reacticitiesNo = new ArrayList<HopeActicity>();
         if(acticities!=null && acticities.size()!=0){
@@ -915,11 +1058,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                     hopeActicity.setShoucangliang(shoucangliang);
                     //图片路径
-                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    String mImage = hopeActicity.getImagename();
+                    try {
+                        mImage = java.net.URLDecoder.decode(mImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    String webUrlend = webUrlq+mImage;
                     hopeActicity.setImagename(webUrlend);
                     //文章路径
-                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                    hopeActicity.setTextpath(textpath);
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName = java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                 //   String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     reacticitiesNo.add(hopeActicity);
                     continue;
                 }
@@ -937,11 +1092,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                         Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                         hopeActicity.setShoucangliang(shoucangliang);
                         //图片路径
-                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        String mImage = hopeActicity.getImagename();
+                        try {
+                            mImage = java.net.URLDecoder.decode(mImage,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        String webUrlend = webUrlq+mImage;
                         hopeActicity.setImagename(webUrlend);
                         //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                        hopeActicity.setTextpath(textpath);
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                      //  String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         reacticitiesNo.add(hopeActicity);
                         continue;
                     }
@@ -960,11 +1127,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                         Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                         hopeActicity.setShoucangliang(shoucangliang);
                         //图片路径
-                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        String mImage = hopeActicity.getImagename();
+                        try {
+                            mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        String webUrlend = webUrlq+mImage;
                         hopeActicity.setImagename(webUrlend);
                         //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                        hopeActicity.setTextpath(textpath);
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName =java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                     //   String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         reacticitiesNo.add(hopeActicity);
                         continue;
                     }
@@ -982,11 +1161,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                     hopeActicity.setShoucangliang(shoucangliang);
                     //图片路径
-                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    String mImage = hopeActicity.getImagename();
+                    try {
+                        mImage= java.net.URLDecoder.decode(mImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    String webUrlend = webUrlq+mImage;
                     hopeActicity.setImagename(webUrlend);
                     //文章路径
-                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                    hopeActicity.setTextpath(textpath);
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName= java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                   // String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     reacticitiesNo.add(hopeActicity);
                     continue;
                 }
@@ -1014,11 +1205,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                     hopeActicity.setShoucangliang(shoucangliang);
                     //图片路径
-                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    String mImage = hopeActicity.getImagename();
+                    try {
+                        mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    String webUrlend = webUrlq+mImage;
                     hopeActicity.setImagename(webUrlend);
                     //文章路径
-                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                    hopeActicity.setTextpath(textpath);
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName=java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                   // String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     reacticities1No.add(hopeActicity);
                     continue;
                 }
@@ -1036,11 +1239,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                         Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                         hopeActicity.setShoucangliang(shoucangliang);
                         //图片路径
-                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        String mImage = hopeActicity.getImagename();
+                        try {
+                            mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        String webUrlend = webUrlq+mImage;
                         hopeActicity.setImagename(webUrlend);
                         //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                        hopeActicity.setTextpath(textpath);
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                    //    String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         reacticities1No.add(hopeActicity);
                         continue;
                     }
@@ -1059,11 +1274,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                         Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                         hopeActicity.setShoucangliang(shoucangliang);
                         //图片路径
-                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        String mImage = hopeActicity.getImagename();
+                        try {
+                            mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        String webUrlend = webUrlq+mImage;
                         hopeActicity.setImagename(webUrlend);
                         //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                        hopeActicity.setTextpath(textpath);
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                       // String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         reacticities1No.add(hopeActicity);
                         continue;
                     }
@@ -1081,11 +1308,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                     hopeActicity.setShoucangliang(shoucangliang);
                     //图片路径
-                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    String mImage = hopeActicity.getImagename();
+                    try {
+                        mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    String webUrlend = webUrlq+mImage;
                     hopeActicity.setImagename(webUrlend);
                     //文章路径
-                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                    hopeActicity.setTextpath(textpath);
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName=java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                   // String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     reacticities1No.add(hopeActicity);
                     continue;
                 }
@@ -1171,7 +1410,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         //有权限
         List<HopeActicity>acticities= hopeActicityMapper.searchActiciByName(aamid,deptid,odeptid,name);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         //上墙/下墙时间判断
         List<HopeActicity>reacticitiesNo = new ArrayList<HopeActicity>();
         if(acticities!=null && acticities.size()!=0){
@@ -1190,11 +1429,24 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                     hopeActicity.setShoucangliang(shoucangliang);
                     //图片路径
-                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    String mImage = hopeActicity.getImagename();
+                    try {
+                        mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                    String webUrlend = webUrlq+mImage;
                     hopeActicity.setImagename(webUrlend);
                     //文章路径
-                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                    hopeActicity.setTextpath(textpath);
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName=java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                   // String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     hopeActicity.setQuanxianC(1);
                     reacticitiesNo.add(hopeActicity);
                     continue;
@@ -1213,11 +1465,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                         Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                         hopeActicity.setShoucangliang(shoucangliang);
                         //图片路径
-                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        String mImage = hopeActicity.getImagename();
+                        try {
+                            mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        String webUrlend = webUrlq+mImage;
                         hopeActicity.setImagename(webUrlend);
                         //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                        hopeActicity.setTextpath(textpath);
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                      //  String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         hopeActicity.setQuanxianC(1);
                         reacticitiesNo.add(hopeActicity);
                         continue;
@@ -1237,11 +1501,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                         Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                         hopeActicity.setShoucangliang(shoucangliang);
                         //图片路径
-                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        String mImage = hopeActicity.getImagename();
+                        try {
+                            mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        String webUrlend = webUrlq+mImage;
                         hopeActicity.setImagename(webUrlend);
                         //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                        hopeActicity.setTextpath(textpath);
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                       // String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         hopeActicity.setQuanxianC(1);
                         reacticitiesNo.add(hopeActicity);
                         continue;
@@ -1260,11 +1536,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                     hopeActicity.setShoucangliang(shoucangliang);
                     //图片路径
-                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    String mImage = hopeActicity.getImagename();
+                    try {
+                        mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    String webUrlend = webUrlq+mImage;
                     hopeActicity.setImagename(webUrlend);
                     //文章路径
-                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                    hopeActicity.setTextpath(textpath);
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName=java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    //String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     hopeActicity.setQuanxianC(1);
                     reacticitiesNo.add(hopeActicity);
                     continue;
@@ -1293,11 +1581,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                     hopeActicity.setShoucangliang(shoucangliang);
                     //图片路径
-                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    String mImage = hopeActicity.getImagename();
+                    try {
+                        mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    String webUrlend = webUrlq+mImage;
                     hopeActicity.setImagename(webUrlend);
                     //文章路径
-                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                    hopeActicity.setTextpath(textpath);
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName=java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    //String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     hopeActicity.setQuanxianC(1);
                     reacticities1No.add(hopeActicity);
                     continue;
@@ -1316,11 +1616,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                         Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                         hopeActicity.setShoucangliang(shoucangliang);
                         //图片路径
-                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        String mImage = hopeActicity.getImagename();
+                        try {
+                            mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        String webUrlend = webUrlq+mImage;
                         hopeActicity.setImagename(webUrlend);
                         //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                        hopeActicity.setTextpath(textpath);
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                      //  String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         hopeActicity.setQuanxianC(1);
                         reacticities1No.add(hopeActicity);
                         continue;
@@ -1340,11 +1652,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                         Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                         hopeActicity.setShoucangliang(shoucangliang);
                         //图片路径
-                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        String mImage = hopeActicity.getImagename();
+                        try {
+                            mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        String webUrlend = webUrlq+mImage;
                         hopeActicity.setImagename(webUrlend);
                         //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                        hopeActicity.setTextpath(textpath);
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                     //   String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         hopeActicity.setQuanxianC(1);
                         reacticities1No.add(hopeActicity);
                         continue;
@@ -1363,11 +1687,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
                     hopeActicity.setShoucangliang(shoucangliang);
                     //图片路径
-                    String webUrlend = webUrlq+hopeActicity.getImagename();
+                    String mImage = hopeActicity.getImagename();
+                    try {
+                        mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    String webUrlend = webUrlq+mImage;
                     hopeActicity.setImagename(webUrlend);
                     //文章路径
-                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                    hopeActicity.setTextpath(textpath);
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName=java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    //String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     hopeActicity.setQuanxianC(1);
                     reacticities1No.add(hopeActicity);
                     continue;
@@ -1433,14 +1769,32 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         List<HopeModule>moduleListNo=hopeModuleMapper.searchMoudleByName1No(name);
         //权限判断,url判断
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         if(moduleList!=null && moduleList.size()!=0 && moduleListNo!=null && moduleListNo.size()!=0){
             for(HopeModule hopeModule:moduleListNo){
-                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
-                hopeModule.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
+                String mIcon = hopeModule.getIcon();
+                try {
+                    mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                hopeModule.setIcon(webUrlq+mIcon);
+                String mImage = hopeModule.getImage();
+                try {
+                    mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                hopeModule.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(mImage));
                 hopeModule.setFangwenTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
                 if(null!=hopeModule.getUseurltype()&&hopeModule.getUseurltype()==1){
-                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(hopeModule.getUrl(),aamid,deptid));
+                    String mUrl = hopeModule.getUrl();
+                    try {
+                        mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(mUrl,aamid,deptid));
                 }
                 for(HopeModule hopeModule1:moduleList){
                     if(hopeModule.getModuleid()==hopeModule1.getModuleid()){
@@ -1459,11 +1813,29 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         //权限判断
         if(moduleList1!=null && moduleList1.size()!=0 && moduleList1No!=null && moduleList1No.size()!=0){
             for(HopeModule hopeModule:moduleList1No){
-                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
-                hopeModule.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
+                String mIcon = hopeModule.getIcon();
+                try {
+                    mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                hopeModule.setIcon(webUrlq+mIcon);
+                String mImage = hopeModule.getImage();
+                try {
+                    mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                hopeModule.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(mImage));
                 hopeModule.setFangwenTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
                 if(null!=hopeModule.getUseurltype()&&hopeModule.getUseurltype()==1){
-                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(hopeModule.getUrl(),aamid,deptid));
+                    String mUrl = hopeModule.getUrl();
+                    try {
+                        mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(mUrl,aamid,deptid));
                 }
                 for(HopeModule hopeModule1:moduleList1){
                     if(hopeModule.getModuleid()==hopeModule1.getModuleid()){
@@ -1540,21 +1912,36 @@ public class HopeModuleServiceImpl implements HopeModuleService {
             }
         }*/
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
+
         //上墙/下墙时间判断
         List<HopeActicity>reacticitiesNo = new ArrayList<HopeActicity>();
         if(acticities!=null && acticities.size()!=0){
             for(HopeActicity hopeActicity:acticities){
                 Date now = new Date();
                 if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
-                    hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName=java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                  //  String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     hopeActicity.setQuanxianC(1);
                     reacticitiesNo.add(hopeActicity);
                     continue;
                 }
                 if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
                     if(hopeActicity.getEndtime().after(now)){
-                        hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                    //    String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         hopeActicity.setQuanxianC(1);
                         reacticitiesNo.add(hopeActicity);
                         continue;
@@ -1562,14 +1949,28 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                 }
                 if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
                     if(hopeActicity.getStarttime().before(now)){
-                        hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                      //  String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         hopeActicity.setQuanxianC(1);
                         reacticitiesNo.add(hopeActicity);
                         continue;
                     }
                 }
                 if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
-                    hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName=java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                   // String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     hopeActicity.setQuanxianC(1);
                     reacticitiesNo.add(hopeActicity);
                     continue;
@@ -1598,14 +1999,28 @@ public class HopeModuleServiceImpl implements HopeModuleService {
             for(HopeActicity hopeActicity:acticities1){
                 Date now = new Date();
                 if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
-                    hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName=java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                  //  String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     hopeActicity.setQuanxianC(1);
                     reacticities1No.add(hopeActicity);
                     continue;
                 }
                 if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
                     if(hopeActicity.getEndtime().after(now)){
-                        hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                      //  String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         hopeActicity.setQuanxianC(1);
                         reacticities1No.add(hopeActicity);
                         continue;
@@ -1613,14 +2028,28 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                 }
                 if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
                     if(hopeActicity.getStarttime().before(now)){
-                        hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                        String tName = hopeActicity.getTextname();
+                        try {
+                            tName=java.net.URLDecoder.decode(tName,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                     //   String textpath=webUrlq+tName+".pdf";
+                        hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                         hopeActicity.setQuanxianC(1);
                         reacticities1No.add(hopeActicity);
                         continue;
                     }
                 }
                 if(hopeActicity.getStarttime().before(now) && hopeActicity.getEndtime().after(now)){
-                    hopeActicity.setTextpath(webUrlq+hopeActicity.getTextname()+".pdf");
+                    String tName = hopeActicity.getTextname();
+                    try {
+                        tName=java.net.URLDecoder.decode(tName,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                  //  String textpath=webUrlq+tName+".pdf";
+                    hopeActicity.setTextpath(hopeActicity.getTextpath().split("/")[hopeActicity.getTextpath().split("/").length-1]);
                     hopeActicity.setQuanxianC(1);
                     reacticities1No.add(hopeActicity);
                     continue;
@@ -1685,12 +2114,24 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         List<HopeModule>moduleListNo=hopeModuleMapper.searchMoudleByName1No(name);
         //权限判断,url判断
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         if(moduleList!=null && moduleList.size()!=0 && moduleListNo!=null && moduleListNo.size()!=0){
             for(HopeModule hopeModule:moduleListNo){
-                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
+                String mIcon = hopeModule.getIcon();
+                try {
+                    mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                hopeModule.setIcon(webUrlq+mIcon);
                 if(null!=hopeModule.getUseurltype()&&hopeModule.getUseurltype()==1){
-                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(hopeModule.getUrl(),aamid,deptid));
+                    String mUrl = hopeModule.getUrl();
+                    try {
+                        mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(mUrl,aamid,deptid));
                 }
                 for(HopeModule hopeModule1:moduleList){
                     if(hopeModule.getModuleid()==hopeModule1.getModuleid()){
@@ -1708,9 +2149,21 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         //权限判断
         if(moduleList1!=null && moduleList1.size()!=0 && moduleList1No!=null && moduleList1No.size()!=0){
             for(HopeModule hopeModule:moduleList1No){
-                hopeModule.setIcon(webUrlq+hopeModule.getIcon());
+                String mIcon = hopeModule.getIcon();
+                try {
+                    mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                hopeModule.setIcon(webUrlq+mIcon);
                 if(null!=hopeModule.getUseurltype()&&hopeModule.getUseurltype()==1){
-                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(hopeModule.getUrl(),aamid,deptid));
+                    String mUrl = hopeModule.getUrl();
+                    try {
+                        mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    hopeModule.setUrl(FiltrateUtil.getModuleUrl(mUrl,aamid,deptid));
                 }
                 for(HopeModule hopeModule1:moduleList1){
                     if(hopeModule.getModuleid()==hopeModule1.getModuleid()){
@@ -1903,14 +2356,9 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         return new BaseResponse(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
     public static void main(String[] args) {
-        for(int i=1;i<10;i++){
-            System.out.println("我是i"+i);
-            for(int h=1;h<10;h++){
-                System.out.println("我是h"+h);
-                if(h==5){
-                    break;
-                }
-            }
+        Random random = new Random();//默认构造方法
+        for(int i = 0;i<10;i++){
+            System.out.println(Math.abs(random.nextInt(10000)));
         }
     }
     /**
@@ -1922,9 +2370,9 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     * @Author: qinwankang
     * @Date: 2020/5/22 16:52
     */
-    private List<ModuleGroup> insertViewByGroup(List<ModuleGroup>relist,List<HopeModule> hopeModuleList,String aamid,String mStatus){
+    private List<ModuleGroup> insertViewByGroup(List<ModuleGroup>relist,List<HopeModule> hopeModuleList,String aamid,Integer mStatus){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         for (HopeModuleGroupEnum hopeModuleGroupEnum : HopeModuleGroupEnum.values()) {
             if(hopeModuleGroupEnum.getKey().equals(HopeModuleGroupEnum.quanbu.getKey()))
                 continue;
@@ -1934,9 +2382,27 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     if(StringUtils.isEmpty(mStatus)||null==mStatus){
                         ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
                         moduleGroupSub.setModuleid(hopeModule.getModuleid());
-                        moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
-                        moduleGroupSub.setImage(webUrlq+hopeModule.getImage());
-                        moduleGroupSub.setUrl(hopeModule.getUrl());
+                        String mIcon = hopeModule.getIcon();
+                        try {
+                            mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        moduleGroupSub.setIcon(webUrlq+mIcon);
+                        String mImage = hopeModule.getImage();
+                        try {
+                            mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        moduleGroupSub.setImage(webUrlq+mImage);
+                        String mUrl = hopeModule.getUrl();
+                        try {
+                            mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        moduleGroupSub.setUrl(mUrl);
                         moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
                         IdentifySub identifySub = new IdentifySub();
                         Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
@@ -1949,12 +2415,30 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                         moduleGroupSub.setTitle(hopeModule.getModulename());
                         sublist.add(moduleGroupSub);
                     }else{
-                        if(mStatus.equals("1")){
+                        if(mStatus==1){
                             ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
                             moduleGroupSub.setModuleid(hopeModule.getModuleid());
-                            moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
-                            moduleGroupSub.setImage(webUrlq+hopeModule.getImage());
-                            moduleGroupSub.setUrl(hopeModule.getUrl());
+                            String mIcon = hopeModule.getIcon();
+                            try {
+                                mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            moduleGroupSub.setIcon(webUrlq+mIcon);
+                            String mImage = hopeModule.getImage();
+                            try {
+                                mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            moduleGroupSub.setImage(webUrlq+mImage);
+                            String mUrl = hopeModule.getUrl();
+                            try {
+                                mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            moduleGroupSub.setUrl(mUrl);
                             moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
                             IdentifySub identifySub = new IdentifySub();
                             Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
@@ -1966,12 +2450,31 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                             moduleGroupSub.setText(hopeModule.getDescription());
                             moduleGroupSub.setTitle(hopeModule.getModulename());
                             sublist.add(moduleGroupSub);
-                        }else if(mStatus.equals("0")){
+                        }else if(mStatus==0){
                             ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
                             moduleGroupSub.setModuleid(hopeModule.getModuleid());
-                            moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
-                            moduleGroupSub.setUrl(hopeModule.getUrl());
-                            moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
+                            String mIcon = hopeModule.getIcon();
+                            try {
+                                mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            moduleGroupSub.setIcon(webUrlq+mIcon);
+                            String mImage = hopeModule.getImage();
+                            try {
+                                mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(mImage));
+                            String mUrl = hopeModule.getUrl();
+                            try {
+                                mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            moduleGroupSub.setUrl(mUrl);
+
                             moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
                             IdentifySub identifySub = new IdentifySub();
                             Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
@@ -2000,63 +2503,131 @@ public class HopeModuleServiceImpl implements HopeModuleService {
      * @param hopeModuleList
      * @param aamid
     * @return: com.icbc.zsyw.hope3.impl.HopeModuleServiceImpl.ModuleGroup
-    * @Author: qinwankang
+    * @Author: qinwankang    ---------------20200730sql语句tel逻辑重写
     * @Date: 2020/5/22 16:43
     */
-    private ModuleGroup insertQuanbu(List<HopeModule> hopeModuleList,String aamid,String mStatus){
+    private List<ModuleGroupSub> insertQuanbu(List<HopeModule> hopeModuleList,String aamid,Integer mStatus){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
+        log.info("requestServerName {} requestServerPort {}", request.getServerName(),request.getServerPort());
+       // List<HopeComments>hopeCommentsList=getZanOrCai(aamid,new Date());
         List<ModuleGroupSub>sublist = new ArrayList<ModuleGroupSub>();
         for(HopeModule hopeModule: hopeModuleList){
             if(StringUtils.isEmpty(mStatus)|| null==mStatus){
                 ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
                 moduleGroupSub.setModuleid(hopeModule.getModuleid());
-                moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
-                moduleGroupSub.setImage(webUrlq+hopeModule.getImage());
-                moduleGroupSub.setUrl(hopeModule.getUrl());
-                moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
+                String mIcon = hopeModule.getIcon();
+                try {
+                    mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                moduleGroupSub.setIcon(webUrlq+mIcon);
+                String mImage = hopeModule.getImage();
+                try {
+                    mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                moduleGroupSub.setImage(webUrlq+mImage);
+                String mUrl = hopeModule.getUrl();
+                try {
+                    mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+              //  moduleGroupSub.setMstatus(true);
+                moduleGroupSub.setUrl(mUrl);
+                moduleGroupSub.setModulegroupname(hopeModule.getModulegroupname());
+               // moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
                 IdentifySub identifySub = new IdentifySub();
                 Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
+
                 identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
                 identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
                 identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
                 moduleGroupSub.setIdentifySub(identifySub);
-                moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                //访问量
+              //  moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                //问题修改；；；；；
+           //   moduleGroupSub.setTel(hopeViewTimesMapper.queryViewTimes(hopeModule.getModuleid()));
                 moduleGroupSub.setText(hopeModule.getDescription());
                 moduleGroupSub.setTitle(hopeModule.getModulename());
                 sublist.add(moduleGroupSub);
             }else{
-                if(mStatus.equals("1")){
+                if(mStatus==0){
                     ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
                     moduleGroupSub.setModuleid(hopeModule.getModuleid());
-                    moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
-                    moduleGroupSub.setImage(webUrlq+hopeModule.getImage());
-                    moduleGroupSub.setUrl(hopeModule.getUrl());
-                    moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
+                    String mIcon = hopeModule.getIcon();
+                    try {
+                        mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    moduleGroupSub.setIcon(webUrlq+mIcon);
+                    String mImage = hopeModule.getImage();
+                    try {
+                        mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    moduleGroupSub.setImage(webUrlq+mImage);
+                    String mUrl = hopeModule.getUrl();
+                    try {
+                        mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                  //  moduleGroupSub.setMstatus(true);
+                    moduleGroupSub.setUrl(mUrl);
+                    moduleGroupSub.setModulegroupname(hopeModule.getModulegroupname());
+                   // moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
                     IdentifySub identifySub = new IdentifySub();
                     Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
                     identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
                     identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
                     identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
                     moduleGroupSub.setIdentifySub(identifySub);
-                    moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                  //  moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                //    moduleGroupSub.setTel(hopeViewTimesMapper.queryViewTimes(hopeModule.getModuleid()));
                     moduleGroupSub.setText(hopeModule.getDescription());
                     moduleGroupSub.setTitle(hopeModule.getModulename());
                     sublist.add(moduleGroupSub);
-                }else if(mStatus.equals("0")){
+                }else if(mStatus==1){
                     ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
                     moduleGroupSub.setModuleid(hopeModule.getModuleid());
-                    moduleGroupSub.setIcon(webUrlq+hopeModule.getIcon());
-                    moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(hopeModule.getImage()));
-                    moduleGroupSub.setUrl(hopeModule.getUrl());
-                    moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
+                    String mIcon = hopeModule.getIcon();
+                    try {
+                        mIcon=java.net.URLDecoder.decode(mIcon,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    moduleGroupSub.setIcon(webUrlq+mIcon);
+                    String mImage = hopeModule.getImage();
+                    try {
+                        mImage=java.net.URLDecoder.decode(mImage,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    moduleGroupSub.setImage(webUrlq+FiltrateUtil.getModuleSmallImage(mImage));
+                    String mUrl = hopeModule.getUrl();
+                    try {
+                        mUrl=java.net.URLDecoder.decode(mUrl,"utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                //    moduleGroupSub.setMstatus(false);
+                    moduleGroupSub.setUrl(mUrl);
+                    moduleGroupSub.setModulegroupname(hopeModule.getModulegroupname());
+                   // moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
                     IdentifySub identifySub = new IdentifySub();
                     Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
                     identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
                     identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
                     identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
                     moduleGroupSub.setIdentifySub(identifySub);
-                    moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                  //  moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
+                   // moduleGroupSub.setTel(hopeViewTimesMapper.queryViewTimes(hopeModule.getModuleid()));
                     moduleGroupSub.setText(hopeModule.getDescription());
                     moduleGroupSub.setTitle(hopeModule.getModulename());
                     sublist.add(moduleGroupSub);
@@ -2065,11 +2636,17 @@ public class HopeModuleServiceImpl implements HopeModuleService {
 
         }
 
-        ModuleGroup moduleGroup = new ModuleGroup();
-        moduleGroup.setModulegroupType(HopeModuleGroupEnum.quanbu.getValue());
-        moduleGroup.setList(sublist);
-        return moduleGroup;
+      //  ModuleGroup moduleGroup = new ModuleGroup();
+       // moduleGroup.setModulegroupType(HopeModuleGroupEnum.quanbu.getValue());
+       // moduleGroup.setList(sublist);
+        return sublist;
     }
+    //某用户点赞，点踩数据
+    private List<HopeComments> getZanOrCai(String aamid,Date date){
+        List<HopeComments> hopeCommentsList=hopeCommentsMapper.getZanOrCai(aamid,date);
+       return hopeCommentsList;
+    }
+
     /**
     * 功能描述:判断用户当日是否对视图点赞，没点赞返回true,否则false
      * @param aamid
@@ -2085,7 +2662,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
       hopeUserFavor.setAamid(aamid);
       hopeUserFavor.setModuleid(moduleid);
       hopeUserFavor.setFavortype(UserFavorTypeEnum.shitu.getKey());
-      HopeUserFavor hopeUserFavor1 = hopeUserFavorMapper.selectWatchModule(hopeUserFavor);
+      Integer hopeUserFavor1 = hopeUserFavorMapper.selectWatchModule(hopeUserFavor);
       Map<Integer,Boolean> sureMap = new HashMap<Integer,Boolean>();
       sureMap.put(HopeCommentsEnum.dianzan.getKey(),false);
       sureMap.put(HopeCommentsEnum.diancai.getKey(),false);
@@ -2171,6 +2748,36 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         private String modulename;
 
         private String shortname;
+
+        private String modulegroupname;
+
+        private boolean mstatus;
+
+        private long footTime;
+
+        public long getFootTime() {
+            return footTime;
+        }
+
+        public void setFootTime(long footTime) {
+            this.footTime = footTime;
+        }
+
+        public boolean isMstatus() {
+            return mstatus;
+        }
+
+        public void setMstatus(boolean mstatus) {
+            this.mstatus = mstatus;
+        }
+
+        public String getModulegroupname() {
+            return modulegroupname;
+        }
+
+        public void setModulegroupname(String modulegroupname) {
+            this.modulegroupname = modulegroupname;
+        }
 
         public String getModulename() {
             return modulename;

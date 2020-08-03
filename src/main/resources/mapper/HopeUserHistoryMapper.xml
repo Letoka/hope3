@@ -16,8 +16,8 @@
     from hopeuserhistory
     where userhistoryid = #{userhistoryid,jdbcType=INTEGER}
   </select>
-  <select id="queryByaamidAndModuleid" resultMap="BaseResultMap" parameterType="com.icbc.zsyw.hope3.dto.HopeUserHistory" >
-    select *
+  <select id="queryByaamidAndModuleid" resultType="java.lang.Integer" parameterType="com.icbc.zsyw.hope3.dto.HopeUserHistory" >
+    select userhistoryid
     from hopeuserhistory
     where aamid = #{aamid,jdbcType=VARCHAR} and moduleid=#{moduleid,jdbcType=INTEGER}
   </select>

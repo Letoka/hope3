@@ -11,6 +11,8 @@ import com.icbc.zsyw.hope3.mapper.HopeActicityMapper;
 import com.icbc.zsyw.hope3.mapper.HopeActivityLogMapper;
 import com.icbc.zsyw.hope3.mapper.HopeUserFavorMapper;
 import com.icbc.zsyw.hope3.service.HopeactivityService;
+import com.icbc.zsyw.hope3.util.FileToHtmlUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,10 +22,12 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
+import javax.persistence.SecondaryTable;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 /**
  * @ClassName HopeactivityServiceImpl
@@ -40,6 +44,24 @@ public class HopeactivityServiceImpl implements HopeactivityService {
     private HopeActivityLogMapper hopeActivityLogMapper;
     @Resource
     private HopeUserFavorMapper hopeUserFavorMapper;
+    @Value("${img.local.path}")
+    private String imgLoaclPath;
+    @Value("${html.image}")
+    private String htmlImage;
+    @Value("${html.path}")
+    private String htmlPath;
+    @Value("${html.worddoc.path}")
+    private String htmlWordPth;
+/*    #word转html windwos路径
+    html.wimage=D:\\icbc\\image\\html\\image
+    html.wpath=D:\\icbc\\image\\html\\
+    html.wworddoc.path=D:\\icbc\\image\\*/
+    /*@Value("${html.wimage}")
+    private String htmlImage;
+    @Value("${html.wpath}")
+    private String htmlPath;
+    @Value("${html.wworddoc.path}")
+    private String htmlWordPth;*/
     /**
     * 功能描述:发现页文章展示（分成案例培训，技术分享，视图上新三个模块进行）
      * @param jsonObject
@@ -57,51 +79,29 @@ public class HopeactivityServiceImpl implements HopeactivityService {
             return checkResoponse;
         }
         List<HopeActicity>activtilist =  hopeActicityMapper.queryWatchActivity(jsonObject);
-        if(activtilist==null || activtilist.size()==0)
+        //该代码先注释掉
+      //  List<Integer>classList= hopeActicityMapper.queryActivityClass();
+        /*if(classList==null || classList.size()==0){
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
+        }*/
+        /*if(activtilist==null || activtilist.size()==0)
+            return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);*/
        // List<ActivityClass> relist = new ArrayList<ActivityClass>();
       //  for(ActivityClassEnum activityClassEnum:ActivityClassEnum.values()){
             //ActivityClass activityClass = new ActivityClass();
             //activityClass.setAclass(activityClassEnum.getValue());
           //  List<HopeActicity>aclist = new ArrayList<HopeActicity>();
         //pdf路径
-         String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        //String webUrlq =imgLoaclPath;
+         String webUrlq =imgLoaclPath;
+        //String webUrlq1 = "./"+imgLoaclPath;
             Date now =new Date();
             List<HopeActicity>activtilist1 =new ArrayList<HopeActicity>();
-            for(HopeActicity hopeActicity:activtilist){
-              //  if(activityClassEnum.getKey()==hopeActicity.getTextclass()){
-                if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
-                    //是否点赞
-                    //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
-                    //  if(hopeActivityLog!=null){
-                    //       hopeActicity.setDianzan(true);
-                    //   }
-                    //点赞量
-                    Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
-                    hopeActicity.setDianzanliang(dianzangliang);
-                    //是否收藏
-                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(jsonObject.getString("aamid"),hopeActicity.getActivityid());
-                    if(hopeUserFavors!=0){
-                        hopeActicity.setShoucang(true);
-                    }
-                    //收藏量
-                    Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
-                    hopeActicity.setShoucangliang(shoucangliang);
-                    //访问量
-                    //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
-                    //   hopeActicity.setFangwenCount(acount);
-                    //图片路径
-                    String webUrlend = webUrlq+hopeActicity.getImagename();
-                    hopeActicity.setImagename(webUrlend);
-                    //文章路径
-                    String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                    hopeActicity.setTextpath(textpath);
-                    //    aclist.add(hopeActicity);
-                    activtilist1.add(hopeActicity);
-                    continue;
-                }
-                if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
-                    if(hopeActicity.getEndtime().after(now)){
+
+            if(activtilist!=null&&activtilist.size()!=0){
+                for(HopeActicity hopeActicity:activtilist){
+                    //  if(activityClassEnum.getKey()==hopeActicity.getTextclass()){
+                    if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
                         //是否点赞
                         //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
                         //  if(hopeActivityLog!=null){
@@ -122,80 +122,245 @@ public class HopeactivityServiceImpl implements HopeactivityService {
                         //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
                         //   hopeActicity.setFangwenCount(acount);
                         //图片路径
-                        String webUrlend = webUrlq+hopeActicity.getImagename();
-                        hopeActicity.setImagename(webUrlend);
-                        //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
-                        hopeActicity.setTextpath(textpath);
-                        //    aclist.add(hopeActicity);
-                        activtilist1.add(hopeActicity);
-                        continue;
-                    }
-                }
-                if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
-                    if(hopeActicity.getStarttime().before(now)){
-                        //是否点赞
-                        //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
-                        //  if(hopeActivityLog!=null){
-                        //       hopeActicity.setDianzan(true);
-                        //   }
-                        //点赞量
-                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
-                        hopeActicity.setDianzanliang(dianzangliang);
-                        //是否收藏
-                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(jsonObject.getString("aamid"),hopeActicity.getActivityid());
-                        if(hopeUserFavors!=0){
-                            hopeActicity.setShoucang(true);
+                        String imagename = hopeActicity.getImagename();
+                        try {
+                            imagename = java.net.URLDecoder.decode(hopeActicity.getImagename(),"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
                         }
-                        //收藏量
-                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
-                        hopeActicity.setShoucangliang(shoucangliang);
-                        //访问量
-                        //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
-                        //   hopeActicity.setFangwenCount(acount);
-                        //图片路径
-                        String webUrlend = webUrlq+hopeActicity.getImagename();
+                        String webUrlend = webUrlq+imagename;
                         hopeActicity.setImagename(webUrlend);
                         //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        String[] textpArr = hopeActicity.getTextpath().split("/");
+                        String textname = textpArr[textpArr.length-1];
+                        try {
+                            textname = java.net.URLDecoder.decode(textname,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        //String textpath=webUrlq+textname;
+                        String textpath=webUrlq+textname.split("\\.")[0]+".html";
+                        try {
+                            File htmlFile = new File(htmlPath + textname.split("\\.")[0]+".html");
+                            if (!htmlFile.exists()) {
+                                //FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                                FileToHtmlUtil.PoiWord03ToHtmlS(htmlImage,htmlPath,htmlWordPth,textname);
+                                //FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                            }
+                               //FileToHtmlUtil.docxToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                            //FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                            //FileToHtmlUtil.convert2Html(htmlWordPth,htmlPath,textname);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                       /* try {
+                            FileToHtmlUtil.fun(htmlWordPth,textname);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }*/
                         hopeActicity.setTextpath(textpath);
                         //    aclist.add(hopeActicity);
                         activtilist1.add(hopeActicity);
                         continue;
                     }
-                }
+                    if(null==hopeActicity.getStarttime()&&null!=hopeActicity.getEndtime()){
+                        if(hopeActicity.getEndtime().after(now)){
+                            //是否点赞
+                            //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                            //  if(hopeActivityLog!=null){
+                            //       hopeActicity.setDianzan(true);
+                            //   }
+                            //点赞量
+                            Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                            hopeActicity.setDianzanliang(dianzangliang);
+                            //是否收藏
+                            Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(jsonObject.getString("aamid"),hopeActicity.getActivityid());
+                            if(hopeUserFavors!=0){
+                                hopeActicity.setShoucang(true);
+                            }
+                            //收藏量
+                            Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                            hopeActicity.setShoucangliang(shoucangliang);
+                            //访问量
+                            //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                            //   hopeActicity.setFangwenCount(acount);
+                            //图片路径
+                            String imagename = hopeActicity.getImagename();
+                            try {
+                                imagename = java.net.URLDecoder.decode(hopeActicity.getImagename(),"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            String webUrlend = webUrlq+imagename;
+                            hopeActicity.setImagename(webUrlend);
+                            //文章路径
+                            String[] textpArr = hopeActicity.getTextpath().split("/");
+                            String textname = textpArr[textpArr.length-1];
+                            try {
+                                textname = java.net.URLDecoder.decode(textname,"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            //String textpath=webUrlq+textname;
+                            String textpath=webUrlq+textname.split("\\.")[0]+".html";
+                            try {
+                                File htmlFile = new File(htmlPath + textname.split("\\.")[0]+".html");
+                                if (!htmlFile.exists()) {
+                                    //FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                                    FileToHtmlUtil.PoiWord03ToHtmlS(htmlImage,htmlPath,htmlWordPth,textname);
+                                    // FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+
+                                }
+                                  // FileToHtmlUtil.docxToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                               //   FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                                //FileToHtmlUtil.convert2Html(htmlWordPth,htmlPath,textname);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                           /* try {
+                                FileToHtmlUtil.fun(htmlWordPth,textname);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }*/
+                            hopeActicity.setTextpath(textpath);
+                            //    aclist.add(hopeActicity);
+                            activtilist1.add(hopeActicity);
+                            continue;
+                        }
+                    }
+                    if(null!=hopeActicity.getStarttime()&&null==hopeActicity.getEndtime()){
+                        if(hopeActicity.getStarttime().before(now)){
+                            //是否点赞
+                            //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                            //  if(hopeActivityLog!=null){
+                            //       hopeActicity.setDianzan(true);
+                            //   }
+                            //点赞量
+                            Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                            hopeActicity.setDianzanliang(dianzangliang);
+                            //是否收藏
+                            Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(jsonObject.getString("aamid"),hopeActicity.getActivityid());
+                            if(hopeUserFavors!=0){
+                                hopeActicity.setShoucang(true);
+                            }
+                            //收藏量
+                            Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                            hopeActicity.setShoucangliang(shoucangliang);
+                            //访问量
+                            //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                            //   hopeActicity.setFangwenCount(acount);
+                            //图片路径
+                            String imagename = hopeActicity.getImagename();
+                            try {
+                                imagename = java.net.URLDecoder.decode(hopeActicity.getImagename(),"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            String webUrlend = webUrlq+imagename;
+                            hopeActicity.setImagename(webUrlend);
+                            //文章路径
+                            String[] textpArr = hopeActicity.getTextpath().split("/");
+                            String textname = textpArr[textpArr.length-1];
+                            try {
+                                textname = java.net.URLDecoder.decode(textname,"utf-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            //String textpath=webUrlq+textname;
+                            String textpath=webUrlq+textname.split("\\.")[0]+".html";
+                            try {
+                                File htmlFile = new File(htmlPath + textname.split("\\.")[0]+".html");
+                                if (!htmlFile.exists()) {
+                                    //FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                                    FileToHtmlUtil.PoiWord03ToHtmlS(htmlImage,htmlPath,htmlWordPth,textname);
+                                    //FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+
+                                }
+                                //FileToHtmlUtil.docxToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                              //    FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                              //  FileToHtmlUtil.convert2Html(htmlWordPth,htmlPath,textname);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                           /* try {
+                                FileToHtmlUtil.fun(htmlWordPth,textname);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }*/
+                            hopeActicity.setTextpath(textpath);
+                            //    aclist.add(hopeActicity);
+                            activtilist1.add(hopeActicity);
+                            continue;
+                        }
+                    }
                     if(hopeActicity.getStarttime().before(now)&& hopeActicity.getEndtime().after(now)){
-                    //是否点赞
-                 //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
-                  //  if(hopeActivityLog!=null){
-                 //       hopeActicity.setDianzan(true);
-                 //   }
-                    //点赞量
-                  Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
-                    hopeActicity.setDianzanliang(dianzangliang);
+                        //是否点赞
+                        //   HopeActivityLog hopeActivityLog = hopeActivityLogMapper.checkDianzan(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                        //  if(hopeActivityLog!=null){
+                        //       hopeActicity.setDianzan(true);
+                        //   }
+                        //点赞量
+                        Integer dianzangliang= hopeActivityLogMapper.getdianzanliang(hopeActicity.getActivityid());
+                        hopeActicity.setDianzanliang(dianzangliang);
                         //是否收藏
-                    Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(jsonObject.getString("aamid"),hopeActicity.getActivityid());
-                   if(hopeUserFavors!=0){
-                        hopeActicity.setShoucang(true);
-                    }
-                    //收藏量
-                   Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
-                    hopeActicity.setShoucangliang(shoucangliang);
+                        Integer hopeUserFavors=  hopeUserFavorMapper.checkShoucang(jsonObject.getString("aamid"),hopeActicity.getActivityid());
+                        if(hopeUserFavors!=0){
+                            hopeActicity.setShoucang(true);
+                        }
+                        //收藏量
+                        Integer shoucangliang =  hopeUserFavorMapper.getshoucangliang(hopeActicity.getActivityid());
+                        hopeActicity.setShoucangliang(shoucangliang);
                         //访问量
-                  //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
-                 //   hopeActicity.setFangwenCount(acount);
-                    //图片路径
-                     String webUrlend = webUrlq+hopeActicity.getImagename();
-                     hopeActicity.setImagename(webUrlend);
-                     //文章路径
-                        String textpath=webUrlq+hopeActicity.getTextname()+".pdf";
+                        //  Integer acount =  hopeActivityLogMapper.queryActiviCount(hopeActicity.getActivityid(),jsonObject.getString("aamid"));
+                        //   hopeActicity.setFangwenCount(acount);
+                        //图片路径
+                        String imagename = hopeActicity.getImagename();
+                        try {
+                            imagename = java.net.URLDecoder.decode(hopeActicity.getImagename(),"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        String webUrlend = webUrlq+imagename;
+                        hopeActicity.setImagename(webUrlend);
+                        //文章路径
+                        String[] textpArr = hopeActicity.getTextpath().split("/");
+                        String textname = textpArr[textpArr.length-1];
+                        try {
+                            textname = java.net.URLDecoder.decode(textname,"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        //String textpath=webUrlq+textname;
+                        String textpath=webUrlq+textname.split("\\.")[0]+".html";
+                        try {
+                            File htmlFile = new File(htmlPath + textname.split("\\.")[0]+".html");
+                            if (!htmlFile.exists()) {
+                                //FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                                FileToHtmlUtil.PoiWord03ToHtmlS(htmlImage,htmlPath,htmlWordPth,textname);
+                                //FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+
+                            }
+
+                              // FileToHtmlUtil.docxToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                           // FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                            // FileToHtmlUtil.convert2Html(htmlWordPth,htmlPath,textname);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        /*try {
+                            FileToHtmlUtil.fun(htmlWordPth,textname);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }*/
                         hopeActicity.setTextpath(textpath);
-                 //    aclist.add(hopeActicity);
+                        //    aclist.add(hopeActicity);
                         activtilist1.add(hopeActicity);
                         continue;
                     }
-                //}
+                    //}
+                }
             }
+
             //activityClass.setList(aclist);
           //  relist.add(activityClass);
       //  }
@@ -232,6 +397,8 @@ public class HopeactivityServiceImpl implements HopeactivityService {
         hopeActivityLogMapper.insert(hopeActivityLog);
         return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
+
+
 /**
 * 功能描述:发现页收藏功能
  * @param hopeUserFavor

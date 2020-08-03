@@ -15,7 +15,9 @@ public enum HopeUserInfoReqEnum {
     usermobile("009002", true, "用户电话参数为空"),
     useremail("009004", true, "用户邮箱参数为空"),
     tdeptname("009005", true, "tdeptname参数为空"),
-    officephone("009006", true, "用户办公电话参数为空");
+    officephone("009006", true, "用户办公电话参数为空"),
+    logtime("009007", true, "用户登录日期参数为空"),
+    userpost("009008", true, "用户职级参数为空");
 
 
     /**

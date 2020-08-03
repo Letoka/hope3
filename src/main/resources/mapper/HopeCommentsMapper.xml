@@ -94,8 +94,14 @@
   <select id="sureCount" resultType="java.lang.Integer" parameterType="com.icbc.zsyw.hope3.dto.HopeCommentsKey" >
     SELECT COUNT(*) FROM hopecomments WHERE moduleid = #{moduleid,jdbcType=INTEGER} AND comments = #{comments,jdbcType=INTEGER}
   </select>
+  <select id="getDianzan" resultType="com.icbc.zsyw.hope3.dto.HopeComments" parameterType="java.lang.Integer" >
+   SELECT hc.moduleid,COUNT(hc.moduleid) AS modcont FROM hopecomments hc WHERE hc.comments=#{dianzan,jdbcType=INTEGER} GROUP BY hc.moduleid
+  </select>
   <select id="checkAamSure" resultType="com.icbc.zsyw.hope3.dto.HopeComments" parameterType="com.icbc.zsyw.hope3.dto.HopeCommentsKey" >
     SELECT logtime,comments FROM hopecomments WHERE aamid = #{aamid,jdbcType=VARCHAR} AND moduleid = #{moduleid,jdbcType=INTEGER}
+  </select>
+  <select id="getZanOrCai" resultType="com.icbc.zsyw.hope3.dto.HopeComments" parameterType="com.icbc.zsyw.hope3.dto.HopeCommentsKey" >
+    SELECT moduleid,comments FROM hopecomments WHERE aamid = #{aamid,jdbcType=VARCHAR} AND logtime = #{date,jdbcType=TIMESTAMP}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeCommentsKey" >
     delete from hopecomments

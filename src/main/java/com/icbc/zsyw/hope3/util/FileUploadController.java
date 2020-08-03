@@ -39,7 +39,7 @@ import java.util.UUID;
 public class FileUploadController {
     @Autowired
     private ApplicationContext applicationContext;
-   // @Value("${img.local.path}")
+    @Value("${img.local.path}")
     private String imgLoaclPath;
     /**
     * 功能描述:将图片上传到本地指定路径
@@ -68,7 +68,7 @@ public class FileUploadController {
         out1.flush();
         out1.close();
     //    registry.addResourceHandler("/static/upload/**").addResourceLocations("file:///"+imgLoaclPath);
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         String webUrlend = webUrlq+fileName;
         return new BaseResponse<String>(BaseResponse.STATUS_HANDLE_SUCCESS,webUrlend,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
@@ -97,7 +97,7 @@ public class FileUploadController {
         out1.flush();
         out1.close();
      //   registry.addResourceHandler("/static/upload/**").addResourceLocations("file:///"+imgLoaclPath);
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/upload/";
+        String webUrlq =imgLoaclPath;
         String webUrlend = webUrlq+fileName;
         return new BaseResponse<String>(BaseResponse.STATUS_HANDLE_SUCCESS,webUrlend,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
@@ -126,7 +126,7 @@ public class FileUploadController {
         out1.flush();
         out1.close();
        //registry.addResourceHandler("/static/upload/**").addResourceLocations("file:///"+imgLoaclPath);
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/uplaod/";
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile123/static/uplaod/";
         String webUrlend = webUrlq+fileName;
         return new BaseResponse<String>(BaseResponse.STATUS_HANDLE_SUCCESS,webUrlend,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
@@ -159,7 +159,7 @@ public class FileUploadController {
         //out1.flush();
         //out1.close();
         // registry.addResourceHandler("/static/upload/**").addResourceLocations("file:///"+imgLoaclPath);
-        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile/static/uplaod/";
+        String webUrlq = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/mobile123/static/uplaod/";
         String webUrlend = webUrlq+fileName;
         return new BaseResponse<String>(BaseResponse.STATUS_HANDLE_SUCCESS,webUrlend,BaseResponse.STATUS_HANDLER_SUCCESS);
     }

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeUserStatusMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeUserStatus" >
+    <id column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="logstatus" property="logstatus" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    aamid, logstatus
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopeuserstatus
+    where aamid = #{aamid,jdbcType=VARCHAR}
+  </select>
+  <select id="queryStatusByAamid" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select
+   logstatus
+    from hopeuserstatus
+    where aamid = #{aamid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from hopeuserstatus
+    where aamid = #{aamid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeUserStatus" >
+    insert into hopeuserstatus (aamid, logstatus)
+    values (#{aamid,jdbcType=VARCHAR}, #{logstatus,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserStatus" >
+    insert into hopeuserstatus
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="logstatus != null" >
+        logstatus,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="logstatus != null" >
+        #{logstatus,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserStatus" >
+    update hopeuserstatus
+    <set >
+      <if test="logstatus != null" >
+        logstatus = #{logstatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where aamid = #{aamid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeUserStatus" >
+    update hopeuserstatus
+    set logstatus = #{logstatus,jdbcType=INTEGER}
+    where aamid = #{aamid,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

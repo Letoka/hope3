@@ -4,6 +4,17 @@ public class HopeComments extends HopeCommentsKey {
     private Integer comments;
 
     private String description;
+//用来记录每张视图对应点赞量
+    private Integer modcont;
+
+    public Integer getModcont() {
+        return modcont;
+    }
+
+    public void setModcont(Integer modcont) {
+        this.modcont = modcont;
+    }
+
     public HopeComments(){
 
     }

@@ -3,6 +3,8 @@ package com.icbc.zsyw.hope3.mapper;
 import com.icbc.zsyw.hope3.dto.HopeComments;
 import com.icbc.zsyw.hope3.dto.HopeCommentsExample;
 import com.icbc.zsyw.hope3.dto.HopeCommentsKey;
+
+import java.util.Date;
 import java.util.List;
 
 import com.icbc.zsyw.hope3.dto.HopeModule;
@@ -36,4 +38,8 @@ public interface HopeCommentsMapper {
     Integer sureCount(Integer moduleid,Integer comments);
    // @Select("SELECT logtime,comments FROM hopecomments WHERE aamid = #{aamid} AND moduleid = #{moduleid}\n")
     List<HopeComments> checkAamSure(String aamid, Integer moduleid);
+
+    List<HopeComments> getDianzan(Integer dianzan);
+
+    List<HopeComments> getZanOrCai(String aamid, Date date);
 }

@@ -37,18 +37,20 @@
     SELECT hm.moduleid,hm.modulename,hm.shortname,hm.description,hm.icon,hm.image,hm.modulegroupname,hm.url,hm.modulestatus FROM hopemodule hm INNER JOIN
     (SELECT moduleid FROM hopeviewmodulepriv WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid = #{deptid,jdbcType=VARCHAR} OR odeptid = #{odeptid,jdbcType=VARCHAR} GROUP BY moduleid) b
     ON hm.moduleid = b.moduleid  WHERE hm.enabled = 1 AND hm.published=0
-
+    AND
+    hm.moduleid in <foreach collection="jsonArray" item="item" index="index"
+                         open="(" separator="," close=")">#{item,jdbcType=INTEGER}</foreach>
     UNION
     SELECT moduleid,modulename,shortname,description,icon,image,modulegroupname,url,modulestatus FROM hopemodule
     WHERE enabled = 1 AND published=1
     AND
     moduleid in <foreach collection="jsonArray" item="item" index="index"
-                         open="(" separator="," close=")">#{item}</foreach>
+                         open="(" separator="," close=")">#{item,jdbcType=INTEGER}</foreach>
   </select>
   <select id="queryMyFoot" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.icbc.zsyw.hope3.dto.HopeUserHistory" >
-   SELECT hm.moduleid,hm.modulename,hm.shortname,hm.description,hm.icon,hm.image,hm.modulegroupname,hm.url,hm.modulestatus
+   SELECT hm.moduleid,hm.modulename,hm.shortname,hm.description,hm.icon,hm.image,hm.modulegroupname,hm.url,hm.modulestatus,b.logtime AS footTime
    FROM hopemodule hm INNER JOIN
-   (SELECT * FROM(SELECT moduleid FROM hopeuserhistory WHERE aamid =#{aamid,jdbcType=VARCHAR}  ORDER BY logtime DESC) c )
+   (SELECT * FROM(SELECT moduleid,logtime FROM hopeuserhistory WHERE aamid =#{aamid,jdbcType=VARCHAR}) c )
    b ON b.moduleid = hm.moduleid
    WHERE hm.enabled = 1
   </select>
@@ -59,10 +61,11 @@
  SELECT url,useurltype FROM hopemodule WHERE moduleid = #{moduleid,jdbcType=INTEGER}
   </select>
   <select id="searchMoudleByName1" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.alibaba.fastjson.JSONObject" >
-SELECT hm.moduleid,hm.modulename,hm.url,hm.icon,hm.useurltype,hm.image,hm.description FROM hopemodule hm INNER JOIN
+SELECT hm.moduleid,hm.modulename,hm.url,hm.icon,hm.useurltype,hm.image,hm.description,hm.weight FROM hopemodule hm INNER JOIN
     (SELECT moduleid FROM hopeviewmodulepriv WHERE aamid = #{aamid,jdbcType=VARCHAR} OR deptid =  #{deptid,jdbcType=VARCHAR} OR odeptid =  #{odeptid,jdbcType=VARCHAR} GROUP BY moduleid) b
-     ON hm.moduleid = b.moduleid  WHERE hm.enabled = 1 AND hm.modulename LIKE  CONCAT('%',#{name,jdbcType=VARCHAR},'%') ORDER BY hm.weight DESC
-
+     ON hm.moduleid = b.moduleid  WHERE hm.enabled = 1 AND hm.published=0 AND hm.modulename LIKE  CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+UNION
+        SELECT moduleid,modulename,url,icon,useurltype,image,description,weight FROM hopemodule WHERE enabled = 1 AND published=1
   </select>
   <select id="searchMoudleByName1No" resultType="com.icbc.zsyw.hope3.dto.HopeModule" parameterType="com.alibaba.fastjson.JSONObject" >
 SELECT hm.moduleid,hm.modulename,hm.url,hm.icon,hm.image,hm.description  FROM hopemodule hm WHERE hm.enabled = 1 AND hm.modulename LIKE  CONCAT('%',#{name,jdbcType=VARCHAR},'%')  ORDER BY hm.weight DESC

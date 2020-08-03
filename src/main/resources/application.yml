@@ -1,0 +1,7 @@
+
+ qwk:
+   name: "秦万康"
+ spring:
+    mail:
+     fName: "xxx"
+     toName: "尊敬的秦万康先生，xxx女士"

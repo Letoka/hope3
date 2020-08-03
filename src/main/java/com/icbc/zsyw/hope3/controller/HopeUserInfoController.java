@@ -1,5 +1,6 @@
 package com.icbc.zsyw.hope3.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.icbc.zsyw.hope3.common.BaseResponse;
 import com.icbc.zsyw.hope3.dto.HopeUserInfo;
 import com.icbc.zsyw.hope3.service.HopeUserInfoService;
@@ -33,12 +34,28 @@ public class HopeUserInfoController {
      * @Author: qinwankang
      * @Date: 2020/5/22 10:53
      */
-   @RequestMapping(path = {"/insertHopeUserInfo"},method = RequestMethod.POST)
+  @RequestMapping(path = {"/insertHopeUserInfo"},method = RequestMethod.POST)
    public BaseResponse<Integer> insertHopeUserInfo(HttpServletRequest request, @RequestBody HopeUserInfo hopeUserInfo){
-        //log.info("insertHopeCommentsStart hopeComments:"+JSON.toJSONString(hopeComments));
+        log.info("insertHopeUserInfoStart hopeComments:"+ JSON.toJSONString(hopeUserInfo));
        BaseResponse<Integer> response = hopeUserInfoService.insertHopeUserInfo(hopeUserInfo);
-        //log.info("insertHopeCommentsEnd Result:"+ JSON.toJSONString(response));
+        log.info("insertHopeUserInfoEnd Result:"+ JSON.toJSONString(response));
       return response;
+
+    }
+   /**
+   * 功能描述:查询首页用户信息，有返回1，无返回0
+    * @param request
+    * @param hopeUserInfo
+   * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
+   * @Author: qinwankang
+   * @Date: 2020/7/31 14:24
+   */
+    @RequestMapping(path = {"/queryHopeUserInfo"},method = RequestMethod.POST)
+    public BaseResponse<Integer> queryHopeUserInfo(HttpServletRequest request, @RequestBody HopeUserInfo hopeUserInfo){
+        log.info("queryHopeUserInfoStart hopeUserInfo:"+ JSON.toJSONString(hopeUserInfo));
+        BaseResponse<Integer> response = hopeUserInfoService.queryHopeUserInfo(hopeUserInfo);
+        log.info("queryHopeUserInfoEnd Result:"+ JSON.toJSONString(response));
+        return response;
 
     }
 }
