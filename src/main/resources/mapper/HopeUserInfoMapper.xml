@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icbc.zsyw.hope3.mapper.HopeUserInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.icbc.zsyw.hope3.dto.HopeUserInfo" >
+    <id column="aamid" property="aamid" jdbcType="VARCHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="deptid" property="deptid" jdbcType="VARCHAR" />
+    <result column="deptname" property="deptname" jdbcType="VARCHAR" />
+    <result column="odeptid" property="odeptid" jdbcType="VARCHAR" />
+    <result column="odeptname" property="odeptname" jdbcType="VARCHAR" />
+    <result column="usermobile" property="usermobile" jdbcType="VARCHAR" />
+    <result column="useremail" property="useremail" jdbcType="VARCHAR" />
+    <result column="officephone" property="officephone" jdbcType="VARCHAR" />
+    <result column="tdeptname" property="tdeptname" jdbcType="VARCHAR" />
+    <result column="logtime" property="logtime" jdbcType="TIMESTAMP" />
+    <result column="userpost" property="userpost" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    aamid, username, deptid, deptname, odeptid, odeptname, usermobile, useremail, officephone, 
+    tdeptname, logtime, userpost
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from hopeuserinfo
+    where aamid = #{aamid,jdbcType=VARCHAR}
+  </select>
+  <select id="queryHopeUserInfo" resultType="java.lang.String" parameterType="java.lang.String" >
+    SELECT aamid FROM hopeuserinfo WHERE aamid = #{aamid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from hopeuserinfo
+    where aamid = #{aamid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.icbc.zsyw.hope3.dto.HopeUserInfo" >
+    insert into hopeuserinfo (aamid, username, deptid, 
+      deptname, odeptid, odeptname, 
+      usermobile, useremail, officephone, 
+      tdeptname, logtime, userpost
+      )
+    values (#{aamid,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{deptid,jdbcType=VARCHAR}, 
+      #{deptname,jdbcType=VARCHAR}, #{odeptid,jdbcType=VARCHAR}, #{odeptname,jdbcType=VARCHAR}, 
+      #{usermobile,jdbcType=VARCHAR}, #{useremail,jdbcType=VARCHAR}, #{officephone,jdbcType=VARCHAR}, 
+      #{tdeptname,jdbcType=VARCHAR}, #{logtime,jdbcType=TIMESTAMP}, #{userpost,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserInfo" >
+    insert into hopeuserinfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="aamid != null" >
+        aamid,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="deptid != null" >
+        deptid,
+      </if>
+      <if test="deptname != null" >
+        deptname,
+      </if>
+      <if test="odeptid != null" >
+        odeptid,
+      </if>
+      <if test="odeptname != null" >
+        odeptname,
+      </if>
+      <if test="usermobile != null" >
+        usermobile,
+      </if>
+      <if test="useremail != null" >
+        useremail,
+      </if>
+      <if test="officephone != null" >
+        officephone,
+      </if>
+      <if test="tdeptname != null" >
+        tdeptname,
+      </if>
+      <if test="logtime != null" >
+        logtime,
+      </if>
+      <if test="userpost != null" >
+        userpost,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="aamid != null" >
+        #{aamid,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptname != null" >
+        #{deptname,jdbcType=VARCHAR},
+      </if>
+      <if test="odeptid != null" >
+        #{odeptid,jdbcType=VARCHAR},
+      </if>
+      <if test="odeptname != null" >
+        #{odeptname,jdbcType=VARCHAR},
+      </if>
+      <if test="usermobile != null" >
+        #{usermobile,jdbcType=VARCHAR},
+      </if>
+      <if test="useremail != null" >
+        #{useremail,jdbcType=VARCHAR},
+      </if>
+      <if test="officephone != null" >
+        #{officephone,jdbcType=VARCHAR},
+      </if>
+      <if test="tdeptname != null" >
+        #{tdeptname,jdbcType=VARCHAR},
+      </if>
+      <if test="logtime != null" >
+        #{logtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userpost != null" >
+        #{userpost,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserInfo" >
+    update hopeuserinfo
+    <set >
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        deptid = #{deptid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptname != null" >
+        deptname = #{deptname,jdbcType=VARCHAR},
+      </if>
+      <if test="odeptid != null" >
+        odeptid = #{odeptid,jdbcType=VARCHAR},
+      </if>
+      <if test="odeptname != null" >
+        odeptname = #{odeptname,jdbcType=VARCHAR},
+      </if>
+      <if test="usermobile != null" >
+        usermobile = #{usermobile,jdbcType=VARCHAR},
+      </if>
+      <if test="useremail != null" >
+        useremail = #{useremail,jdbcType=VARCHAR},
+      </if>
+      <if test="officephone != null" >
+        officephone = #{officephone,jdbcType=VARCHAR},
+      </if>
+      <if test="tdeptname != null" >
+        tdeptname = #{tdeptname,jdbcType=VARCHAR},
+      </if>
+      <if test="logtime != null" >
+        logtime = #{logtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userpost != null" >
+        userpost = #{userpost,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where aamid = #{aamid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.icbc.zsyw.hope3.dto.HopeUserInfo" >
+    update hopeuserinfo
+    set username = #{username,jdbcType=VARCHAR},
+      deptid = #{deptid,jdbcType=VARCHAR},
+      deptname = #{deptname,jdbcType=VARCHAR},
+      odeptid = #{odeptid,jdbcType=VARCHAR},
+      odeptname = #{odeptname,jdbcType=VARCHAR},
+      usermobile = #{usermobile,jdbcType=VARCHAR},
+      useremail = #{useremail,jdbcType=VARCHAR},
+      officephone = #{officephone,jdbcType=VARCHAR},
+      tdeptname = #{tdeptname,jdbcType=VARCHAR},
+      logtime = #{logtime,jdbcType=TIMESTAMP},
+      userpost = #{userpost,jdbcType=VARCHAR}
+    where aamid = #{aamid,jdbcType=VARCHAR}
+  </update>
+</mapper>
