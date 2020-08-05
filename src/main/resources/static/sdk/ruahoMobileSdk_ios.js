@@ -2030,6 +2030,14 @@ module.exports = Keyboard;
    RuahoPlugin.getUserInfo = function(paramObj, success, error) {
    cordova.exec(success, error, "RuahoPlugin", "getUserInfo", [paramObj]);
    }
+
+   RuahoPlugin.PDFDownload = function(paramObj, success, error) {
+   cordova.exec(success, error, "RuahoPlugin", "PDFDownload", [paramObj]);
+   }
+
+   RuahoPlugin.displayDSMFile = function(paramObj, success, error) {
+   cordova.exec(success, error, "RuahoPlugin", "displayDSMFile", [paramObj]);
+   }
    
    RuahoPlugin.showOrgAddressSection = function(paramObj, success, error) {
    cordova.exec(success, error, "RuahoPlugin", "showOrgAddressSection", [paramObj]);
