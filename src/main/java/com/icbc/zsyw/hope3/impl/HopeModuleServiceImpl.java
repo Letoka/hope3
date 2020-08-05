@@ -2557,6 +2557,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                 //update by 开艳20200805 添加返回的modulestatus
                 moduleGroupSub.setModulestatus(hopeModule.getModulestatus());
 
+
                 sublist.add(moduleGroupSub);
             }else{
                 if(mStatus==0){
