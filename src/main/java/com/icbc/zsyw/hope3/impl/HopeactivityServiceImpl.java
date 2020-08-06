@@ -55,6 +55,12 @@ public class HopeactivityServiceImpl implements HopeactivityService {
     private String htmlWordPth;
     @Value("${html.wtext.path}")
     private String htmltextpath;
+    @Value("${html.Ipng.path}")
+    private String htmlIpngPath;
+
+    public final String base1 = "data:image/";
+
+    public final String base2 = ";base64,";
 /*    #word转html windwos路径
     html.wimage=D:\\icbc\\image\\html\\image
     html.wpath=D:\\icbc\\image\\html\\
@@ -100,9 +106,12 @@ public class HopeactivityServiceImpl implements HopeactivityService {
         //String webUrlq1 = "./"+imgLoaclPath;
             Date now =new Date();
             List<HopeActicity>activtilist1 =new ArrayList<HopeActicity>();
-
+            Set<String>actClass = new HashSet<String>();
             if(activtilist!=null&&activtilist.size()!=0){
                 for(HopeActicity hopeActicity:activtilist){
+                    if(!StringUtils.isEmpty(hopeActicity.getTextclass())){
+                        actClass.add(hopeActicity.getTextclass());
+                    }
                     //  if(activityClassEnum.getKey()==hopeActicity.getTextclass()){
                     if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
                         //是否点赞
@@ -147,18 +156,30 @@ public class HopeactivityServiceImpl implements HopeactivityService {
                         try {
                           File htmlFile = new File(htmlPath + textname.split("\\.")[0]+".html");
                             if (!htmlFile.exists()) {
-                                  FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                                 // FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                                 //FileToHtmlUtil.PoiWord03ToHtmlS(htmlImage,htmlPath,htmlWordPth,textname);
                                 // FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                             }
 
-                           /* File texFile = new File(htmltextpath);
-                           // File texFile = new File(hopeActicity.getTextpath());
-                            String articleContent = "";
+                            //File texFile = new File(htmltextpath);
+                            File texFile = new File(hopeActicity.getTextpath());
+                            JSONObject articleContent =null;
                             if(texFile.exists()){
                                 articleContent= TxtReader.readTxt(texFile);
                             }
-                            hopeActicity.setArticleContent(articleContent);*/
+                            hopeActicity.setArticleContent(articleContent.getString("content"));
+                            List<String> pngList = (List<String>) articleContent.get("pngList");
+                            List<Map<String, Object>>mapList = new ArrayList<>();
+                            //  Map<String,Object>map=new HashMap<String,Object>();
+                            JSONObject map = new JSONObject();
+                            if(pngList!=null&&pngList.size()!=0){
+                                for(String pStr:pngList){
+                                    String zBase = TxtReader.encodeBase64File(htmlIpngPath+pStr);
+                                    map.put(pStr.split("\\.")[0],base1+pStr.split("\\.")[1]+base2+zBase);
+                                }
+                            }
+                            mapList.add(map);
+                            hopeActicity.setImgList(mapList);
                                //FileToHtmlUtil.docxToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                             //FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                             //FileToHtmlUtil.convert2Html(htmlWordPth,htmlPath,textname);
@@ -170,8 +191,8 @@ public class HopeactivityServiceImpl implements HopeactivityService {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }*/
-                        hopeActicity.setTextpath(textpath);
-                       // hopeActicity.setTextpath(webUrlq);
+                        // hopeActicity.setTextpath(textpath);
+                        hopeActicity.setTextpath(webUrlq);
                         //    aclist.add(hopeActicity);
                         activtilist1.add(hopeActicity);
                         continue;
@@ -219,18 +240,30 @@ public class HopeactivityServiceImpl implements HopeactivityService {
                             try {
                                 File htmlFile = new File(htmlPath + textname.split("\\.")[0]+".html");
                                 if (!htmlFile.exists()) {
-                                       FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                                       //FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                                     //FileToHtmlUtil.PoiWord03ToHtmlS(htmlImage,htmlPath,htmlWordPth,textname);
                                     // FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
 
                                 }
-                               /*  File texFile = new File(htmltextpath);
-                                //File texFile = new File(hopeActicity.getTextpath());
-                                String articleContent = "";
+                                //File texFile = new File(htmltextpath);
+                                File texFile = new File(hopeActicity.getTextpath());
+                                JSONObject articleContent =null;
                                 if(texFile.exists()){
                                     articleContent= TxtReader.readTxt(texFile);
                                 }
-                                hopeActicity.setArticleContent(articleContent);*/
+                                hopeActicity.setArticleContent(articleContent.getString("content"));
+                                List<String> pngList = (List<String>) articleContent.get("pngList");
+                                List<Map<String, Object>>mapList = new ArrayList<>();
+                                //  Map<String,Object>map=new HashMap<String,Object>();
+                                JSONObject map = new JSONObject();
+                                if(pngList!=null&&pngList.size()!=0){
+                                    for(String pStr:pngList){
+                                        String zBase = TxtReader.encodeBase64File(htmlIpngPath+pStr);
+                                        map.put(pStr.split("\\.")[0],base1+pStr.split("\\.")[1]+base2+zBase);
+                                    }
+                                }
+                                mapList.add(map);
+                                hopeActicity.setImgList(mapList);
                                   // FileToHtmlUtil.docxToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                                //   FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                                 //FileToHtmlUtil.convert2Html(htmlWordPth,htmlPath,textname);
@@ -242,7 +275,7 @@ public class HopeactivityServiceImpl implements HopeactivityService {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }*/
-                            hopeActicity.setTextpath(textpath);
+                           // hopeActicity.setTextpath(textpath);
                             hopeActicity.setTextpath(webUrlq);
                             //    aclist.add(hopeActicity);
                             activtilist1.add(hopeActicity);
@@ -293,22 +326,30 @@ public class HopeactivityServiceImpl implements HopeactivityService {
                             try {
                               File htmlFile = new File(htmlPath + textname.split("\\.")[0]+".html");
                                 if (!htmlFile.exists()) {
-                                     FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                                    // FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                                     //FileToHtmlUtil.PoiWord03ToHtmlS(htmlImage,htmlPath,htmlWordPth,textname);
                                     // FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
 
                                 }
-                                /*File texFile = new File(htmltextpath);
-                                // File texFile = new File(hopeActicity.getTextpath());
-                                String articleContent = "";
+                                // File texFile = new File(htmltextpath);
+                                File texFile = new File(hopeActicity.getTextpath());
+                                JSONObject articleContent =null;
                                 if(texFile.exists()){
-                                    try {
-                                        articleContent= TxtReader.readTxt(texFile);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                    articleContent= TxtReader.readTxt(texFile);
+                                }
+                                hopeActicity.setArticleContent(articleContent.getString("content"));
+                                List<String> pngList = (List<String>) articleContent.get("pngList");
+                                List<Map<String, Object>>mapList = new ArrayList<>();
+                                //  Map<String,Object>map=new HashMap<String,Object>();
+                                JSONObject map = new JSONObject();
+                                if(pngList!=null&&pngList.size()!=0){
+                                    for(String pStr:pngList){
+                                        String zBase = TxtReader.encodeBase64File(htmlIpngPath+pStr);
+                                        map.put(pStr.split("\\.")[0],base1+pStr.split("\\.")[1]+base2+zBase);
                                     }
                                 }
-                                hopeActicity.setArticleContent(articleContent);*/
+                                mapList.add(map);
+                                hopeActicity.setImgList(mapList);
                                 //FileToHtmlUtil.docxToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                               //    FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                               //  FileToHtmlUtil.convert2Html(htmlWordPth,htmlPath,textname);
@@ -320,8 +361,8 @@ public class HopeactivityServiceImpl implements HopeactivityService {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }*/
-                            hopeActicity.setTextpath(textpath);
-                            // hopeActicity.setTextpath(webUrlq);
+                            //hopeActicity.setTextpath(textpath);
+                             hopeActicity.setTextpath(webUrlq);
                             //    aclist.add(hopeActicity);
                             activtilist1.add(hopeActicity);
                             continue;
@@ -369,18 +410,31 @@ public class HopeactivityServiceImpl implements HopeactivityService {
                         try {
                            File htmlFile = new File(htmlPath + textname.split("\\.")[0]+".html");
                             if (!htmlFile.exists()) {
-                                 FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
+                                 //FileToHtmlUtil.PoiWord03ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                                 // FileToHtmlUtil.PoiWord03ToHtmlS(htmlImage,htmlPath,htmlWordPth,textname);
                                // FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
 
                             }
-                         /* File texFile = new File(htmltextpath);
-                            //File texFile = new File(hopeActicity.getTextpath());
-                            String articleContent = "";
+                            // File texFile = new File(htmltextpath);
+                          File texFile = new File(hopeActicity.getTextpath());
+                            JSONObject articleContent =null;
                             if(texFile.exists()){
                                 articleContent= TxtReader.readTxt(texFile);
                             }
-                            hopeActicity.setArticleContent(articleContent);*/
+                            hopeActicity.setArticleContent(articleContent.getString("content"));
+                            List<String> pngList = (List<String>) articleContent.get("pngList");
+                            List<Map<String, Object>>mapList = new ArrayList<>();
+                          //  Map<String,Object>map=new HashMap<String,Object>();
+                            JSONObject map = new JSONObject();
+                            if(pngList!=null&&pngList.size()!=0){
+                                for(String pStr:pngList){
+                                    String zBase = TxtReader.encodeBase64File(htmlIpngPath+pStr);
+                                    map.put(pStr.split("\\.")[0],base1+pStr.split("\\.")[1]+base2+zBase);
+
+                                }
+                            }
+                            mapList.add(map);
+                            hopeActicity.setImgList(mapList);
                               // FileToHtmlUtil.docxToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                            // FileToHtmlUtil.Word2003ToHtml(htmlImage,htmlPath,htmlWordPth,textname);
                             // FileToHtmlUtil.convert2Html(htmlWordPth,htmlPath,textname);
@@ -392,8 +446,8 @@ public class HopeactivityServiceImpl implements HopeactivityService {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }*/
-                        hopeActicity.setTextpath(textpath);
-                      //  hopeActicity.setTextpath(webUrlq);
+                        // hopeActicity.setTextpath(textpath);
+                        hopeActicity.setTextpath(webUrlq);
                         //    aclist.add(hopeActicity);
                         activtilist1.add(hopeActicity);
                         continue;
@@ -408,14 +462,22 @@ public class HopeactivityServiceImpl implements HopeactivityService {
       //  if(relist==null || relist.size()==0)
          //   return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
         List<ActivityClass> relist = new ArrayList<ActivityClass>();
-          for(ActivityClassEnum activityClassEnum:ActivityClassEnum.values()) {
+         /* for(ActivityClassEnum activityClassEnum:ActivityClassEnum.values()) {
               ActivityClass activityClass = new ActivityClass();
               activityClass.setAclass(activityClassEnum.getValue());
               if(activityClassEnum.getKey()==jsonObject.getInteger(HopeActivityReqEnum.textclass.name())){
                   activityClass.setList(activtilist1);
               }
               relist.add(activityClass);
-          }
+          }*/
+        for(String aStr:actClass) {
+            ActivityClass activityClass = new ActivityClass();
+            activityClass.setAclass(aStr);
+            if(aStr==jsonObject.getString(HopeActivityReqEnum.textclass.name())){
+                activityClass.setList(activtilist1);
+            }
+            relist.add(activityClass);
+        }
         return new BaseResponse<List<ActivityClass>>(BaseResponse.STATUS_HANDLE_SUCCESS,relist,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
 /**

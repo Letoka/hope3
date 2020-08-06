@@ -1,58 +1,60 @@
-<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"><link rel=icon href=favicon.ico><title></title><script>var recalc = function() {
-				var html = document.getElementsByTagName('html')[0];
-				var pageWidth = html.getBoundingClientRect().width;
-				html.style.fontSize = pageWidth / 375 * 100 + 'px';
-			}
-			window.addEventListener('resize', recalc, false)
-			document.addEventListener('DOMContentLoaded', recalc, false)
-			
-			var EquipmentMsg = navigator.userAgent;
-			var TogoFlag = 0;
-			var Agents = [
-				"Android",
-				"iPhone",
-				"SymbianOS",
-				"Windows Phone",
-				"iPad",
-				"iPod"
-			];
-			for (var i = 0; i < Agents.length; i++) {
-				if (EquipmentMsg.indexOf(Agents[i]) > 0) {
-				TogoFlag = 1;
-				break;
-				}
-			}
-			if (TogoFlag == 1) {
-				var userAgent = navigator.userAgent;
-				var isCochat = userAgent.indexOf('cochat') !== -1;
-				var isIos = userAgent.indexOf('cochat:ios') !== -1;
-				var isAndroid = userAgent.indexOf('cochat:android') !== -1;
-				
-				var cordovaScript = document.createElement('script');
-				if (userAgent.toLocaleLowerCase().indexOf('iphone') !== -1) {
-					cordovaScript.src = './sdk/ruahoMobileSdk_ios.min.js';
-				} else {
-					cordovaScript.src = './sdk/ruahoMobileSdk_android.min.js';
-				}
-				document.getElementsByTagName('head')[0].appendChild(cordovaScript);
-			}</script><link href=css/chunk-e77a0a90.beb00168.css rel=prefetch><link href=js/about.9263a48c.js rel=prefetch><link href=js/chunk-e77a0a90.29d953eb.js rel=prefetch><link href=css/app.4214ae5a.css rel=preload as=style><link href=js/app.c07402ab.js rel=preload as=script><link href=js/chunk-vendors.0e7091e3.js rel=preload as=script><link href=css/app.4214ae5a.css rel=stylesheet></head><body><noscript><strong>We're sorry but vue-cli-demo doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id=app></div><script src=js/chunk-vendors.0e7091e3.js></script><script src=js/app.c07402ab.js></script></body><script>// 阻止webView双击放大
-		window.onload = function() {
-			(function() {
-				var agent = navigator.userAgent.toLowerCase();
-				var iLastTouch = null; //缓存上一次tap的时间
-				if (agent.indexOf('iphone') >= 0) {
-					var a = document.getElementsByTagName('body');
-					a[0].addEventListener('touchend', function(event) {
-						var iNow = new Date()
-							.getTime();
-						iLastTouch = iLastTouch || iNow + 1 /** 第一次时将iLastTouch设为当前时间+1 */ ;
-						var delta = iNow - iLastTouch;
-						if (delta < 500 && delta > 0) {
-							event.preventDefault();
-							return false;
-						}
-						iLastTouch = iNow;
-					}, false);
-				}
-			})()
-		}</script></html>
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta http-equiv=Content-Type content="text/html; charset=UTF-8"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"><link rel=icon href=favicon.ico><title>掌上运维</title><script>//动态rem
+    var recalc = function () {
+      var html = document.getElementsByTagName('html')[0];
+      var pageWidth = html.getBoundingClientRect().width;
+      html.style.fontSize = pageWidth / 375 * 100 + 'px';
+    }
+    window.addEventListener('resize', recalc, false)
+    document.addEventListener('DOMContentLoaded', recalc, false)  
+    
+    
+    var EquipmentMsg = navigator.userAgent;
+        var TogoFlag = 0;
+        var Agents = [
+            "Android",
+            "iPhone",
+            "SymbianOS",
+            "Windows Phone",
+            "iPad",
+            "iPod"
+        ];
+        for (var i = 0; i < Agents.length; i++) {
+            if (EquipmentMsg.indexOf(Agents[i]) > 0) {
+            TogoFlag = 1;
+            break;
+            }
+        }
+        if (TogoFlag == 1) {
+          var userAgent = navigator.userAgent;
+          var isCochat = userAgent.indexOf('cochat') !== -1;
+          var isIos = userAgent.indexOf('cochat:ios') !== -1;
+          var isAndroid = userAgent.indexOf('cochat:android') !== -1;
+          
+          var cordovaScript = document.createElement('script');
+          if (userAgent.toLocaleLowerCase().indexOf('iphone') !== -1) {
+            cordovaScript.src = './sdk/ruahoMobileSdk_ios.min.js';
+          } else {
+            cordovaScript.src = './sdk/ruahoMobileSdk_android.min.js';
+          }
+          document.getElementsByTagName('head')[0].appendChild(cordovaScript);
+        }</script><link href=css/OuterIframe.52a22639.css rel=prefetch><link href=css/chunk-00c8cece.05bf11ed.css rel=prefetch><link href=css/chunk-24e1a7d2.121dc333.css rel=prefetch><link href=css/chunk-29f4ec7e.07d5a80e.css rel=prefetch><link href=css/chunk-377f0e0c.102046d6.css rel=prefetch><link href=css/chunk-38be6f64.6125183d.css rel=prefetch><link href=css/chunk-3ab11cdf.89d99e70.css rel=prefetch><link href=css/chunk-4ae7ce0c.8b170755.css rel=prefetch><link href=css/chunk-5c636356.fa73af09.css rel=prefetch><link href=css/chunk-5e85e10c.6a60dfc8.css rel=prefetch><link href=css/chunk-6196f939.707dda41.css rel=prefetch><link href=css/chunk-693b0502.80f07271.css rel=prefetch><link href=css/chunk-71166fff.52cd169a.css rel=prefetch><link href=css/chunk-75bc46bf.f7838d85.css rel=prefetch><link href=css/chunk-8e8317fc.89d99e70.css rel=prefetch><link href=css/chunk-bea26e20.6ecc02f9.css rel=prefetch><link href=css/chunk-c1d48f5a.d676941a.css rel=prefetch><link href=css/chunk-c3d58670.f3262b57.css rel=prefetch><link href=css/chunk-f55dcfe8.117733fc.css rel=prefetch><link href=js/OuterIframe.aa46ef19.js rel=prefetch><link href=js/chunk-00c8cece.e2a338bf.js rel=prefetch><link href=js/chunk-0b90bfbc.bb0b399b.js rel=prefetch><link href=js/chunk-24e1a7d2.41783156.js rel=prefetch><link href=js/chunk-29f4ec7e.2086c670.js rel=prefetch><link href=js/chunk-377f0e0c.be07e0a0.js rel=prefetch><link href=js/chunk-38be6f64.0d532551.js rel=prefetch><link href=js/chunk-3ab11cdf.eedb96e3.js rel=prefetch><link href=js/chunk-4ae7ce0c.81273146.js rel=prefetch><link href=js/chunk-5c636356.91e35e42.js rel=prefetch><link href=js/chunk-5e85e10c.8f2d2736.js rel=prefetch><link href=js/chunk-6196f939.379f072d.js rel=prefetch><link href=js/chunk-693b0502.a94b3c10.js rel=prefetch><link href=js/chunk-71166fff.98e00460.js rel=prefetch><link href=js/chunk-75bc46bf.629653c7.js rel=prefetch><link href=js/chunk-8e8317fc.6ec7abe9.js rel=prefetch><link href=js/chunk-bea26e20.14b0c172.js rel=prefetch><link href=js/chunk-c1d48f5a.f1a1e00d.js rel=prefetch><link href=js/chunk-c3d58670.2a970400.js rel=prefetch><link href=js/chunk-eab7fde8.1dfaa7fe.js rel=prefetch><link href=js/chunk-f55dcfe8.4f29a6bf.js rel=prefetch><link href=css/app.0ec05259.css rel=preload as=style><link href=css/chunk-vendors.a45a59eb.css rel=preload as=style><link href=js/app.a5e21168.js rel=preload as=script><link href=js/chunk-vendors.7595e2be.js rel=preload as=script><link href=css/chunk-vendors.a45a59eb.css rel=stylesheet><link href=css/app.0ec05259.css rel=stylesheet></head><body><noscript><strong>We're sorry but edition-commissioning doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id=app></div><script src=js/chunk-vendors.7595e2be.js></script><script src=js/app.a5e21168.js></script></body><script>// 阻止webView双击放大
+  window.onload = function () {
+    (function () {
+      var agent = navigator.userAgent.toLowerCase();
+      var iLastTouch = null; //缓存上一次tap的时间
+      if (agent.indexOf('iphone') >= 0) {
+        var a = document.getElementsByTagName('body');
+        a[0].addEventListener('touchend', function (event) {
+          var iNow = new Date()
+            .getTime();
+          iLastTouch = iLastTouch || iNow + 1 /** 第一次时将iLastTouch设为当前时间+1 */;
+          var delta = iNow - iLastTouch;
+          if (delta < 500 && delta > 0) {
+            event.preventDefault();
+            return false;
+          }
+          iLastTouch = iNow;
+        }, false);
+      }
+    })()
+  }</script></html>

@@ -17,7 +17,7 @@ public class MyPicMyWebAppConfigurer implements WebMvcConfigurer  {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //外部访问路径映射到本地磁盘路径--windows系统映射
- /* registry.addResourceHandler("/static/upload/**")
+/*  registry.addResourceHandler("/static/upload/**")
                .addResourceLocations("file:D:\\icbc\\image\\")
                .addResourceLocations("file:D:\\icbc\\image\\moduleicon\\")
                .addResourceLocations("file:D:\\icbc\\image\\moduleimage\\")

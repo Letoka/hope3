@@ -4,6 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 //@Entity
 public class HopeActicity {
    // @Id
@@ -15,7 +18,7 @@ public class HopeActicity {
 
     private String textpath;
 
-    private Integer textclass;
+    private String textclass;
 
     private String imagename;
 
@@ -41,7 +44,16 @@ public class HopeActicity {
     private Integer shoucangliang;
     @Transient//文章内容
     private String articleContent;
+    @Transient//文章图片base64
+    private List<Map<String,Object>> imgList;
 
+    public List<Map<String, Object>> getImgList() {
+        return imgList;
+    }
+
+    public void setImgList(List<Map<String, Object>> imgList) {
+        this.imgList = imgList;
+    }
 
     public HopeActicity(){
 
@@ -175,11 +187,11 @@ public class HopeActicity {
         this.textpath = textpath == null ? null : textpath.trim();
     }
 
-    public Integer getTextclass() {
+    public String getTextclass() {
         return textclass;
     }
 
-    public void setTextclass(Integer textclass) {
+    public void setTextclass(String textclass) {
         this.textclass = textclass;
     }
 

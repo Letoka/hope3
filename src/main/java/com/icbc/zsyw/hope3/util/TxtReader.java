@@ -1,9 +1,12 @@
 package com.icbc.zsyw.hope3.util;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.util.ResourceUtils;
 import sun.misc.BASE64Encoder;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @ClassName TxtReader
@@ -13,24 +16,36 @@ import java.io.*;
  * @Version V1.0
  **/
 public class TxtReader {
-    public static String readTxt(File file) throws IOException {
+    public static JSONObject readTxt(File file) throws IOException {
+        List<String> pngList = new ArrayList<String>();
         String s = "";
         InputStreamReader in = new InputStreamReader(new FileInputStream(file),"UTF-8");
         BufferedReader br = new BufferedReader(in);
         StringBuffer content = new StringBuffer();
         while ((s=br.readLine())!=null){
           //System.out.println(s);
-            if(s.contains("jpg")||s.contains("png")||s.contains("gif")||s.contains("tif")||s.contains("pcx")||s.contains("bmp")
+            /*if(s.contains("jpg")||s.contains("png")||s.contains("gif")||s.contains("tif")||s.contains("pcx")||s.contains("bmp")
             ||s.contains("tga")||s.contains("exif")||s.contains("fpx")||s.contains("svg")||s.contains("psd")||s.contains("cdr")
                     ||s.contains("pcd")||s.contains("dxf")||s.contains("ufo")||s.contains("eps")||s.contains("ai")||s.contains("raw")
                     ||s.contains("WMF")||s.contains("webp")||s.contains("jpeg")||s.contains("svg")||s.contains("psd")||s.contains("cdr")){
 
                s=s.split("\\$\\$")[0]+"&$$"+s.split("\\$\\$")[1];
+                pngList.add("$$"+s.split("\\$\\$")[1]);
+            }*/
+            if(s.contains("$$")){
+                if(s.split("\\\\$\\\\$").length>0){
+                    s=s.split("\\$\\$")[0]+"&$$"+s.split("\\$\\$")[1];
+                    pngList.add(s.split("\\$\\$")[1]);
+                }
             }
 
             content = content.append(s).append("&");
         }
-        return content.toString();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("pngList",pngList);
+        jsonObject.put("content",content.toString());
+        //return content.toString();
+        return jsonObject;
     }
     /**
      * <p>将文件转成base64 字符串</p>
@@ -49,11 +64,11 @@ public class TxtReader {
     public static void main(String[] args) {
         try {
 //通过绝对路径获取文件
-            String s1 = readTxt(new File("D:\\qwki\\qwkword\\zsyw20.txt"));
+           JSONObject s1 = readTxt(new File("D:\\qwki\\qwkword\\zsyw20.txt"));
 //spring boot中文件直接放在resources目录下
             //String s2 = readTxt(ResourceUtils.getFile("classpath:du.txt"));
-            System.out.println(s1);
-        } catch (IOException e) {
+            System.out.println(s1.getString("content"));
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -8,7 +8,7 @@ package com.icbc.zsyw.hope3.enums;
  * @Version V1.0
  **/
 public enum  ActivityClassEnum {
-    anlifenxiang(0, "技术上新"),
+    anlifenxiang(0, "技术文章"),
     jishushangxin(1, "视图上新"),
     shitushangxin(2, "案例分享");
     private Integer  key;
