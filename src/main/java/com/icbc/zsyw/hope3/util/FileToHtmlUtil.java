@@ -86,17 +86,7 @@ public class FileToHtmlUtil {
         return targetFileName;
     }
 
-    public static void main(String[] args) {
-        try {
-            PoiWord03ToHtml1("D:\\qwki\\qwkword\\html\\image\\","D:\\qwki\\qwkword\\html\\","","shiyanshi_liulianfx.doc");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
-    }
+
     /**
      * word03版本(.doc)转html
      * poi:word03在线预览
@@ -322,6 +312,18 @@ public class FileToHtmlUtil {
 
 
     }
+
+    public static void main(String[] args) {
+        try {
+            PoiWord03ToHtmlS("D:\\qwki\\qwkword\\html\\image\\","D:\\qwki\\qwkword\\html\\","D:\\qwki\\qwkword\\","shiyanshi_liulianfx.doc");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * word03版本(.doc)转html
      * poi:word03在线预览
@@ -389,10 +391,10 @@ public class FileToHtmlUtil {
             for (int i = 0; i < pics.size(); i++) {
                 Picture pic = (Picture) pics.get(i);
                 try {//图片保存在文件夹的路径
-                    //  File htmlimgFile = new File(htmlPath +"image\\");
-                    File htmlimgFile = new File(htmlPath + "image/");
+                     File htmlimgFile = new File(htmlPath +"image\\");
+                    //  File htmlimgFile = new File(htmlPath + "image/");
                     if (!htmlimgFile.exists()) {
-                        htmlimgFile.mkdir();
+                        htmlimgFile.mkdirs();
                     }
                     log.info(pic.suggestFullFileName());
                     log.info(pic.getHeight() + "");
@@ -408,11 +410,11 @@ public class FileToHtmlUtil {
                             if(filename.equals(imgName)){
                                 Random random = new Random();
                                 int filerandom = random.nextInt(100);
-                                imgName=imgName.split("\\.")[0]+filerandom+"\\."+imgName.split("\\.")[1];
+                                imgName=imgName.split("\\.")[0]+filerandom+"."+imgName.split("\\.")[1];
                             }
                         }
                     }
-                    pic.writeImageContent(new FileOutputStream(htmlPath + "image/"
+                    pic.writeImageContent(new FileOutputStream(htmlPath + "image\\"
                             + imgName));
                     //FileOutputStream(File file)
                 } catch (FileNotFoundException e) {

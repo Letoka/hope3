@@ -39,6 +39,8 @@ public class HopeActicity {
     private Integer dianzanliang;
     @Transient//收藏量
     private Integer shoucangliang;
+    @Transient//文章内容
+    private String articleContent;
 
 
     public HopeActicity(){
@@ -237,5 +239,13 @@ public class HopeActicity {
 
     public void setPrivgroupid(String privgroupid) {
         this.privgroupid = privgroupid == null ? null : privgroupid.trim();
+    }
+
+    public String getArticleContent() {
+        return articleContent;
+    }
+
+    public void setArticleContent(String articleContent) {
+        this.articleContent = articleContent;
     }
 }
