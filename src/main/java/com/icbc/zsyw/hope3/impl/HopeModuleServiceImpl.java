@@ -2553,6 +2553,11 @@ public class HopeModuleServiceImpl implements HopeModuleService {
            //   moduleGroupSub.setTel(hopeViewTimesMapper.queryViewTimes(hopeModule.getModuleid()));
                 moduleGroupSub.setText(hopeModule.getDescription());
                 moduleGroupSub.setTitle(hopeModule.getModulename());
+
+                //update by 开艳20200805 添加返回的modulestatus
+                moduleGroupSub.setModulestatus(hopeModule.getModulestatus());
+
+
                 sublist.add(moduleGroupSub);
             }else{
                 if(mStatus==0){
@@ -2592,6 +2597,10 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                 //    moduleGroupSub.setTel(hopeViewTimesMapper.queryViewTimes(hopeModule.getModuleid()));
                     moduleGroupSub.setText(hopeModule.getDescription());
                     moduleGroupSub.setTitle(hopeModule.getModulename());
+
+                    //update by 开艳20200805 添加返回的modulestatus
+                    moduleGroupSub.setModulestatus(hopeModule.getModulestatus());
+
                     sublist.add(moduleGroupSub);
                 }else if(mStatus==1){
                     ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
@@ -2630,6 +2639,10 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                    // moduleGroupSub.setTel(hopeViewTimesMapper.queryViewTimes(hopeModule.getModuleid()));
                     moduleGroupSub.setText(hopeModule.getDescription());
                     moduleGroupSub.setTitle(hopeModule.getModulename());
+
+                    //update by 开艳20200805 添加返回的modulestatus
+                    moduleGroupSub.setModulestatus(hopeModule.getModulestatus());
+
                     sublist.add(moduleGroupSub);
                 }
             }
@@ -2754,6 +2767,16 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         private boolean mstatus;
 
         private long footTime;
+
+        private String modulestatus;
+
+        public String getModulestatus() {
+            return modulestatus;
+        }
+
+        public void setModulestatus(String modulestatus) {
+            this.modulestatus = modulestatus;
+        }
 
         public long getFootTime() {
             return footTime;
