@@ -9,7 +9,7 @@ package com.icbc.zsyw.hope3.service;
  **/
 public interface MailService {
     //普通文字邮件
-    public void sendMail(String title,String content);
+  //  public void sendMail(String title,String content);
     //html邮件
-    public void sendMailHtml(String title,String mContent);
+   // public void sendMailHtml(String title,String mContent);
 }

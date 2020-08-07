@@ -3,18 +3,14 @@ package com.icbc.zsyw.hope3.impl;
 import com.icbc.zsyw.hope3.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+
 
 /**
  * @ClassName MailServiceImpl
@@ -26,7 +22,7 @@ import javax.mail.internet.MimeMessage;
 @Service
 public class MailServiceImpl implements MailService {
     @Resource
-    private JavaMailSender mailSender;
+   // private JavaMailSender mailSender;
 
 
     //JavaMailSender Config第一种
@@ -50,10 +46,10 @@ public class MailServiceImpl implements MailService {
    // private String toTmp="2154609837@qq.com;qinwankang123@163.com";
     //普通文字邮件
 
-    @Async //设置异步，加快发送速度
+    /*@Async //设置异步，加快发送速度
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public void sendMail( String title, String content) {
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)*/
+    /*public void sendMail( String title, String content) {
         String[] to = toTmp.split(";"); //目标必须字符串或数组，多接收人时必须为数组，用字府串会报异常
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from); //腾讯的限制，发送人必须与发送邮箱相同，不同会报异常
@@ -62,9 +58,9 @@ public class MailServiceImpl implements MailService {
         message.setText(content);
         mailSender.send(message);
         //System.out.println("send mail to: "+ Arrays.toString(to) +"and content: "+ content);
-    }
+    }*/
 //html文件
-    @Async //设置异步，加快发送速度
+    /*@Async //设置异步，加快发送速度
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public void sendMailHtml(String title,String mContent) {
@@ -91,5 +87,5 @@ public class MailServiceImpl implements MailService {
             e.printStackTrace();
         }
         mailSender.send(message);
-    }
+    }*/
 }

@@ -1,6 +1,6 @@
 package com.icbc.zsyw.hope3;
 
-import com.whalin.MemCached.MemCachedClient;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 @SpringBootTest
 public class MemcacheTests {
     //private static final Logger logger = LoggerFactory.getLogger(MemcacheTests.class);
-    @Resource
+   /* @Resource
     private MemCachedClient memCachedClient;
 
     @Test
@@ -53,5 +53,5 @@ public class MemcacheTests {
         Object value = memCachedClient.get("mem");
         System.out.println(value);
 
-    }
+    }*/
 }

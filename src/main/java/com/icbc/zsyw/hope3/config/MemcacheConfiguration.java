@@ -1,10 +1,6 @@
 package com.icbc.zsyw.hope3.config;
 
-import com.whalin.MemCached.MemCachedClient;
-import com.whalin.MemCached.SockIOPool;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+
 
 /**
  * @ClassName MemcacheConfiguration

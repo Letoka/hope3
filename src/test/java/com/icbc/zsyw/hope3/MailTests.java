@@ -1,7 +1,7 @@
 package com.icbc.zsyw.hope3;
 
 import com.icbc.zsyw.hope3.service.MailService;
-import com.whalin.MemCached.MemCachedClient;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class MailTests {
-    @Resource
+   /* @Resource
     private MailService mailService;
     @Test
     public void mailSendTest()  {
@@ -30,5 +30,5 @@ public class MailTests {
     @Test
     public void mailSendHtmlTest()  {
         mailService.sendMailHtml("欢迎来到北京！","现附上你的永久居住证，祝您生活愉快！");
-    }
+    }*/
 }
