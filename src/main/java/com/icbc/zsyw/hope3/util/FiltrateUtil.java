@@ -71,14 +71,7 @@ public class FiltrateUtil {
                  return hList;
 
     }
-    public static void main(String[] args) {
-        String url = "agagonagds$$assdjdslg$$sadkgdg$$";
-        String[]urls = url.split("\\$\\$");
-        for(String s:urls){
-            System.out.println(s);
-        }
 
-    }
     public static String getModuleUrl(String url,String aamid,String deptid){
         //http://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?aamid=$$aamid$$
         //http://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?deptid=$$deptid$$

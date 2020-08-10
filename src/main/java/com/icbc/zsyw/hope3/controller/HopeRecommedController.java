@@ -30,7 +30,7 @@ public class HopeRecommedController {
     /**
     * 功能描述:查询视图推荐
      * @param request
-     * @param hopePrivGroup
+     * @param
     * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
     * @Author: qinwankang
     * @Date: 2020/7/22 22:53

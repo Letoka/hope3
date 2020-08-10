@@ -4,10 +4,7 @@ import com.icbc.zsyw.hope3.dto.HopeActicity;
 import com.icbc.zsyw.hope3.dto.HopeModule;
 import com.icbc.zsyw.hope3.dto.HopePrivGroup;
 import com.icbc.zsyw.hope3.dto.HopeUserFavor;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -46,4 +43,6 @@ public interface HopeUserFavorMapper {
     Integer getshoucangliang(Integer activityid);
 
     void deleteMoudelByAamidAndType(String aamid, Integer favortype);
+
+    void insertFavorList(@Param("hopeUserFavor") List<HopeUserFavor> hopeUserFavor);
 }

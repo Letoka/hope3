@@ -20,6 +20,7 @@
   <select id="queryViewTimesByGroup" resultType="com.icbc.zsyw.hope3.dto.HopeViewTimes" >
  SELECT moduleid,viewtimes FROM hopeviewtimes
   </select>
+  
   <select id="queryTimeByaaAndmoid" resultType="java.lang.Integer" parameterType="com.icbc.zsyw.hope3.dto.HopeViewTimes" >
  SELECT viewtimes FROM hopeviewtimes WHERE aamid = #{aamid,jdbcType=VARCHAR} AND moduleid = #{moduleid,jdbcType=INTEGER}
   </select>

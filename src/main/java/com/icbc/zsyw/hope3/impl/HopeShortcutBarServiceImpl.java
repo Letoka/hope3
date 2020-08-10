@@ -131,6 +131,7 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
                 HopeShortcutBar hopeShortcutBar = new HopeShortcutBar();
                 List<Integer>list1=new ArrayList<Integer>();
                 Integer count = 0;
+
                 for(HopeShortcutBar shortcutBar:list){
                      if(shortcutBar.getShortcutbarname().equals(sname)){
                          count++;
@@ -173,6 +174,7 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
                             e.printStackTrace();
                         }
                         hopeShortcutBar.setShortModuleUrl(sUrl);
+
                     }
 
                 }
@@ -318,10 +320,7 @@ public class HopeShortcutBarServiceImpl implements HopeShortcutBarService {
         return new BaseResponse<ShortcutBarSub>(BaseResponse.STATUS_SYSTEM_FAILURE,BaseResponse.STATUS_SYSTEM_FAILUREE);
     }
 
-    public static void main(String[] args) {
 
-
-    }
     /**
     * 功能描述:三大块视图返回所需要的封装类
      * @param

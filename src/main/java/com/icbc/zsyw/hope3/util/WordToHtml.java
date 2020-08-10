@@ -40,21 +40,7 @@ import org.w3c.dom.Document;
  * @Version V1.0
  **/
 public class WordToHtml {
-    public static void main(String[] args) {
-        try {
-           // wordToHtml("d:\\12.docx", "d:\\", "123.html");
-            wordToHtml("d:\\2.doc", "d:\\", "12.html");
-        } catch (TransformerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+
 
     public static void wordToHtml(String wordPath,String htmlPath,String newFilename) throws TransformerException, IOException, ParserConfigurationException {
         convert2Html(wordPath, htmlPath, newFilename);

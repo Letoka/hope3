@@ -313,17 +313,7 @@ public class FileToHtmlUtil {
 
     }
 
-    public static void main(String[] args) {
-        try {
-            PoiWord03ToHtmlS("D:\\qwki\\qwkword\\html\\image\\","D:\\qwki\\qwkword\\html\\","D:\\qwki\\qwkword\\","shiyanshi_liulianfx.doc");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
-    }
+
     /**
      * word03版本(.doc)转html
      * poi:word03在线预览

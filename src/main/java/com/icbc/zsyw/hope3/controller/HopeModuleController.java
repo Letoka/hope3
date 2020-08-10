@@ -41,7 +41,7 @@ public class HopeModuleController {
         public BaseResponse<List<HopeModule>> queryHopeModule(HttpServletRequest request, @RequestBody HopeviewModulePriv hopeviewModulePriv){
         log.info("queryHopeModuleStart hopeviewModulePriv:"+ JSON.toJSONString(hopeviewModulePriv));
         BaseResponse<List<HopeModule>> response = hopeModuleService.queryHopeModule(hopeviewModulePriv.getAamid(),hopeviewModulePriv.getDeptid(),hopeviewModulePriv.getOdeptid());
-       log.info("queryHopeModule Result:"+JSON.toJSONString(response));
+       log.info("queryHopeModuleEnd Result:"+JSON.toJSONString(response));
         return response;
     }
     /**
@@ -315,9 +315,9 @@ public class HopeModuleController {
 */
     @RequestMapping(path = {"/getModuleByShortCutBar"},method = RequestMethod.POST)
     public BaseResponse<List<HopeModuleServiceImpl.ModuleGroupSub>> getModuleByShortCutBar(HttpServletRequest request, @RequestBody JSONObject jsonObject){
-        log.info("findPageSearchStart hopeModule:"+JSON.toJSONString(jsonObject));
+        log.info("getModuleByShortCutBarStart hopeModule:"+JSON.toJSONString(jsonObject));
         BaseResponse<List<HopeModuleServiceImpl.ModuleGroupSub>> response = hopeModuleService.getModuleByShortCutBar(jsonObject);
-        log.info("findPageSearchEnd Result:"+JSON.toJSONString(response));
+        log.info("getModuleByShortCutBarEnd Result:"+JSON.toJSONString(response));
         return response;
     }
 }

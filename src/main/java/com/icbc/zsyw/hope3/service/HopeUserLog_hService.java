@@ -39,4 +39,19 @@ public interface HopeUserLog_hService {
 * @Date: 2020/7/9 16:14
 */
     BaseResponse<Integer> insertFourCh(HopeUserLog hopeUserLog);
+/*
+* 功能描述:往userlog,userlog_h添加用户访问视图记录，往userhistory添加足迹，viewtimes记录访问量
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
+* @Author: qinwankang
+* @Date: 2020/8/8 17:50
+*/
+    BaseResponse<Integer> insertUserLog_hV2(HopeUserLog hopeUserLog);
+/**
+* 功能描述:往userlog,userlog_h添加记录，首页-1，消息-2，发现-3，推荐-4，三大块，第一块-5，第二块-6，第三块-7
+ * @param hopeUserLog
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
+* @Author: qinwankang
+* @Date: 2020/8/9 0:16
+*/
+    BaseResponse<Integer> insertFourChV2(HopeUserLog hopeUserLog);
 }

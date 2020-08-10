@@ -68,9 +68,9 @@ public class HopeSearchHistoryController {
     */
     @RequestMapping(path = {"/delSearchRecord"},method = RequestMethod.POST)
     public BaseResponse<List<HopeSearchHistory>> delSearchRecord(HttpServletRequest request, @RequestBody JSONObject jsonObject){
-        log.info("querySearchRecordStart hopeSearchHistory:"+JSON.toJSONString(jsonObject));
+        log.info("delSearchRecordStart jsonObject:"+JSON.toJSONString(jsonObject));
         BaseResponse<List<HopeSearchHistory>> searchHistoryResponse = hopeSearchHistoryService.delSearchRecord(jsonObject);
-        log.info("querySearchRecordEnd Result:"+ JSON.toJSONString(searchHistoryResponse));
+        log.info("delSearchRecordEnd Result:"+ JSON.toJSONString(searchHistoryResponse));
         return searchHistoryResponse;
     }
 }

@@ -71,4 +71,6 @@ public interface HopeActicityMapper {
     List<HopeActicity> searchActiciByKeyandClass(String name, String aamid, String deptid, String odeptid,Integer textclass);
 
     List<Integer> queryActivityClass();
+
+    List<String> queryActiviByAamid(String aamid);
 }

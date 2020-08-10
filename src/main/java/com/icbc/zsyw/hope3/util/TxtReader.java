@@ -61,15 +61,5 @@ public class TxtReader {
         inputFile.close();
         return new BASE64Encoder().encode(buffer);
     }
-    public static void main(String[] args) {
-        try {
-//通过绝对路径获取文件
-           JSONObject s1 = readTxt(new File("D:\\qwki\\qwkword\\zsyw20.txt"));
-//spring boot中文件直接放在resources目录下
-            //String s2 = readTxt(ResourceUtils.getFile("classpath:du.txt"));
-            System.out.println(s1.getString("content"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 }

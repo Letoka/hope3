@@ -130,18 +130,23 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     * @Author: qinwankang
     * @Date: 2020/6/1 16:06
     */
-    private BaseResponse<Integer>  insertWatchHopeModuleV2(HopeUserFavor hopeUserFavor){
+    private BaseResponse<Integer>  insertWatchHopeModuleV2(List<HopeUserFavor> hopeUserFavor){
         //入参非空校验
-        for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getAamid()) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-            if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getModuleid()) && headCheckEnum.name().toString().equals("moduleid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-            if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getModulesequence()) && headCheckEnum.name().toString().equals("modulesequence"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
+      //  for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
+           /* if (StringUtils.isEmpty(hopeUserFavor.getAamid()) )
+                return new BaseResponse<>(HopeUserFavorRequestEnum.aamid.getReturnCode(), null, HopeUserFavorRequestEnum.aamid.getMsg());
+            if(StringUtils.isEmpty(hopeUserFavor.getModuleid()) )
+                return new BaseResponse<>(HopeUserFavorRequestEnum.moduleid.getReturnCode(), null, HopeUserFavorRequestEnum.moduleid.getMsg());
+            if( StringUtils.isEmpty(hopeUserFavor.getModulesequence()))*/
+                //return new BaseResponse<>(HopeUserFavorRequestEnum.modulesequence.getReturnCode(), null, HopeUserFavorRequestEnum.modulesequence.getMsg());
+        //}
+            //hopeUserFavor.setFavortype(UserFavorTypeEnum.shitu.getKey());
+          //  hopeUserFavorMapper.insert(hopeUserFavor);
+        try {
+            hopeUserFavorMapper.insertFavorList(hopeUserFavor);
+        }catch (Exception e){
+            return new BaseResponse<>(BaseResponse.STATUS_SYSTEM_FAILURE,BaseResponse.STATUS_SYSTEM_FAILUREE);
         }
-            hopeUserFavor.setFavortype(UserFavorTypeEnum.shitu.getKey());
-            hopeUserFavorMapper.insert(hopeUserFavor);
         return new BaseResponse<Integer>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
 
     }
@@ -156,12 +161,12 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public BaseResponse<Integer> deleteWatchHopeModule(HopeUserFavor hopeUserFavor) {
         //入参非空校验
-        for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getAamid()) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-            if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getModuleid()) && headCheckEnum.name().toString().equals("moduleid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-        }
+        //for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
+            if (StringUtils.isEmpty(hopeUserFavor.getAamid()) )
+                return new BaseResponse<>(HopeUserFavorRequestEnum.aamid.getReturnCode(), null, HopeUserFavorRequestEnum.aamid.getMsg());
+            if(StringUtils.isEmpty(hopeUserFavor.getModuleid()))
+                return new BaseResponse<>(HopeUserFavorRequestEnum.moduleid.getReturnCode(), null, HopeUserFavorRequestEnum.moduleid.getMsg());
+      //  }
         Integer hopeUserFavor1= hopeUserFavorMapper.selectWatchModule(hopeUserFavor);
         if(hopeUserFavor1==null)
             return new BaseResponse<Integer>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
@@ -182,13 +187,13 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         //入参非空校验
         for (HopeUserFavorRequestEnum headCheckEnum : HopeUserFavorRequestEnum.values()) {
             if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getAamid()) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
+                return new BaseResponse<>(HopeUserFavorRequestEnum.aamid.getReturnCode(), null, HopeUserFavorRequestEnum.aamid.getMsg());
             if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getModuleid()) && headCheckEnum.name().toString().equals("moduleid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
+                return new BaseResponse<>(HopeUserFavorRequestEnum.moduleid.getReturnCode(), null, HopeUserFavorRequestEnum.moduleid.getMsg());
             if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavorAfter.getAamid()) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
+                return new BaseResponse<>(HopeUserFavorRequestEnum.aamid.getReturnCode(), null, HopeUserFavorRequestEnum.aamid.getMsg());
             if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavorAfter.getModuleid()) && headCheckEnum.name().toString().equals("moduleid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
+                return new BaseResponse<>(HopeUserFavorRequestEnum.moduleid.getReturnCode(), null, HopeUserFavorRequestEnum.moduleid.getMsg());
             if(!headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavor.getModulesequence()) && headCheckEnum.name().toString().equals("sequence"))
                 return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
             if(!headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserFavorAfter.getModulesequence()) && headCheckEnum.name().toString().equals("sequence"))
@@ -408,10 +413,10 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public BaseResponse<List<HopeModule>> searchMoudleByName(HopeModule hopeModule) {
         //入参非空校验
-        for (HopeModuleRequestEnum headCheckEnum : HopeModuleRequestEnum.values()) {
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeModule.getModulename()) && headCheckEnum.name().toString().equals("modulename"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-        }
+      //  for (HopeModuleRequestEnum headCheckEnum : HopeModuleRequestEnum.values()) {
+            if (StringUtils.isEmpty(hopeModule.getModulename()) )
+                return new BaseResponse<>(HopeModuleRequestEnum.modulename.getReturnCode(), null, HopeModuleRequestEnum.modulename.getMsg());
+        //}
         List<HopeModule>list = hopeModuleMapper.searchMoudleByName(hopeModule.getModulename());
         if(list==null || list.size()==0){
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
@@ -432,26 +437,26 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         String aamid = hopeviewModulePriv.getAamid();
         String deptid = hopeviewModulePriv.getDeptid();
         String odeptid = hopeviewModulePriv.getOdeptid();
-        for (HopePrivRequestEnum headCheckEnum : HopePrivRequestEnum.values()) {
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(aamid) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-            if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(deptid) && headCheckEnum.name().toString().equals("deptid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-            if(headCheckEnum.isNotEmpty() && StringUtils.isEmpty(odeptid) && headCheckEnum.name().toString().equals("odeptid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-        }
+        //for (HopePrivRequestEnum headCheckEnum : HopePrivRequestEnum.values()) {
+            if (StringUtils.isEmpty(aamid))
+                return new BaseResponse<>(HopePrivRequestEnum.aamid.getReturnCode(), null, HopePrivRequestEnum.aamid.getMsg());
+            if(StringUtils.isEmpty(deptid) )
+                return new BaseResponse<>(HopePrivRequestEnum.deptid.getReturnCode(), null, HopePrivRequestEnum.deptid.getMsg());
+            if(StringUtils.isEmpty(odeptid))
+                return new BaseResponse<>(HopePrivRequestEnum.odeptid.getReturnCode(), null, HopePrivRequestEnum.odeptid.getMsg());
+       // }
         List<HopeModule>hopeModuleList =   hopeModuleMapper.queryHopeModule(aamid,deptid,odeptid);
         if(hopeModuleList==null || hopeModuleList.size()==0)
             return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
         //视图排序
         hopeModuleList=FiltrateUtil.sortModule(hopeModuleList);
-       Set<String>modulegroupSet=new HashSet<String>();
+      /* Set<String>modulegroupSet=new HashSet<String>();
        for(HopeModule m:hopeModuleList){
            modulegroupSet.add(m.getModulegroupname());
         }
        if(modulegroupSet==null || modulegroupSet.size()==0){
            return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
-       }
+       }*/
        //打乱视图顺序
        // Collections.shuffle(hopeModuleList);
      //   List<ModuleGroup>relist = new ArrayList<ModuleGroup>();
@@ -459,8 +464,9 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         //String moduleStatus=   hopeModuleStatusMapper.selectByaamidAndtype(hopeUserFavor.getAamid(),HopeModuleTypeEnum.yihang.getKey());
         Integer mouleStautus= hopeUserConfMapper.selectByaamidAndName(aamid,HopeModuleTypeEnum.fenzu.getValue());
 
-        List<ModuleGroupSub> moduleGroup1 = insertQuanbu(hopeModuleList,aamid,mouleStautus);
-
+        JSONObject moduleGroup1 = insertQuanbu(hopeModuleList,aamid,mouleStautus);
+        Set<String>modulegroupSet = (Set<String>) moduleGroup1.get("moduleGroupSet");
+        List<ModuleGroupSub>moduleGroupList = (List<ModuleGroupSub>) moduleGroup1.get("sublist");
         //relist.add(moduleGroup1);
        // List<ModuleGroup>relist1 = insertViewByGroup(relist,hopeModuleList,aamid,mouleStautus);
        // String mStatus = hopeModuleStatusMapper.selectByaamidAndtype(aamid,HopeModuleTypeEnum.fenzu.getKey());
@@ -469,7 +475,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         List<HopeViewTimes>reVlist=getHopeViewTimes();
         List<HopeComments>dianzanList= getMoudledianZan(HopeCommentsEnum.dianzan.getKey());
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("allModules",moduleGroup1);
+        jsonObject.put("allModules",moduleGroupList);
         jsonObject.put("modulegroupSet",modulegroupSet);
         jsonObject.put("reVlist",reVlist);
         jsonObject.put("dianzanList",dianzanList);
@@ -570,15 +576,19 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public BaseResponse insertMyFoot(HopeUserHistory hopeUserHistory) {
         //入参非空校验
-        for (HopePrivRequestEnum headCheckEnum : HopePrivRequestEnum.values()) {
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserHistory.getAamid()) && headCheckEnum.name().toString().equals("aamid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserHistory.getModuleid()) && headCheckEnum.name().toString().equals("moduleid"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
-            if (headCheckEnum.isNotEmpty() && StringUtils.isEmpty(hopeUserHistory.getModuleid()) && headCheckEnum.name().toString().equals("logtime"))
-                return new BaseResponse<>(headCheckEnum.getReturnCode(), null, headCheckEnum.getMsg());
+       /// for (HopePrivRequestEnum headCheckEnum : HopePrivRequestEnum.values()) {
+            if (StringUtils.isEmpty(hopeUserHistory.getAamid()) )
+                return new BaseResponse<>(HopePrivRequestEnum.aamid.getReturnCode(), null, HopePrivRequestEnum.aamid.getMsg());
+            if (StringUtils.isEmpty(hopeUserHistory.getModuleid()) )
+                return new BaseResponse<>(HopePrivRequestEnum.moduleid.getReturnCode(), null, HopePrivRequestEnum.moduleid.getMsg());
+            if (StringUtils.isEmpty(hopeUserHistory.getLogtime()) )
+                return new BaseResponse<>(HopePrivRequestEnum.logtime.getReturnCode(), null, HopePrivRequestEnum.logtime.getMsg());
+       // }
+        try {
+            hopeUserHistoryMapper.insert(hopeUserHistory);
+        }catch (Exception e){
+            return new BaseResponse(BaseResponse.STATUS_SYSTEM_FAILURE,BaseResponse.STATUS_SYSTEM_FAILUREE);
         }
-        hopeUserHistoryMapper.insert(hopeUserHistory);
         return new BaseResponse<>(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
     /**
@@ -733,29 +743,35 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         if(addModuleArr!=null && addModuleArr.size()!=0){
             List<HopeUserFavor>hflist = hopeUserFavorMapper.queryModuleByAamid(aamid,UserFavorTypeEnum.shitu.getKey());
             if(hflist==null || hflist.size()==0){
+                List<HopeUserFavor>userfavorList = new ArrayList<HopeUserFavor>();
                 for(int i = 0;i<addModuleArr.size();i++){
                     HopeUserFavor hopeUserFavor = new HopeUserFavor();
                     hopeUserFavor.setAamid(aamid);
                     hopeUserFavor.setModuleid((Integer) addModuleArr.get(i));
                     hopeUserFavor.setModulesequence(i);
-                    BaseResponse<Integer>addresponse=insertWatchHopeModuleV2(hopeUserFavor);
-                    if(!BaseResponse.STATUS_HANDLE_SUCCESS.equals(addresponse.getStatus()) || !BaseResponse.STATUS_HANDLER_SUCCESS.equals(addresponse.getMessage())){
-                        return addresponse;
-                    }
+                    hopeUserFavor.setFavortype(UserFavorTypeEnum.shitu.getKey());
+                    userfavorList.add(hopeUserFavor);
+                }
+                BaseResponse<Integer>addresponse=insertWatchHopeModuleV2(userfavorList);
+                if(!BaseResponse.STATUS_HANDLE_SUCCESS.equals(addresponse.getStatus()) || !BaseResponse.STATUS_HANDLER_SUCCESS.equals(addresponse.getMessage())){
+                    return addresponse;
                 }
             }
             if(hflist!=null && hflist.size()!=0){
                 //====
                 hopeUserFavorMapper.deleteMoudelByAamidAndType(aamid,UserFavorTypeEnum.shitu.getKey());
+                List<HopeUserFavor>userfavorList = new ArrayList<HopeUserFavor>();
                 for(int i = 0;i<addModuleArr.size();i++){
                     HopeUserFavor hopeUserFavor = new HopeUserFavor();
                     hopeUserFavor.setAamid(aamid);
                     hopeUserFavor.setModuleid((Integer) addModuleArr.get(i));
                     hopeUserFavor.setModulesequence(i);
-                    BaseResponse<Integer>addresponse=insertWatchHopeModuleV2(hopeUserFavor);
-                    if(!BaseResponse.STATUS_HANDLE_SUCCESS.equals(addresponse.getStatus()) || !BaseResponse.STATUS_HANDLER_SUCCESS.equals(addresponse.getMessage())){
-                        return addresponse;
-                    }
+                    hopeUserFavor.setFavortype(UserFavorTypeEnum.shitu.getKey());
+                    userfavorList.add(hopeUserFavor);
+                }
+                BaseResponse<Integer>addresponse=insertWatchHopeModuleV2(userfavorList);
+                if(!BaseResponse.STATUS_HANDLE_SUCCESS.equals(addresponse.getStatus()) || !BaseResponse.STATUS_HANDLER_SUCCESS.equals(addresponse.getMessage())){
+                    return addresponse;
                 }
                 //==
             /*    for(HopeUserFavor hopeUserFavor: hflist){
@@ -2355,12 +2371,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
         }
         return new BaseResponse(BaseResponse.STATUS_HANDLE_SUCCESS,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
-    public static void main(String[] args) {
-        Random random = new Random();//默认构造方法
-        for(int i = 0;i<10;i++){
-            System.out.println(Math.abs(random.nextInt(10000)));
-        }
-    }
+
     /**
     * 功能描述:将数据库返回的视图按照视图分组名称分类然后组成集合返回
      * @param relist
@@ -2506,13 +2517,17 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     * @Author: qinwankang    ---------------20200730sql语句tel逻辑重写
     * @Date: 2020/5/22 16:43
     */
-    private List<ModuleGroupSub> insertQuanbu(List<HopeModule> hopeModuleList,String aamid,Integer mStatus){
+    private JSONObject insertQuanbu(List<HopeModule> hopeModuleList,String aamid,Integer mStatus){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String webUrlq =imgLoaclPath;
         log.info("requestServerName {} requestServerPort {}", request.getServerName(),request.getServerPort());
        // List<HopeComments>hopeCommentsList=getZanOrCai(aamid,new Date());
         List<ModuleGroupSub>sublist = new ArrayList<ModuleGroupSub>();
+        Set<String>moduleGroupSet = new HashSet<String>();
+      //  Set<Integer>moduleidSet = new HashSet<Integer>();
         for(HopeModule hopeModule: hopeModuleList){
+            moduleGroupSet.add(hopeModule.getModulegroupname());
+         //   moduleidSet.add(hopeModule.getModuleid());
             if(StringUtils.isEmpty(mStatus)|| null==mStatus){
                 ModuleGroupSub moduleGroupSub = new ModuleGroupSub();
                 moduleGroupSub.setModuleid(hopeModule.getModuleid());
@@ -2540,13 +2555,13 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                 moduleGroupSub.setUrl(mUrl);
                 moduleGroupSub.setModulegroupname(hopeModule.getModulegroupname());
                // moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
-                IdentifySub identifySub = new IdentifySub();
-                Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
+               // IdentifySub identifySub = new IdentifySub();
+               /* Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
 
                 identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
                 identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
-                identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
-                moduleGroupSub.setIdentifySub(identifySub);
+                identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));*/
+               // moduleGroupSub.setIdentifySub(identifySub);
                 //访问量
               //  moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
                 //问题修改；；；；；
@@ -2587,12 +2602,12 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     moduleGroupSub.setUrl(mUrl);
                     moduleGroupSub.setModulegroupname(hopeModule.getModulegroupname());
                    // moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
-                    IdentifySub identifySub = new IdentifySub();
+                   /* IdentifySub identifySub = new IdentifySub();
                     Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
                     identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
                     identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
-                    identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
-                    moduleGroupSub.setIdentifySub(identifySub);
+                    identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));*/
+                   // moduleGroupSub.setIdentifySub(identifySub);
                   //  moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
                 //    moduleGroupSub.setTel(hopeViewTimesMapper.queryViewTimes(hopeModule.getModuleid()));
                     moduleGroupSub.setText(hopeModule.getDescription());
@@ -2629,12 +2644,12 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                     moduleGroupSub.setUrl(mUrl);
                     moduleGroupSub.setModulegroupname(hopeModule.getModulegroupname());
                    // moduleGroupSub.setSureCount(hopeCommentsMapper.sureCount(hopeModule.getModuleid(),HopeCommentsEnum.dianzan.getKey()));
-                    IdentifySub identifySub = new IdentifySub();
+                   /* IdentifySub identifySub = new IdentifySub();
                     Map<Integer,Boolean> map = checkAamSure(aamid,hopeModule.getModuleid());
                     identifySub.setShadeImg1(map.get(HopeCommentsEnum.dianzan.getKey()));
                     identifySub.setShadeImg2(map.get(HopeCommentsEnum.diancai.getKey()));
                     identifySub.setShadeImg(map.get(HopeCommentsEnum.guanzhu.getKey()));
-                    moduleGroupSub.setIdentifySub(identifySub);
+                    moduleGroupSub.setIdentifySub(identifySub);*/
                   //  moduleGroupSub.setTel(hopeUserLogMapper.queryUserLog_h(hopeModule.getModuleid()));
                    // moduleGroupSub.setTel(hopeViewTimesMapper.queryViewTimes(hopeModule.getModuleid()));
                     moduleGroupSub.setText(hopeModule.getDescription());
@@ -2652,7 +2667,15 @@ public class HopeModuleServiceImpl implements HopeModuleService {
       //  ModuleGroup moduleGroup = new ModuleGroup();
        // moduleGroup.setModulegroupType(HopeModuleGroupEnum.quanbu.getValue());
        // moduleGroup.setList(sublist);
-        return sublist;
+       // List<HopeViewTimes>reVlist= new ArrayList<HopeViewTimes>();
+        //if(moduleidSet!=null&&moduleidSet.size()!=0){
+        //    reVlist = hopeViewTimesMapper.queryViewTimesByModuleid(moduleidSet);
+       // }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("sublist",sublist);
+        jsonObject.put("moduleGroupSet",moduleGroupSet);
+       // jsonObject.put("reVlist",reVlist);
+        return jsonObject;
     }
     //某用户点赞，点踩数据
     private List<HopeComments> getZanOrCai(String aamid,Date date){
@@ -2670,25 +2693,25 @@ public class HopeModuleServiceImpl implements HopeModuleService {
     */
     private Map<Integer,Boolean>  checkAamSure(String aamid,Integer moduleid){
       //不需要入参非空校验
-      List<HopeComments> hopeCommentsList= hopeCommentsMapper.checkAamSure(aamid,moduleid);
+     //List<HopeComments> hopeCommentsList= hopeCommentsMapper.checkAamSure(aamid,moduleid);
       HopeUserFavor hopeUserFavor = new HopeUserFavor();
       hopeUserFavor.setAamid(aamid);
       hopeUserFavor.setModuleid(moduleid);
       hopeUserFavor.setFavortype(UserFavorTypeEnum.shitu.getKey());
-      Integer hopeUserFavor1 = hopeUserFavorMapper.selectWatchModule(hopeUserFavor);
+     // Integer hopeUserFavor1 = hopeUserFavorMapper.selectWatchModule(hopeUserFavor);
       Map<Integer,Boolean> sureMap = new HashMap<Integer,Boolean>();
       sureMap.put(HopeCommentsEnum.dianzan.getKey(),false);
       sureMap.put(HopeCommentsEnum.diancai.getKey(),false);
       sureMap.put(HopeCommentsEnum.guanzhu.getKey(),false);
-      if(hopeUserFavor1!=null){
+     /* if(hopeUserFavor1!=null){
           sureMap.put(HopeCommentsEnum.guanzhu.getKey(),true);
-      }
-      if(hopeCommentsList==null||hopeCommentsList.size()==0){
+      }*/
+      /*if(hopeCommentsList==null||hopeCommentsList.size()==0){
           //该用户没有点过赞或者点过踩
              return sureMap;
-      }
+      }*/
         Calendar calendar = Calendar.getInstance();
-      for(HopeComments hopeComments:hopeCommentsList){
+     /* for(HopeComments hopeComments:hopeCommentsList){
           Date hdate = hopeComments.getLogtime();
           Calendar calendar1 = Calendar.getInstance();
           calendar1.setTime(hdate);
@@ -2704,7 +2727,7 @@ public class HopeModuleServiceImpl implements HopeModuleService {
                   }
               }
           }
-      }
+      }*/
         return sureMap;
     }
 

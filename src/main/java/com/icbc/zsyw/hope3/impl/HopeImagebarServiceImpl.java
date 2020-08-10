@@ -65,7 +65,8 @@ public class HopeImagebarServiceImpl implements HopeImagebarService {
         String webUrlq =imgLoaclPath;
         log.info("requestServerName {} requestServerPort {}", request.getServerName(),request.getServerPort());
         List<HopeImagebar> list= hopeImagebarMapper.queryHopeImagebar(aamid,deptid,odeptid);
-
+        //查询权限下视图
+        List<HopeModule>hopeModuleList =   hopeModuleMapper.queryHopeModule(aamid,deptid,odeptid);
         if(list!=null && list.size()!=0){
             List<HopeImagebar>relist = new ArrayList<HopeImagebar>();
             Date date = new Date();
@@ -73,10 +74,16 @@ public class HopeImagebarServiceImpl implements HopeImagebarService {
                 if(hopeImagebar.getStarttime()==null){
                     if(hopeImagebar.getEndtime().after(date)){
                         if(null!=hopeImagebar.getModuleid()){
-                            String iUrl= hopeModuleMapper.queryUrlBymoduleids(aamid,deptid,odeptid,hopeImagebar.getModuleid());
-
-
-                            if(!StringUtils.isEmpty(iUrl)){
+                           // String iUrl= hopeModuleMapper.queryUrlBymoduleids(aamid,deptid,odeptid,hopeImagebar.getModuleid());
+                            String iUrl="";
+                            if(hopeModuleList!=null&&hopeModuleList.size()!=0){
+                                for(HopeModule hopeModule:hopeModuleList){
+                                    if(hopeModule.getModuleid()==hopeImagebar.getModuleid()){
+                                        iUrl=hopeModule.getUrl();
+                                    }
+                                }
+                            }
+                         if(!StringUtils.isEmpty(iUrl)){
                                 try {
                                     iUrl=  java.net.URLDecoder.decode(iUrl,"utf-8");
                                 } catch (UnsupportedEncodingException e) {
@@ -107,7 +114,15 @@ public class HopeImagebarServiceImpl implements HopeImagebarService {
                 }else{
                    if((hopeImagebar.getStarttime().before(date) || hopeImagebar.getStarttime().compareTo(date)==0) && hopeImagebar.getEndtime().after(date)){
                        if(null!=hopeImagebar.getModuleid()){
-                           String iUrl= hopeModuleMapper.queryUrlBymoduleids(aamid,deptid,odeptid,hopeImagebar.getModuleid());
+                           // String iUrl= hopeModuleMapper.queryUrlBymoduleids(aamid,deptid,odeptid,hopeImagebar.getModuleid());
+                           String iUrl="";
+                           if(hopeModuleList!=null&&hopeModuleList.size()!=0){
+                               for(HopeModule hopeModule:hopeModuleList){
+                                   if(hopeModule.getModuleid()==hopeImagebar.getModuleid()){
+                                       iUrl=hopeModule.getUrl();
+                                   }
+                               }
+                           }
                            try {
                                iUrl=  java.net.URLDecoder.decode(iUrl,"utf-8");
                            } catch (UnsupportedEncodingException e) {

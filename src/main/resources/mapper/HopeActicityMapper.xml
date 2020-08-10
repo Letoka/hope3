@@ -54,6 +54,9 @@
  SELECT hc.* FROM hopeacticity hc INNER JOIN
             (SELECT MAX(starttime) AS starttime FROM hopeacticity ) b ON hc.starttime = b.starttime ORDER BY hc.activityid ASC
   </select>
+    <select id="queryActiviByAamid" resultType="java.lang.String"  parameterType="java.lang.String">
+ SELECT activityid FROM hopeuserfavor WHERE aamid = #{aamid,jdbcType=VARCHAR} AND favortype = 1
+  </select>
   <select id="getHopeActivitys" resultMap="BaseResultMap"  >
  SELECT * FROM hopeacticity ORDER BY starttime DESC
   </select>

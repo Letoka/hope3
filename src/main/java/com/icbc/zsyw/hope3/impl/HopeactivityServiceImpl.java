@@ -88,6 +88,8 @@ public class HopeactivityServiceImpl implements HopeactivityService {
             return checkResoponse;
         }
         List<HopeActicity>activtilist =  hopeActicityMapper.queryWatchActivity(jsonObject);
+//获取该用户收藏的文章
+      //  List<String>aaActiviList = hopeActicityMapper.queryActiviByAamid(jsonObject.getString("aamid"));
         //该代码先注释掉
       //  List<Integer>classList= hopeActicityMapper.queryActivityClass();
         /*if(classList==null || classList.size()==0){
@@ -106,12 +108,12 @@ public class HopeactivityServiceImpl implements HopeactivityService {
         //String webUrlq1 = "./"+imgLoaclPath;
             Date now =new Date();
             List<HopeActicity>activtilist1 =new ArrayList<HopeActicity>();
-            Set<String>actClass = new HashSet<String>();
+           // Set<String>actClass = new HashSet<String>();
             if(activtilist!=null&&activtilist.size()!=0){
                 for(HopeActicity hopeActicity:activtilist){
-                    if(!StringUtils.isEmpty(hopeActicity.getTextclass())){
+                   /* if(!StringUtils.isEmpty(hopeActicity.getTextclass())){
                         actClass.add(hopeActicity.getTextclass());
-                    }
+                    }*/
                     //  if(activityClassEnum.getKey()==hopeActicity.getTextclass()){
                     if(null==hopeActicity.getStarttime()&& null==hopeActicity.getEndtime()){
                         //是否点赞
@@ -462,25 +464,34 @@ public class HopeactivityServiceImpl implements HopeactivityService {
       //  if(relist==null || relist.size()==0)
          //   return new BaseResponse<>(BaseResponse.DATA_STATUS_NULL,BaseResponse.DATA_STATUS_NULLR);
         List<ActivityClass> relist = new ArrayList<ActivityClass>();
-         /* for(ActivityClassEnum activityClassEnum:ActivityClassEnum.values()) {
+        for(ActivityClassEnum activityClassEnum:ActivityClassEnum.values()) {
               ActivityClass activityClass = new ActivityClass();
               activityClass.setAclass(activityClassEnum.getValue());
               if(activityClassEnum.getKey()==jsonObject.getInteger(HopeActivityReqEnum.textclass.name())){
                   activityClass.setList(activtilist1);
               }
               relist.add(activityClass);
-          }*/
-        for(String aStr:actClass) {
+          }
+        /*for(String aStr:actClass) {
             ActivityClass activityClass = new ActivityClass();
             activityClass.setAclass(aStr);
             if(aStr==jsonObject.getString(HopeActivityReqEnum.textclass.name())){
                 activityClass.setList(activtilist1);
             }
             relist.add(activityClass);
-        }
+        }*/
         return new BaseResponse<List<ActivityClass>>(BaseResponse.STATUS_HANDLE_SUCCESS,relist,BaseResponse.STATUS_HANDLER_SUCCESS);
     }
-/**
+
+    public static void main(String[] args) {
+        List<Integer>list = new ArrayList();
+        list.add(1);
+        for(int i = 0;i<list.size();i++){
+            list.add(i);
+        }
+
+    }
+/**;
 * 功能描述:发现页文章点赞功能
  * @param hopeActivityLog
 * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.util.List<com.icbc.zsyw.hope3.impl.HopeactivityServiceImpl.ActivityClass>>

@@ -63,6 +63,22 @@ public class HopeUserLog_hController {
 
     }
     /**
+    * 功能描述:往userlog,userlog_h添加用户访问视图记录，往userhistory添加足迹，viewtimes记录访问量
+     * @param request
+     * @param hopeUserLog
+    * @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
+    * @Author: qinwankang
+    * @Date: 2020/8/8 17:25
+    */
+    @RequestMapping(path = {"/insertUserLog_hV2"},method = RequestMethod.POST)
+    public BaseResponse<Integer> insertUserLog_hV2(HttpServletRequest request, @RequestBody HopeUserLog hopeUserLog){
+        log.info("insertUserLog_hV2Start hopeUserLog:"+JSON.toJSONString(hopeUserLog));
+        BaseResponse<Integer> response = hopeUserLog_hService.insertUserLog_hV2(hopeUserLog);
+        log.info("insertUserLog_hV2End Result:"+ JSON.toJSONString(response));
+        return response;
+
+    }
+    /**
     * 功能描述:记录用户点击四大项（首页-1，消息-2，发现-3，我的-4）
      * @param request
      * @param hopeUserLog
@@ -72,9 +88,25 @@ public class HopeUserLog_hController {
     */
     @RequestMapping(path = {"/insertFourCh"},method = RequestMethod.POST)
     public BaseResponse<Integer> insertFourCh(HttpServletRequest request, @RequestBody HopeUserLog hopeUserLog){
-          log.info("insertUserLog_hStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog));
+          log.info("insertFourChStart hopeUserLog_h:"+JSON.toJSONString(hopeUserLog));
         BaseResponse<Integer> response = hopeUserLog_hService.insertFourCh(hopeUserLog);
-          log.info("insertUserLog_hEnd Result:"+ JSON.toJSONString(response));
+          log.info("insertFourChEnd Result:"+ JSON.toJSONString(response));
+        return response;
+
+    }
+/**
+* 功能描述:往userlog,userlog_h添加记录，首页-1，消息-2，发现-3，推荐-4，三大块，第一块-5，第二块-6，第三块-7
+ * @param request
+ * @param hopeUserLog
+* @return: com.icbc.zsyw.hope3.common.BaseResponse<java.lang.Integer>
+* @Author: qinwankang
+* @Date: 2020/8/9 0:13
+*/
+    @RequestMapping(path = {"/insertFourChV2"},method = RequestMethod.POST)
+    public BaseResponse<Integer> insertFourChV2(HttpServletRequest request, @RequestBody HopeUserLog hopeUserLog){
+        log.info("insertFourChV2Start hopeUserLog:"+JSON.toJSONString(hopeUserLog));
+        BaseResponse<Integer> response = hopeUserLog_hService.insertFourChV2(hopeUserLog);
+        log.info("insertFourChV2End Result:"+ JSON.toJSONString(response));
         return response;
 
     }

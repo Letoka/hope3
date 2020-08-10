@@ -118,7 +118,7 @@ public class HopeactivityController {
     */
     @RequestMapping(path = {"/deleteCollActivi"},method = RequestMethod.POST)
     public BaseResponse<Object> deleteCollActivi(HttpServletRequest request,@RequestBody HopeUserFavor hopeUserFavor){
-        log.info("deleteCollActiviStart"+JSON.toJSONString(hopeUserFavor));
+        log.info("deleteCollActiviStart hopeUserFavor:"+JSON.toJSONString(hopeUserFavor));
         BaseResponse<Object> response = hopeactivityService.deleteCollActivi(hopeUserFavor);
         log.info("deleteCollActiviEnd Result:"+JSON.toJSONString(response));
         return response;

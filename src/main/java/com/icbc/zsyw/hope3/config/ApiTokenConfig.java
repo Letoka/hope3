@@ -168,8 +168,5 @@ public class ApiTokenConfig {
         String k = new  String(a);
         return  k;
     }
-    public static void main(String[] args) {
-      String s = JM("9a286406c252a3d14218228974e1f567");
-      System.out.println(s);
-    }
+
 }

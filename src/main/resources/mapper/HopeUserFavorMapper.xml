@@ -110,6 +110,19 @@ SELECT COUNT(*) FROM hopeuserfavor WHERE activityid=#{activityid,jdbcType=INTEGE
       </if>
     </trim>
   </insert>
+  <insert id="insertFavorList"  parameterType="java.util.List">
+    insert into hopeuserfavor ( aamid, favortype,
+    moduleid, modulesequence)
+    values
+    <foreach collection="hopeUserFavor" item="item" index="index" separator="," >
+      (
+      #{item.aamid,jdbcType=VARCHAR},
+      #{item.favortype,jdbcType=INTEGER},
+      #{item.moduleid,jdbcType=INTEGER},
+      #{item.modulesequence,jdbcType=INTEGER}
+      )
+    </foreach>
+  </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.icbc.zsyw.hope3.dto.HopeUserFavor" >
     update hopeuserfavor
     <set >
